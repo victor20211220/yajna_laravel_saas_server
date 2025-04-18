@@ -1,0 +1,241 @@
+/*
+* Prefixed by https://autoprefixer.github.io
+* PostCSS: v8.4.14,
+* Autoprefixer: v10.4.7
+* Browsers: last 4 version
+*/
+
+@media screen and (min-width: 481px) {
+    .theme-preview-body .btn {
+        font-size: 16px;
+    }
+
+    .theme-preview-body .slick-prev {
+        left: -15px;
+    }
+
+    .theme-preview-body .slick-next {
+        right: -15px;
+    }
+
+    /* appointment-sec css */
+    .theme-preview-body .appointment-sec .check-box-div { 
+        margin: 0 auto 20px;
+    }
+    .theme-preview-body .appointment-sec .appointment-form .appointment-btn {
+        padding: 15px;
+    }
+
+     /* gallery css */
+     .theme-preview-body .gallery-slider .slick-slide .gallery-card-inner{
+        transform: scale(0.9);
+        transition: all ease-in-out .5s;
+        -webkit-transition: all ease-in-out .5s;
+        -moz-transition: all ease-in-out .5s;
+        -ms-transition: all ease-in-out .5s;
+        -o-transition: all ease-in-out .5s;
+        -webkit-transform: scale(0.9);
+        -moz-transform: scale(0.9);
+        -ms-transform: scale(0.9);
+        -o-transform: scale(0.9);
+    }
+    .theme-preview-body .gallery-slider .slick-center .gallery-card-inner{
+        position: relative;
+        z-index: 1;
+        transform: scale(1.4);
+        -webkit-transform: scale(1.4);
+        -moz-transform: scale(1.4);
+        -ms-transform: scale(1.4);
+        -o-transform: scale(1.4);
+    }
+    .theme-preview-body .gallery-slider  .slick-list  {
+        padding: 10% 32% !important;
+    } 
+
+}
+
+@media screen and (max-width: 480px) {
+    :root {
+        --h1: normal 600 34px/1.2 var(--first-font);
+        --h2: normal 600 24px/1.2 var(--first-font);
+        --h3: normal 600 22px/1.2 var(--first-font);
+        --h4: normal 600 20px/1.2 var(--first-font);
+        --h5: normal 600 18px/1.2 var(--first-font);
+        --h6: normal 600 16px/1.2 var(--first-font);
+        --common-text: normal 400 14px/1.4 var(--first-font);
+    }
+
+    .theme-preview-body .form-control,
+    .theme-preview-body input:not([type="submit"]),
+    .theme-preview-body input:not([type="checkbox"]),
+    .theme-preview-body input:not([type="button"]),
+    .theme-preview-body input:not([type="radio"]),
+    .theme-preview-body select,
+    .theme-preview-body textarea,
+    .theme-preview-body .theme-popup .form-group .form-input {
+        padding: 10px 15px;
+    }
+
+    .theme-preview-body .container {
+        padding: 0 15px;
+    } 
+
+    /* theme-popup css */
+    .theme-preview-body .theme-popup-inner .theme-popup-content {
+        padding: 20px 15px;
+    }
+
+    .theme-preview-body .popup-header .popup-title h2 {
+        font-size: 20px;
+    }
+
+    .theme-preview-body .theme-popup .form-group .form-input svg {
+        height: 14px;
+        width: 14px;
+    }
+
+    .theme-preview-body .popup-header .close-arrow-btn {
+        height: 25px;
+        width: 25px;
+    }
+
+    .theme-preview-body .popup-header .close-arrow-btn svg {
+        height: 15px;
+        width: 15px;
+    }
+    .theme-preview-body .common-title {
+        margin: 0 0 22px;
+    }
+    .theme-preview-body .popup-header {
+        gap: 10px;
+    }
+    /* gallery css  */
+    .theme-preview-body .gallery-card {
+        padding: 0 10px;
+    }
+    .gallery-sec .container{
+        padding: 0;
+    }
+    /* appointment-sec css */
+    .theme-preview-body .appointment-sec .checkbox-custom {
+        max-width: calc(50% - 5px);
+    }
+    /* share-card-popup css */
+    .theme-preview-body .share-card-popup .social-list {
+        padding: 10px 15px;
+    }
+
+    /* profile-sec css */
+    .profile-sec .client-info-wrp .client-image {
+        height: 115px;
+        width: 115px;
+        border-width: 5px;
+        margin: -100px auto 15px;
+    } 
+    
+    /* social-link-sec css */
+    .theme-preview-body .social-link-sec .social-link a {
+        height: 35px;
+        width: 35px;
+    }
+
+    .theme-preview-body .social-link-sec .social-link a img {
+        width: 16px;
+        height: 16px;
+    } 
+    /* business-hour-sec css */
+    .theme-preview-body .business-hour-sec .hours-list li {
+        max-width: 100%;
+        padding: 8px;
+        -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+                justify-content: space-between;
+    }
+    .theme-preview-body .business-hour-sec .hours-list {
+        max-width: 100%;
+        gap: 12px;
+    }
+    .theme-preview-body .business-hour-sec .hours-list li:last-child {
+        padding: 8px;
+    }
+    
+    /* testimonial-sec css */
+    .theme-preview-body .testimonial-sec .testimonial-content-inner {
+        padding: 15px;
+    }
+
+    .theme-preview-body .testimonial-sec .testimonial-img {
+        height: 80px;
+        width: 80px;
+        transform: scale(0.7);
+        -webkit-transform: scale(0.7);
+        -moz-transform: scale(0.7);
+        -ms-transform: scale(0.7);
+        -o-transform: scale(0.7);
+    }
+
+    .theme-preview-body .testimonial-sec .testimonial-content-inner::before {  
+        height: 40px;
+        width: 40px;  
+        bottom: -20px;
+    }
+
+    .theme-preview-body .testimonial-sec .testimonial-image-wrp span {
+        font-size: 16px;
+    }
+    /* contact-info-sec css */
+    .theme-preview-body .contact-info-sec .contact-list li a {
+        font-size: 14px;
+    }
+
+    .theme-preview-body .contact-list .contact-image {
+        height: 30px;
+        width: 30px;
+    }
+
+    .theme-preview-body .contact-info-sec .contact-list li img {
+        height: 15px;
+        width: 15px;
+    }
+
+    /* more-info-sec css  */
+    .theme-preview-body .more-info-sec ul {
+        gap: 10px;
+    }
+    
+    .theme-preview-body .more-info-sec ul li h3 {
+        font-size: 14px;
+    } 
+
+    .theme-preview-body .more-info-sec ul li a svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .theme-preview-body .more-info-sec ul li a {
+        gap: 12px;
+        padding: 10px;
+    }
+    /* payment-sec css */
+    .theme-preview-body .payment-sec ul,
+    .theme-preview-body .download-sec ul {
+        gap: 15px;
+    }
+    .theme-preview-body .download-sec ul li a {
+        padding: 10px 15px;
+    }
+    .theme-preview-body .payment-sec ul li a img {
+        max-width: 25px;
+    }
+    .theme-preview-body .payment-sec ul li {
+        -webkit-box-flex: 1;
+            -ms-flex: 1;
+                flex: 1;
+    }
+    .theme-preview-body .payment-sec ul li a {
+        min-width: auto;
+    }
+    .theme-preview-body .appointment-form .appointment-btn, .theme-preview-body .payment-sec ul li a span {
+        font-size: 16px;
+    }
+}

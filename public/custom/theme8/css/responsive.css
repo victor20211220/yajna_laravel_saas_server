@@ -1,0 +1,282 @@
+@media screen and (min-width: 481px) {
+    .theme-preview-body .btn {
+        font-size: 16px;
+    }
+     /* appointment-sec css  start */
+    .theme-preview-body .appointment-sec .check-box-div {
+        max-width: 75%;
+        width: 100%;
+        margin: 0 auto 20px;
+    }
+    .theme-preview-body .appointment-sec .appointment-form{
+        max-width: 80%;
+        width: 100%;
+        margin: 0 auto;
+    }
+     /* appointment-sec css end */
+
+    .theme-preview-body .testimonial-sec .arrow-wrapper{
+        position: absolute;
+        top: 40px;
+        right: 30px;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: end;
+            -ms-flex-align: end;
+                align-items: end;
+        -webkit-box-pack: end;
+            -ms-flex-pack: end;
+                justify-content: end;
+        width: 100%;
+    }
+   }
+
+@media screen and (max-width: 480px) {
+    :root .theme-preview-body {
+        --h1: normal 600 34px/1.2 var(--second-font);
+        --h2: normal 600 24px/1.2 var(--second-font);
+        --h3: normal 600 22px/1.2 var(--second-font);
+        --h4: normal 600 20px/1.2 var(--second-font);
+        --h5: normal 600 18px/1.2 var(--second-font);
+        --h6: normal 600 16px/1.2 var(--second-font);
+    }
+    .theme-preview-body .form-control,
+    .theme-preview-body input:not([type="submit"]),
+    .theme-preview-body input:not([type="checkbox"]),
+    .theme-preview-body input:not([type="button"]),
+    .theme-preview-body input:not([type="radio"]),
+    .theme-preview-body select,
+    .theme-preview-body textarea,
+    .theme-preview-body .theme-popup .form-group .form-input {
+        padding: 10px 15px;
+    }
+
+    .theme-preview-body .container {
+        padding: 0 15px;
+    }
+ 
+    .theme-preview-body .common-title h2::after{
+        bottom: 2px;
+        width: 6px;
+        height: 6px;
+    }
+    .theme-preview-body .payment-sec ul li{
+        -webkit-box-flex: 1;
+            -ms-flex: 1;
+                flex: 1;
+    }
+     /* theme-popup css start */
+     .theme-preview-body .popup-header .close-arrow-btn{
+        width: 26px;
+        height: 26px;
+     }
+     .theme-preview-body .popup-header .popup-title {
+        gap: 10px;
+     }
+     .theme-preview-body .popup-header .close-arrow-btn svg{
+        height: 14px;
+        width: 14px;
+     }
+     .theme-preview-body .theme-popup-inner .theme-popup-content {
+        padding: 20px 15px;
+    }
+
+    .theme-preview-body .popup-header .popup-title h2 {
+        font-size: 20px;
+    }
+
+    .theme-preview-body .theme-popup .form-group .form-input svg {
+        height: 14px;
+        width: 14px;
+    }
+    /* theme-popup css end */
+    /* product-sec css start */
+    .profile-sec .client-info-wrp .client-image {
+        height: 120px;
+        width: 120px;
+        border-width: 5px;
+        margin: -100px auto 15px;
+    }
+    /* product-sec css end */
+
+    /* social-link-sec css start */
+    .theme-preview-body .social-link-slider {
+        margin: 0 25px;
+    }
+
+    .theme-preview-body .social-link-sec .social-link a {
+        height: 35px;
+        width: 35px;
+    }
+
+    .theme-preview-body .social-link-sec .social-link a img {
+        width: 16px;
+        height: 16px;
+    }
+    .theme-preview-body .social-link-sec .slick-arrow{
+        width: 18px;
+        height: 18px;
+    }
+    /* social-link-sec css end */
+    /* business-hour section css start */
+    .theme-preview-body .business-hour-sec .hours-list li p,
+    .theme-preview-body .business-hour-sec .hours-list li span{
+        font-size: 14px;
+    }
+    .theme-preview-body .business-hour-sec .hours-list li p {
+        max-width: 140px;
+    }
+    .theme-preview-body .business-hour-sec .hours-list li span::before{
+        width: 30%;
+    }
+    .theme-preview-body .business-hour-sec .hours-list li span::after{
+        width: 6px;
+        height: 6px;
+    }
+    .theme-preview-body .business-hour-sec .hours-list li:not(:last-of-type) {
+        margin-bottom: 12px;
+    }
+    .theme-preview-body .common-title h2 {
+        padding: 0 0 10px;
+        margin: 0 auto 15px;
+    }
+   /* business-hour section css end */
+   /* service section css start */
+  
+   .theme-preview-body .service-sec .arrow-wrapper {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0 0;
+}
+.theme-preview-body .service-sec .arrow-wrapper .slick-arrow {
+    position: unset;
+    transform: translate(0);
+    -webkit-transform: translate(0);
+    -moz-transform: translate(0);
+    -ms-transform: translate(0);
+    -o-transform: translate(0);
+}
+   /* service section css end */
+   /* gallery section css start */
+   .theme-preview-body .gallery-slider .slick-list{
+    padding: 0 10% !important;
+   }
+   .theme-preview-body .gallery-card-inner {
+    padding: 5px;
+   }
+   .theme-preview-body .gallery-card-inner .img-wrapper {
+    padding-top: 60%;
+}
+   /* gallery section css end */
+   /* appointment section css */
+   .theme-preview-body .appointment-sec .appointment-form .date-picker .form-control{
+    background-size: 16px;
+   }
+   .theme-preview-body .appointment-sec .appointment-form .date-picker {
+    margin: 0 0 15px;
+}
+.theme-preview-body .appointment-sec .checkbox-custom label{
+    padding: 10px;
+}
+.theme-preview-body .appointment-sec .check-box-div {
+    gap: 10px 12px;
+}
+.theme-preview-body .more-info-sec ul{
+    max-width: 100%;
+}
+/* appointment section end */
+/* contact info section css start*/
+
+.theme-preview-body .contact-info-sec li .contact-image {
+    width: 46px;
+    height: 46px;
+    margin-top: -46px;
+}
+.theme-preview-body .contact-info-sec li .contact-image img {
+    height: 18px;
+    width: 18px;
+}
+.theme-preview-body .contact-info-sec .contact-list li{
+    margin-top: 45px;
+    padding: 20px 15px;
+}
+/* contact info section css end*/
+/* testimonial section css start*/
+.theme-preview-body .testimonial-sec .arrow-wrapper{
+    margin-top: 20px;
+}
+.theme-preview-body .testimonial-card .testimonial-card-inner{
+    padding: 20px;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+}
+.theme-preview-body .testimonial-card .testimonial-image-wrp{
+    max-width: 50%;
+    margin: 0px auto 15px;
+}
+.theme-preview-body .testimonial-card .testimonial-image{
+    padding-top: 110%;
+}
+.theme-preview-body .testimonial-card .testimonial-image img{
+    -o-object-position: top;
+       object-position: top;
+}
+.theme-preview-body .testimonial-card-inner .testimonial-content{
+    padding: 0;
+    text-align: center;
+}
+.theme-preview-body .testimonial-card-inner .testimonial-content .rating{
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+}
+.theme-preview-body .testimonial-card {
+    padding: 0px 10px 0px;
+}
+.theme-preview-body .testimonial-sec .testimonial-slider-wrp {
+    padding: 20px 0 0;
+}
+.theme-preview-body .testimonial-card-inner .testimonial-content .rating svg {
+    width: 75px;
+}
+/* testimonial section css end*/
+/* more-info section css start*/
+.theme-preview-body .more-info-sec ul li a svg {
+    width: 20px;
+    height: 20px;
+}
+.theme-preview-body .more-info-sec ul,
+.theme-preview-body .more-info-sec ul li a{
+    gap: 15px;
+}
+/* more-info section css end*/
+ /* share-card-popup css start */
+ .theme-preview-body .share-card-popup .social-list {
+    padding: 10px 15px;
+}
+.theme-preview-body .share-card-popup .popup-body .qr-link span{
+    font-size: 13px;
+}
+.theme-preview-body .share-card-popup .client-image {
+    height: 85px;
+    width: 85px;
+}
+ /* share-card-popup css end */
+ .theme-preview-body .download-sec ul{
+    gap: 15px;
+ }
+ .theme-preview-body .download-sec ul li a{
+    padding: 10px 15px;
+}
+}

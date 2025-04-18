@@ -1,0 +1,224 @@
+@media screen and (min-width: 481px) {
+  .theme-preview-body .btn {
+    font-size: 16px;
+  }
+  /* service sec  */
+  .theme-preview-body .service-slider {
+    max-width: 375px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  .theme-preview-body .service-card-inner .service-card-image {
+    max-width: 135px;
+    width: 100%;
+  }
+  .theme-preview-body .service-card-inner .service-content {
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+  }
+  /* appointment-sec css */
+  .appointment-sec .appointment-form {
+    max-width: 375px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  /* payment-sec */
+  .theme-preview-body .payment-sec ul {
+    max-width: 90%;
+    width: 100%;
+    margin: 0 auto;
+  }
+  /* download-sec */
+  .theme-preview-body .download-sec ul {
+    max-width: 85%;
+    width: 100%;
+    margin: 0 auto;
+  }
+}
+@media screen and (max-width: 480px) {
+  :root {
+    --h1: normal 500 34px/1.2 var(--first-font);
+    --h2: normal 500 24px/1.2 var(--second-font);
+    --h3: normal 500 22px/1.2 var(--first-font);
+    --h4: normal 500 20px/1.2 var(--first-font);
+    --h5: normal 500 18px/1.2 var(--first-font);
+    --h6: normal 500 16px/1.2 var(--first-font);
+    --common-text: normal 400 14px/1.4 var(--first-font);
+  }
+  .theme-preview-body .form-control,
+  .theme-preview-body input:not([type="submit"]),
+  .theme-preview-body input:not([type="checkbox"]),
+  .theme-preview-body input:not([type="button"]),
+  .theme-preview-body input:not([type="radio"]),
+  .theme-preview-body select,
+  .theme-preview-body textarea,
+  .theme-preview-body .theme-popup .form-group .form-input {
+    padding: 10px 15px;
+  }
+  .theme-preview-body .container {
+    padding: 0 15px;
+  }
+  /* section-title */
+  .theme-preview-body .common-title {
+    padding: 10px;
+  }
+  .arrow-wrapper {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0 0;
+  }
+  .arrow-wrapper .slick-arrow {
+    position: unset;
+    transform: translate(0);
+    -webkit-transform: translate(0);
+    -moz-transform: translate(0);
+    -ms-transform: translate(0);
+    -o-transform: translate(0);
+  }
+  .theme-preview-body .social-link-sec .social-link-slider .slick-list {
+    margin: 0 -8px;
+  }
+  /* theme-popup css */
+  .theme-preview-body .theme-popup-inner .theme-popup-content {
+    padding: 20px 15px;
+  }
+  .theme-preview-body .popup-header .popup-title h2 {
+    font-size: 20px;
+  }
+  .theme-preview-body .theme-popup .form-group .form-input svg {
+    height: 14px;
+    width: 14px;
+  }
+  .theme-preview-body .popup-header .close-arrow-btn {
+    height: 25px;
+    width: 25px;
+  }
+  .theme-preview-body .popup-header .popup-title {
+    gap: 10px;
+  }
+  .theme-preview-body .popup-header .close-arrow-btn svg {
+    height: 15px;
+    width: 15px;
+  }
+  /* share-card-popup css */
+  .theme-preview-body .share-card-popup .social-list {
+    padding: 10px 15px;
+  }
+  /* profile-sec css */
+  .theme-preview-body .profile-sec .client-info-wrp .client-image {
+    height: 100px;
+    width: 100px;
+    margin: -70px auto 12px;
+  }
+  /* social-link-sec css */
+  .theme-preview-body .social-link-sec .social-link a {
+    height: 35px;
+    width: 35px;
+  }
+  .theme-preview-body .social-link-sec .social-link a img {
+    width: 16px;
+    height: 16px;
+  }
+  /* contact-info-sec css */
+  .theme-preview-body .contact-info-sec .contact-list li a {
+    font-size: 16px;
+  }
+  .theme-preview-body .contact-list .contact-image {
+    height: 30px;
+    width: 30px;
+  }
+  .theme-preview-body .contact-info-sec .contact-list li img {
+    height: 15px;
+    width: 15px;
+  }
+  /* service sec  */
+  .theme-preview-body .service-card .service-content .service-content-top {
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+  }
+  .theme-preview-body .service-card-inner .service-card-image {
+    max-width: 100%;
+  }
+  .theme-preview-body .service-card .service-card-inner {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+  }
+  .theme-preview-body .service-card-inner .service-content {
+    padding: 15px 0 0;
+  }
+  .theme-preview-body .service-card-inner .img-wrapper {
+    padding-top: 70%;
+  }
+  /* business-hour-sec css */
+  .theme-preview-body .business-hour-sec .hours-list li {
+    padding: 10px 0;
+  }
+  .theme-preview-body .business-hour-sec .hours-list li span,
+  .theme-preview-body .business-hour-sec .hours-list li p {
+    font-size: 16px;
+  }
+  /* product-sec css */
+  .theme-preview-body .product-card-inner .product-content {
+    padding: 15px;
+  }
+  /* appointment css */
+  .theme-preview-body .appointment-form .appointment-btn,
+  .theme-preview-body .payment-sec ul li a span {
+    font-size: 16px;
+  }
+  .theme-preview-body .appointment-sec .appointment-form .date-picker {
+    margin: 0 0 15px;
+  }
+  .theme-preview-body .appointment-form .form-group>label,
+  .theme-preview-body .footer-sec p,
+  .theme-preview-body .profile-sec .client-info-wrp p,
+  .theme-preview-body .appointment-sec .checkbox-custom label {
+    font-size: 14px;
+  }
+  /* testimonial-sec css */
+  .theme-preview-body .testimonial-card-inner {
+    padding: 15px;
+    max-width: 100%;
+  }
+  .theme-preview-body .testimonial-card-inner .testimonial-content p {
+    font-size: 14px;
+    line-height: 20px;
+  }
+  .theme-preview-body .testimonial-card-inner .testimonial-content .rating svg{
+    max-width: 100px;
+    width: 100%;
+    height: auto;
+  }
+  .theme-preview-body .testimonial-card-inner  h3{
+    font: var(--h4);
+  }
+  /* more-info-sec css  */
+  .theme-preview-body .more-info-sec ul {
+    gap: 10px;
+  }
+  .theme-preview-body .more-info-sec ul li a {
+    gap: 10px;
+    padding: 10px;
+  }
+  .theme-preview-body .more-info-sec ul li a svg {
+    width: 16px;
+    height: 16px;
+  }
+  /* payment-sec css */
+  .theme-preview-body .payment-sec ul,
+  .theme-preview-body .download-sec ul {
+    gap: 15px;
+  }
+}

@@ -1,0 +1,192 @@
+@media screen and (min-width: 481px) {
+    .theme-preview-body .btn {
+        font-size: 16px;
+    }
+
+    /* social-link-sec css */
+    .theme-preview-body .social-link-slider {
+        margin: 0 8%;
+    }
+    /* more-info-sec css */
+    .theme-preview-body .more-info-sec ul li {
+        max-width: 110px;
+        width: 100%;
+    }
+
+    /* payment-sec css */
+    .theme-preview-body .payment-sec ul li {
+        max-width: 130px;
+        width: 100%;
+    }
+
+    /* custom-text-sec css */
+    .theme-preview-body .custom-text-sec .thankyou-svg {
+        max-width: 430px;
+        width: 100%;
+        margin: 0 auto 30px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    :root {
+        --h1: normal 400 34px/1.2 var(--second-font);
+        --h2: normal 400 24px/1.2 var(--second-font);
+        --h3: normal 400 22px/1.2 var(--second-font);
+        --h4: normal 400 20px/1.2 var(--second-font);
+        --h5: normal 400 18px/1.2 var(--second-font);
+        --h6: normal 400 16px/1.2 var(--second-font);
+        --common-text: normal 400 14px/1.4 var(--first-font);
+    }
+
+    .theme-preview-body .form-control,
+    .theme-preview-body input:not([type="submit"]),
+    .theme-preview-body input:not([type="checkbox"]),
+    .theme-preview-body input:not([type="button"]),
+    .theme-preview-body input:not([type="radio"]),
+    .theme-preview-body select,
+    .theme-preview-body textarea,
+    .theme-preview-body .theme-popup .form-group .form-input {
+        padding: 10px 15px;
+    }
+
+    .theme-preview-body .container {
+        padding: 0 15px;
+    }
+
+    /* theme-popup css */
+    .theme-preview-body .theme-popup-inner .theme-popup-content {
+        padding: 20px 15px;
+    }
+
+    .theme-preview-body .popup-header .popup-title h2 {
+        font-size: 20px;
+    }
+
+    .theme-preview-body .theme-popup .form-group .form-input svg {
+        height: 14px;
+        width: 14px;
+    }
+
+    .theme-preview-body .popup-header .close-arrow-btn {
+        height: 30px;
+        width: 30px;
+    }
+
+    .theme-preview-body .popup-header .close-arrow-btn svg {
+        height: 15px;
+        width: 15px;
+    }
+
+    /* share-card-popup css */
+    .theme-preview-body .share-card-popup .social-list {
+        padding: 10px 15px;
+    }
+
+    /* profile-sec css */
+    .theme-preview-body .profile-sec .profile-banner {
+        padding: 0 0 20px;
+    }
+
+    .theme-preview-body .profile-sec .client-info-wrp {
+        padding: 0 0 0 15px;
+        margin: 0 0 20px;
+    }
+
+    .theme-preview-body .profile-sec .client-image {
+        height: 100px;
+        width: 100px;
+    }
+
+    .theme-preview-body .profile-sec .client-info h2 {
+        font-size: 20px;
+    }
+
+    .theme-preview-body .profile-sec .client-info span,
+    .theme-preview-body .profile-sec .client-info p {
+        letter-spacing: 4px;
+    }
+
+    /* social-link-sec css */
+    .theme-preview-body .social-link-slider .slick-list {
+        margin: 0 -15px;
+    }
+
+    .theme-preview-body .social-link-sec .social-link a {
+        height: 35px;
+        width: 35px;
+    }
+
+    .theme-preview-body .social-link-sec .social-link a img {
+        width: 16px;
+        height: 16px;
+    }
+
+    /* business-hour-sec css */
+    .theme-preview-body .common-title {
+        padding: 15px;
+    }
+
+    .theme-preview-body .business-hour-sec .hours-list li {
+        padding: 10px 15px;
+    }
+
+    .theme-preview-body .business-hour-sec .hours-list li span,
+    .theme-preview-body .business-hour-sec .hours-list li p {
+        font-size: 16px;
+    }
+
+    /* contact-info-sec css */
+    .theme-preview-body .contact-info-sec .contact-list li {
+        padding: 10px 15px;
+    }
+
+    .theme-preview-body .contact-list .contact-image {
+        height: 30px;
+        width: 30px;
+    }
+
+    .theme-preview-body .contact-info-sec .contact-list li img {
+        height: 15px;
+        width: 15px;
+    }
+
+    .theme-preview-body .contact-info-sec .contact-list li a {
+        font-size: 16px;
+    }
+
+    /* more-info-sec css */
+    .theme-preview-body .more-info-sec ul {
+        gap: 10px;
+    }
+
+    .theme-preview-body .more-info-sec ul li {
+        -webkit-box-flex: 1;
+        -ms-flex: 1;
+        flex: 1;
+    }
+
+    .theme-preview-body .testimonial-card-inner {
+        padding: 20px 15px;
+    }
+
+    /* payment-sec css */
+    .theme-preview-body .payment-sec ul li {
+        -webkit-box-flex: 1;
+        -ms-flex: 1;
+        flex: 1;
+    }
+
+    .theme-preview-body .payment-sec ul li a span {
+        font-size: 16px;
+    }
+
+    .theme-preview-body .download-sec ul li a {
+        padding: 8px 20px;
+    }
+
+    /* custom-text-sec css */
+    .theme-preview-body .custom-text-sec .thankyou-svg {
+        margin: 0 0 30px;
+    }
+
+}

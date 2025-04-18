@@ -1,0 +1,211 @@
+@media screen and (min-width: 481px) {
+
+    /* appointment-sec css */
+    .theme-preview-body .appointment-sec .appointment-form {
+        padding: 0 40px;
+    }
+
+    /* social-link-sec css */
+    .theme-preview-body .social-link-slider .slick-list {
+        margin: 0 19%;
+    }
+
+    /* product-sec css */
+    .theme-preview-body .product-card .product-card-inner {
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+        flex-direction: row;
+    }
+
+    .theme-preview-body .product-card-inner .product-card-image {
+        max-width: 35%;
+        width: 100%;
+    }
+
+    .theme-preview-body .product-card-inner .product-card-image,
+    .theme-preview-body .product-card-inner .img-wrapper {
+        height: 100%;
+    }
+
+    .theme-preview-body .product-card-inner .product-content {
+        height: auto;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+    }
+
+    .theme-preview-body .product-card .product-content .product-content-top {
+        -webkit-box-flex: unset;
+        -ms-flex: unset;
+        flex: unset;
+    }
+
+    /* more-info-sec css */
+    .theme-preview-body .more-info-sec ul {
+        padding: 0 40px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    :root .theme-preview-body {
+        --first-font: "Outfit", sans-serif;
+        --h1: normal 600 34px/1.2 var(--first-font);
+        --h2: normal 600 24px/1.2 var(--first-font);
+        --h3: normal 600 22px/1.2 var(--first-font);
+        --h4: normal 600 20px/1.2 var(--first-font);
+        --h5: normal 600 18px/1.2 var(--first-font);
+        --h6: normal 600 16px/1.2 var(--first-font);
+        --common-text: normal 400 14px/1.4 var(--first-font);
+    }
+
+    /* theme-popup css */
+    .theme-preview-body .theme-popup-inner .theme-popup-content {
+        padding: 20px 15px;
+    }
+
+    .theme-preview-body .popup-header .popup-title h2 {
+        font-size: 20px;
+    }
+
+    /* share-card-popup css */
+    .theme-preview-body .share-card-popup .social-list {
+        padding: 10px 15px;
+    }
+
+    /* profile-sec css */
+    .theme-preview-body .profile-sec .profile-banner {
+        padding: 20px 15px;
+        margin: 0 0 20px;
+    }
+
+    .theme-preview-body .profile-sec .client-info-wrp {
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    .theme-preview-body .profile-sec .client-info-wrp .client-image {
+        height: 80px;
+        width: 80px;
+    }
+
+    .theme-preview-body .profile-sec .profile-banner .section-title {
+        margin: 0 0 30px;
+    }
+
+    /* business-hour-sec css */
+    .theme-preview-body .section-title.line-title .line {
+        max-width: 180px;
+    }
+
+    .theme-preview-body .section-title.line-title::before,
+    .theme-preview-body .section-title.line-title::after {
+        width: 15%;
+    }
+
+    .theme-preview-body .business-hour-sec .business-hours .bottom-svg {
+        bottom: 10px;
+        right: 25px;
+        height: 22px;
+        width: 22px;
+    }
+
+    /* contact-info-sec css */
+    .theme-preview-body .contact-info-sec .contact-list li svg {
+        height: 16px;
+        width: 16px;
+    }
+
+    .theme-preview-body .contact-info-sec .contact-list li a {
+        font-size: 16px;
+    }
+
+    /* appointment-sec css */
+    .theme-preview-body .appointment-sec .appointment-form .date-picker>span,
+    .theme-preview-body .appointment-sec .appointment-form .check-box-div>span {
+        font-size: 16px;
+    }
+
+    .theme-preview-body .appointment-sec .aapointment-wrp .bottom-svg {
+        left: 15px;
+        height: 22px;
+        width: 22px;
+    }
+
+    /* social-link-sec css */
+    .theme-preview-body .social-link-sec .social-link a {
+        height: 40px;
+        width: 40px;
+    }
+
+    .theme-preview-body .social-link-sec .social-link a img {
+        max-width: 18px;
+    }
+
+    /* product-sec css */
+    .theme-preview-body .product-card .product-card-inner {
+        padding: 15px;
+    }
+
+    .theme-preview-body .product-card-inner .product-content {
+        padding: 15px 0 0;
+    }
+
+    .theme-preview-body .more-info-sec ul li a {
+        height: 50px;
+        width: 50px;
+    }
+
+    .theme-preview-body .more-info-sec ul li a svg {
+        height: 26px;
+        width: 26px;
+    }
+
+    /* testimonial-sec css */
+    .theme-preview-body .testimonial-card {
+        padding: 40px 10px 0;
+    }
+
+    .theme-preview-body .testimonial-card .testimonial-card-inner {
+        padding: 15px;
+    }
+
+    .theme-preview-body .testimonial-card-inner .testimonial-image {
+        height: 80px;
+        width: 80px;
+        margin: -55px auto 15px;
+        border-width: 4px;
+    }
+
+    /* payment-sec css */
+    .theme-preview-body .payment-sec ul {
+        gap: 15px;
+    }
+
+    .theme-preview-body .payment-sec ul li a {
+        padding: 8px 15px;
+    }
+
+    .theme-preview-body .payment-sec ul li a span {
+        font-size: 16px;
+    }
+
+    /* download-sec css */
+    .theme-preview-body .download-sec ul {
+      gap: 10px;
+    }
+
+    .theme-preview-body .download-sec ul li {
+        width: 100%;
+    }
+
+    .theme-preview-body .download-sec ul li a .download-info p {
+        font-size: 18px;
+    }
+}

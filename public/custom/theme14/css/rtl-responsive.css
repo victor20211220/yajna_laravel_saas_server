@@ -1,0 +1,200 @@
+@media screen and (min-width: 481px) {
+    /* profile-sec  css  */
+    .theme-preview-body .profile-sec .client-info-wrp{
+        padding: 0 40px;
+    }
+    .theme-preview-body .profile-sec .profile-content{
+        max-width: 83%;
+        width: 100%;
+        margin: 0 auto;
+    }
+    /* contact css */
+    .theme-preview-body .contact-info-sec .contact-list li{
+        padding: 10px 10px 10px 25px;
+        gap: 20px;
+        max-width: 370px;
+        width: 100%;
+        margin-left:auto ;
+        margin-right: auto;
+    }
+    .theme-preview-body .contact-info-sec .contact-list li a{
+        font-size: 20px;
+    }    
+    /* business-hour-sec css */
+    .theme-preview-body .business-hour-sec .hours-list{
+        max-width: 370px;
+        width: 100%;
+        margin: 0 auto;
+    }
+    .theme-preview-body .business-hour-sec .hours-list li{
+        max-width: calc( 50% - 8px);
+    }
+    /* payment sec css  */
+    .theme-preview-body .payment-sec ul{
+        max-width: 82%;
+        width: 100%;
+        margin: 0 auto;
+    }
+    /* download sec */
+    .theme-preview-body .download-sec ul{
+        max-width: 76%;
+        width: 100%;
+        margin: 0 auto;
+    }
+    .theme-preview-body .footer-sec p {
+        font-size: 16px;
+    }
+}
+@media screen and (max-width: 480px) {
+    :root {
+        --h1: normal 400 34px/1.2 var(--first-font);
+        --h2: normal 400 22px/1.2 var(--first-font);
+        --h3: normal 400 22px/1.2 var(--first-font);
+        --h4: normal 400 18px/1.2 var(--first-font);
+        --h5: normal 400 16px/1.2 var(--first-font);
+    }
+    .theme-preview-body .form-control,
+    .theme-preview-body input:not([type="submit"]),
+    .theme-preview-body input:not([type="checkbox"]),
+    .theme-preview-body input:not([type="button"]),
+    .theme-preview-body input:not([type="radio"]),
+    .theme-preview-body select,
+    .theme-preview-body textarea,
+    .theme-preview-body .theme-popup .form-group .form-input {
+        padding: 10px 15px;
+    }
+    .theme-preview-body .container {
+        padding: 0 15px;
+    }
+    /* theme-popup css */
+    .theme-preview-body .theme-popup-inner .theme-popup-content {
+        padding: 15px;
+    }
+    .theme-preview-body .popup-header .popup-title h2 {
+        font-size: 18px;
+    }
+    .theme-preview-body .theme-popup .form-group .form-input svg {
+        height: 14px;
+        width: 14px;
+    }
+    .theme-preview-body .popup-header .close-arrow-btn {
+        height: 30px;
+        width: 30px;
+    }
+    .theme-preview-body .popup-header .close-arrow-btn svg {
+        height: 15px;
+        width: 15px;
+    }
+    /* share-card-popup css */
+    .theme-preview-body .share-card-popup .social-list {
+        padding: 10px 15px;
+    }
+    /* profile-sec css */
+    .theme-preview-body .profile-sec .client-info-wrp .client-image{
+        width: 100px;
+        height: 100px;
+    }
+    .theme-preview-body .profile-sec .profile-name span{
+        padding: 7px 15px;
+    }
+    .theme-preview-body .profile-sec p{
+        font-size: 14px;
+    }
+    .theme-preview-body .profile-sec .client-info-wrp::after{
+        height: 64%;
+    }
+    .theme-preview-body .profile-sec .profile-banner{
+        margin: 0 0 20px;
+    }
+    /* social link sec css  */
+    .theme-preview-body .social-link-sec .social-link a,
+    .theme-preview-body .contact-list .contact-image{
+        width: 35px;
+        height: 35px;
+    }
+    .theme-preview-body .social-link-sec .social-link a img ,
+    .theme-preview-body .contact-list .contact-image img{
+        width: 16px;
+        height: 16px;
+    }
+    .theme-preview-body .social-link-sec .social-link-slider .slick-list {
+        margin: 0 -8px;
+    }
+    /* business-hour-sec css */
+    .theme-preview-body .business-hour-sec .hours-list li{
+        -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+                justify-content: space-between;
+    }
+    .theme-preview-body .business-hour-sec .hours-list li:last-child{
+        padding: 10px;
+    }
+    /* appointment css */
+    .theme-preview-body .appointment-form .appointment-btn,
+    .theme-preview-body .appointment-form .form-group>label{
+        font-size: 14px;
+    }
+    .theme-preview-body .appointment-sec .checkbox-custom {
+        max-width: calc(50% - 10px);
+    }
+    .theme-preview-body .appointment-sec .appointment-form .date-picker {
+        margin: 0 0 15px;
+    }
+    /* more-info-sec sec css */
+    .theme-preview-body .more-info-sec ul li{
+        max-width: -webkit-fit-content;
+        max-width: -moz-fit-content;
+        max-width: fit-content;
+    }
+    .theme-preview-body .more-info-sec ul {
+        gap: 13px;
+    }
+    /* testimonial css */
+    .theme-preview-body .testimonial-card .testimonial-image-wrp{
+        max-width: 100%;
+        padding-left: 0;
+        height: auto;
+    }
+    .theme-preview-body .testimonial-card .testimonial-image-wrp:after{
+        display: none;
+    }
+    .theme-preview-body .testimonial-card .testimonial-card-inner{
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: reverse;
+            -ms-flex-direction: column-reverse;
+                flex-direction: column-reverse;
+    }
+    .theme-preview-body .testimonial-card-inner .testimonial-content{
+        padding: 15px;
+        text-align: center;
+        margin: 0;
+        border-radius: 0 0 5px 5px;
+        -webkit-border-radius: 0 0 5px 5px;
+        -moz-border-radius: 0 0 5px 5px;
+        -ms-border-radius: 0 0 5px 5px;
+        -o-border-radius: 0 0 5px 5px;
+        -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+                justify-content: space-between;
+    }
+    .theme-preview-body .testimonial-card .testimonial-image{
+            padding-top: 100%;
+            border-radius: 5px 5px 0 0 ;
+            -webkit-border-radius: 5px 5px 0 0 ;
+            -moz-border-radius: 5px 5px 0 0 ;
+            -ms-border-radius: 5px 5px 0 0 ;
+            -o-border-radius: 5px 5px 0 0 ;
+    }
+    .theme-preview-body .testimonial-card-inner .testimonial-content .testimonial-content-top::before{
+        width: 35px;
+        height: 35px;
+        left: 50%;
+    }
+    .theme-preview-body .testimonial-card-inner .testimonial-content .testimonial-content-top{
+        padding: 0 0 35px;
+    }
+    /* payment sec css  */
+    .theme-preview-body .payment-sec ul li a span {
+        font-size: 16px;
+    }
+}

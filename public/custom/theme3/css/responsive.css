@@ -1,0 +1,224 @@
+@media screen and (min-width: 481px) {
+    .theme-preview-body .btn {
+        font-size: 16px;
+    }
+
+    /* business-hour-sec css */
+    .theme-preview-body .business-hour-sec .business-hours {
+        max-width: 90%;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    /* product-sec css */
+    .theme-preview-body .product-card .product-card-inner {
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+        flex-direction: row;
+    }
+
+    .theme-preview-body .product-card-inner .product-card-image,
+    .theme-preview-body .product-card-inner .img-wrapper {
+        height: 100%;
+    }
+
+    .theme-preview-body .product-card-inner .product-card-image {
+        max-width: 35%;
+        width: 100%;
+    }
+
+    .theme-preview-body .product-card-inner .product-content {
+        height: auto;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+    }
+
+    .theme-preview-body .product-card .product-content .product-content-top {
+        -webkit-box-flex: unset;
+        -ms-flex: unset;
+        flex: unset;
+    }
+
+    /* contact-info-sec css */
+    .theme-preview-body .contact-info-sec .contact-list,
+    .theme-preview-body .more-info-sec ul {
+        max-width: 85%;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    /* appointment-sec css */
+    .theme-preview-body .appointment-sec .check-box-div {
+        max-width: 80%;
+        width: 100%;
+        margin: 0 auto 20px;
+    }
+
+}
+
+@media screen and (max-width: 480px) {
+    :root .theme-preview-body {
+        --h1: normal 500 34px/1.2 var(--second-font);
+        --h2: normal 500 28px/1.2 var(--second-font);
+        --h3: normal 500 24px/1.2 var(--second-font);
+        --h4: normal 500 22px/1.2 var(--second-font);
+        --h5: normal 500 20px/1.2 var(--second-font);
+        --h6: normal 500 16px/1.2 var(--second-font);
+        --common-text: normal 400 14px/1.4 var(--first-font);
+    }
+
+    .theme-preview-body .form-control,
+    .theme-preview-body input:not([type="submit"]),
+    .theme-preview-body input:not([type="checkbox"]),
+    .theme-preview-body input:not([type="button"]),
+    .theme-preview-body input:not([type="radio"]),
+    .theme-preview-body select,
+    .theme-preview-body textarea,
+    .theme-preview-body .theme-popup .form-group .form-input {
+        padding: 10px 15px;
+    }
+
+    .theme-preview-body .container {
+        padding: 0 15px;
+    }
+
+    /* theme-popup css */
+    .theme-preview-body .theme-popup-inner .theme-popup-content {
+        padding: 20px 15px;
+    }
+
+    .theme-preview-body .popup-header .popup-title h2 {
+        font-size: 20px;
+    }
+
+    .theme-preview-body .theme-popup .form-group .form-input svg {
+        height: 14px;
+        width: 14px;
+    }
+    .theme-preview-body .popup-header .close-arrow-btn {
+        height: 30px;
+        width: 30px;
+    }
+
+    .theme-preview-body .popup-header .close-arrow-btn svg {
+        height: 15px;
+        width: 15px;
+    }
+
+    /* share-card-popup css */
+    .theme-preview-body .share-card-popup .social-list {
+        padding: 10px 15px;
+    }
+
+    /* profile-sec css */
+    .theme-preview-body .profile-sec .client-info-wrp .client-image {
+        height: 110px;
+        width: 110px;
+        margin: 0 auto 15px;
+    }
+
+    /* gallery-sec css */
+    .theme-preview-body .gallery-slider {
+        margin: -35% 15% 0;
+    }
+
+    .theme-preview-body .gallery-sec .arrow-wrapper {
+        padding: 10% 15px;
+    }
+
+    /* service-sec css */
+    .theme-preview-body .section-title.common-title .title-svg {
+        max-width: 75px;
+    }
+
+    .theme-preview-body .service-card .service-card-inner .service-card-image {
+        height: 75px;
+        width: 75px;
+    }
+
+    /* business-hour-sec css */
+    .theme-preview-body .business-hour-sec .business-hours {
+        padding: 20px 15px;
+    }
+    /* product-sec css */
+    .theme-preview-body .product-card-inner .img-wrapper {
+        padding-top: 85%;
+    }
+
+    /* contact-info-sec css */
+    .theme-preview-body .contact-info-sec .contact-list {
+        padding: 20px 15px;
+    }
+
+    .theme-preview-body .contact-info-sec .contact-list li svg {
+        height: 18px;
+        width: 18px;
+    }
+
+    .theme-preview-body .contact-info-sec .contact-list li a {
+        font-size: 16px;
+    }
+
+    /* more-info-sec css */
+    .theme-preview-body .more-info-sec ul li a {
+        height: 50px;
+        width: 50px;
+    }
+
+    .theme-preview-body .more-info-sec ul li a svg {
+        height: 26px;
+        width: 26px;
+    }
+
+    /* testimonial-sec css */
+    .theme-preview-body .testimonial-sec .testimonial-content-inner {
+        padding: 15px;
+    }
+
+    .theme-preview-body .testimonial-sec .testimonial-img {
+        height: 80px;
+        width: 80px;
+        transform: scale(0.7);
+        -webkit-transform: scale(0.7);
+        -moz-transform: scale(0.7);
+        -ms-transform: scale(0.7);
+        -o-transform: scale(0.7);
+    }
+
+    /* social-link-sec css */
+    .theme-preview-body .social-link-slider {
+        margin: 0 40px;
+    }
+
+    .theme-preview-body .social-link-sec .left-svg,
+    .theme-preview-body .social-link-sec .right-svg {
+        max-width: 50px;
+    }
+
+    .theme-preview-body .social-link-sec .social-link a {
+        height: 35px;
+        width: 35px;
+    }
+
+    .theme-preview-body .social-link-sec .social-link a img {
+        max-width: 16px;
+    }
+
+    /* payment-sec css */
+    .theme-preview-body .payment-sec ul,
+    .theme-preview-body .download-sec ul {
+        padding: 30px 15px;
+        gap: 15px;
+    }
+
+    .theme-preview-body .payment-sec ul li a {
+        padding: 8px 15px;
+    }
+
+    .theme-preview-body .payment-sec ul li a span {
+        font-size: 16px;
+    }
+
+}

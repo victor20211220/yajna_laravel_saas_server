@@ -1,0 +1,186 @@
+@media screen and (min-width: 481px) {
+
+    /* appointment-sec css */
+    .theme-preview-body .appointment-sec .check-box-div {
+        padding: 0 50px;
+    }
+
+    /* gallery-sec css */
+    .theme-preview-body .gallery-slider .slick-list {
+        padding: 0 13%;
+    }
+
+    /* more-info-sec css */
+    .theme-preview-body .more-info-sec ul {
+        padding: 0 10%;
+    }
+
+}
+
+@media screen and (max-width: 480px) {
+    :root {
+        --first-font: "Outfit", sans-serif;
+        --second-font: "Alumni Sans", sans-serif;
+        --h1: normal 600 34px/1.2 var(--second-font);
+        --h2: normal 600 28px/1.2 var(--second-font);
+        --h3: normal 600 24px/1.2 var(--second-font);
+        --h4: normal 600 20px/1.2 var(--second-font);
+        --h5: normal 600 18px/1.2 var(--second-font);
+        --h6: normal 600 16px/1.2 var(--second-font);
+        --common-text: normal 400 14px/1.4 var(--first-font);
+    }
+
+    .theme-preview-body .container {
+        padding: 0 15px;
+    }
+
+    /* theme-popup css */
+    .theme-preview-body .theme-popup-inner .theme-popup-content {
+        padding: 20px 15px;
+    }
+
+    /* share-card-popup css */
+    .theme-preview-body .share-card-popup .social-list {
+        padding: 10px 15px;
+    }
+
+    /* profile-sec css */
+    .theme-preview-body .profile-sec .client-info-wrp .client-image {
+        height: 130px;
+        width: 130px;
+    }
+
+    /* contact-info-sec css */
+   .theme-preview-body .common-title {
+        padding: 10px 0 10px 22px;
+        margin: 0 0 20px;
+    }
+
+   .theme-preview-body .common-title .title-circle {
+        height: 52px;
+        width: 52px;
+    }
+
+   .theme-preview-body .common-title .title-circle::before {
+        height: 35px;
+        width: 35px;
+    }
+
+    .contact-info-sec .section-title {
+        margin: 0 0 25px;
+    }
+
+    .theme-preview-body .contact-info-sec .contact-list {
+        padding: 10px 0 10px 19px;
+    }
+
+    .theme-preview-body .contact-info-sec .contact-list::before {
+        left: 7px;
+        width: 40px;
+    }
+
+    .theme-preview-body  .contact-info-sec .contact-list::after {
+        left: 27px;
+    }
+
+    .theme-preview-body .contact-info-sec .contact-list li svg {
+        height: 16px;
+        width: 16px;
+    }
+
+    .theme-preview-body .contact-info-sec .contact-list li span {
+        max-width: 20%;
+    }
+
+    .theme-preview-body .contact-info-sec .contact-list li a {
+        font-size: 16px;
+    }
+
+    /* business-hour-sec css */
+    .theme-preview-body .business-hour-sec .hours-list li span {
+        max-width: 100px;
+    }
+
+    .theme-preview-body .business-hour-sec .hours-list li p {
+        max-width: 100%;
+    }
+    .theme-preview-body .business-hour-sec .hours-list li {
+        gap: 10px;
+    }
+
+    /* service-sec css */
+    .theme-preview-body .service-card .service-content-bottom .service-icon {
+        height: 45px;
+        width: 45px;
+        border-width: 3px;
+    }
+
+    .theme-preview-body .service-card .service-content-bottom .service-icon svg {
+        height: 26px;
+        width: 26px;
+    }
+
+    /* more-info-sec css */
+    .theme-preview-body .more-info-sec ul li a {
+        height: 65px;
+        width: 65px;
+    }
+
+    .theme-preview-body .more-info-sec ul li a .info-icon svg {
+        height: 30px;
+        width: 30px;
+    }
+
+    /* testimonial-sec css */
+    .theme-preview-body .testimonial-card-inner {
+        padding: 15px;
+        background: -o-linear-gradient(left, var(--third-color) 37.5px, var(--white) 37.5px);
+        background: linear-gradient(90deg, var(--third-color) 37.5px, var(--white) 37.5px);
+    }
+
+    .theme-preview-body .testimonial-card-inner .testimonial-image {
+        height: 45px;
+        width: 45px;
+    }
+
+    /* social-link-sec css */
+    .theme-preview-body .social-link-sec .social-link a {
+        height: 40px;
+        width: 40px;
+    }
+
+    .theme-preview-body .social-link-sec .social-link a svg {
+        height: 18px;
+        width: 18px;
+    }
+
+    /* payment-sec css */
+    .theme-preview-body .payment-sec ul {
+        gap: 15px;
+    }
+
+    .theme-preview-body .payment-sec ul li a {
+        padding: 8px 15px;
+    }
+
+    .theme-preview-body .payment-sec ul li a span {
+        font-size: 16px;
+    }
+
+    /* download-sec css */
+    .theme-preview-body .download-sec ul {
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+        flex-direction: column;
+    }
+
+    .theme-preview-body .download-sec ul li {
+        width: 100%;
+    }
+
+    /* custom-text-sec css */
+    .theme-preview-body .custom-text-sec .thankyou-svg {
+        padding: 0 0 20px;
+    }
+}
