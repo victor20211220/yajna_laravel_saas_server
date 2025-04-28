@@ -49,6 +49,13 @@ class HomeController extends Controller
                     header('location:install');
                     die;
                 } else {
+                    if(\Auth::user()->type == 'company'){
+                        if (auth()->user()->isImpersonated()) {
+                            return view('business.superadmin-create');
+                        }
+                        $user = \Auth::user();
+                        return redirect()->route('business.edit', $user->current_business);
+                    }
 
                     $uri = url()->full();
                     $segments = explode('/', str_replace('' . url('') . '', '', $uri));

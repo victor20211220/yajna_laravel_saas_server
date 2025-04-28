@@ -58,6 +58,7 @@
                     </a>
                     <ul class="dash-submenu">
                         @if (\Auth::user()->can('create business'))
+                            @impersonating($guard = null)
                             <li class="dash-item {{ Request::segment(1) == 'new_business' ? 'active' : '' }}">
                                 <a href="#" class="dash-link" data-bs-toggle="modal"
                                     data-bs-target="#exampleModal" data-url="{{ route('business.create') }}"
@@ -65,6 +66,7 @@
                                     {{ __('Create Business') }}
                                 </a>
                             </li>
+                            @endImpersonating
                         @endif
                         @if (\Auth::user()->can('manage business'))
                             <li class="dash-item {{ Request::segment(1) == 'business' ? 'active' : '' }}">

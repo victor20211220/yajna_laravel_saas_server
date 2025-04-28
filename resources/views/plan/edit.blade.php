@@ -4,7 +4,7 @@
 @endphp
 {{ Form::model($plan, ['route' => ['plans.update', $plan->id], 'method' => 'PUT', 'enctype' => 'multipart/form-data','class' => 'needs-validation', 'novalidate']) }}
 @if (isset($chatgpt_setting['chatgpt_key']) && !empty($chatgpt_setting['chatgpt_key']))
-<div class="col-xl-12 col-lg-12 col-md-12 d-flex align-items-center justify-content-between justify-content-md-end mb-3"" data-bs-placement="top">
+<div class="col-xl-12 col-lg-12 col-md-12 d-flex align-items-center justify-content-between justify-content-md-end mb-3" data-bs-placement="top">
         <a href="javascript:void(0)" data-size="lg" class="btn btn-sm btn-primary" data-ajax-popup-over="true"
             data-url="{{ route('generate', ['plan']) }}" data-bs-toggle="tooltip" data-bs-placement="top"
             title="{{ __('Generate') }}" data-title="{{ __('Generate content with AI') }}">
@@ -83,10 +83,9 @@
         </div>
     </div>
 
-    <div class="col-6"><br>
+    <div class="col-6 d-none"><br>
         <div class="form-check form-switch custom-switch-v1">
-            <input type="checkbox" class="form-check-input" name="enable_chatgpt" id="enable_chatgpt"
-                {{ $plan['enable_chatgpt'] == 'on' ? 'checked=checked' : '' }}>
+            <input type="checkbox" class="form-check-input" name="enable_chatgpt" id="enable_chatgpt">
             <label class="custom-control-label form-check-label"
                 for="enable_chatgpt">{{ __('Enable Chatgpt') }}</label>
         </div>
@@ -155,7 +154,7 @@
     @endif
 </div>
 <div class="horizontal mt-3 mb-3">
-    <div class="verticals twelve">
+    <div class="verticals twelve d-none">
         <div class="form-group col-md-6">
             {{ Form::label('Select Themes', __('Business Select Themes'), ['class' => 'form-label']) }}
         </div>

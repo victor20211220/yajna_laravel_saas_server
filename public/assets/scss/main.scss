@@ -1,0 +1,328 @@
+:root {
+    --bs-border-color: #C8C9CB;
+    --bs-body-color: #171717;
+}
+
+body {
+    background-color: #f8f8f8 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+}
+
+.form-control:focus {
+    box-shadow: none;
+}
+
+
+/* Remove autofill background (Chrome/Safari) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #f5f6f7 inset !important;
+    -webkit-text-fill-color: #333 !important;
+    transition: background-color 9999s ease-in-out 0s;
+}
+
+
+/* Eye icon addon */
+.input-group-text {
+    border: none !important;
+    background-color: #f5f6f7 !important;
+    padding: 0.5rem 0.75rem;
+}
+
+/* Remove border when side-by-side */
+.input-group .form-control + .input-group-text {
+    margin-left: -1px;
+}
+
+/* Autofill fix */
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px #f5f6f7 inset !important;
+    -webkit-text-fill-color: #333 !important;
+}
+
+.sidebar-bottom {
+    margin-top: auto;
+}
+
+.main-content {
+    padding: 2rem;
+    background-color: #f8f8f8;
+}
+
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    background-color: #eee;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.sidebar {
+    width: 250px;
+    min-height: 100vh;
+    background: #fff;
+    border-right: 1px solid #eee;
+    transition: transform 0.3s ease-in-out;
+}
+
+.sidebar-hidden {
+    transform: translateX(-100%);
+}
+
+.toggle-btn {
+    z-index: 1050;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: left 0.3s ease-in-out;
+}
+
+.main-content {
+    padding: 2rem;
+    transition: margin-left 0.3s ease-in-out;
+    margin-left: 250px;
+}
+
+.main-content.collapsed {
+    margin-left: 0;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        z-index: 1045;
+    }
+    .main-content {
+        margin-left: 0 !important;
+    }
+}
+
+
+.sticky-top {
+    top: 0;
+    background-color: #fff;
+}
+
+.add-image-block {
+    width: 152px;
+    height: 152px;
+
+    label {
+        img {
+            width: 47px;
+        }
+    }
+}
+
+#coverPhotoUpload {
+    .add-image-block {
+        width: 300px;
+        border-radius: 25px;
+
+        img {
+            border-radius: 25px;
+        }
+    }
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.dropzone.drag-over {
+    border: 2px dashed #aaa;
+    background-color: #f5f6f7;
+    transition: 0.2s;
+}
+
+.card-header, .card-body {
+    padding: 26px;
+}
+
+#updateBusinessForm {
+    .card-body {
+        padding: 0;
+
+        section {
+            padding: 26px;
+            border-bottom: solid 1px var(--bs-border-color);
+
+            .section-title {
+                font-size: 18px;
+                font-weight: 500;
+                margin-bottom: 26px;
+            }
+        }
+    }
+}
+
+.form-group {
+    margin-bottom: 30px;
+    font-size: 18px;
+
+    .form-label {
+        font-weight: 500;
+    }
+}
+
+.social-row {
+    img {
+        width: 27px;
+    }
+}
+
+.btn-white {
+    background: #FFFFFF !important;
+}
+
+.fill-white {
+    .st0 {
+        fill: white;
+    }
+}
+
+.fill-primary {
+    .st0 {
+        fill: var(--bs-primary-rgb);
+    }
+}
+
+a {
+    text-decoration: none !important;
+}
+
+.sidebar-nav {
+    svg {
+        width: 20px;
+        height: auto;
+    }
+}
+
+// Logo
+.logo-img {
+    max-height: 48px;
+}
+
+#sidebar .dropdown-menu * {
+    font-size: 16px !important;
+}
+
+// Remove Bootstrap default caret
+.dropdown-toggle::after {
+    display: none;
+}
+
+// Insert your custom image
+.dropdown-toggle {
+    position: relative;
+    padding-right: 2rem; // Add space for the image
+
+    &::before {
+        content: '';
+        background: url('/assets/images/icons/user_interface/dropdown_caret.svg') no-repeat center;
+        background-size: contain;
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        width: 12px; // Customize size
+        height: 12px;
+        transform: translateY(-50%);
+        pointer-events: none;
+    }
+}
+
+.sticky-top-32 {
+    top: 8rem; // 8 * 16px = 128px
+}
+
+.card-edit-right-block {
+    min-width: 374px;
+}
+
+.custom-box {
+    aspect-ratio: 1 / 2; // width : height = 1:2
+    max-height: 900px;
+    min-height: calc(100vh - 180px);
+    width: 374px;
+    border-radius: 42px;
+    border: 8px solid #000; // black border
+    background-color: #fff; // white background
+    position: relative;
+    box-shadow: 0 0 0 1px #a3a3a3, 0 1rem 3rem rgba(0, 0, 0, .175); // 1px ring + normal shadow
+    overflow-y: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Dark mode */
+    @media (prefers-color-scheme: dark) {
+        background-color: #171717; // Tailwind's neutral-900
+    }
+}
+
+.custom-rounded-34 {
+    border-radius: 34px;
+}
+
+.btn-icon {
+    @extend .d-flex, .justify-content-between, .align-items-center, .gap-2;
+    svg {
+        width: 20px;
+        height: auto;
+        object-fit: contain;
+    }
+    &.tab-btn{
+        @extend .justify-content-center;
+    }
+}
+.tab-btn{
+    background: var(--bs-secondary);
+    &.active{
+        background: var(--bs-primary);
+        color: white;
+        .st0 {
+            fill: white;
+        }
+    }
+}
+
+
+@media(min-width: 768px) {
+    .fill-md-primary {
+        .st0 {
+            fill: var(--bs-primary-rgb);
+        }
+    }
+    .text-md-primary {
+        color: var(--bs-primary-rgb) !important;
+    }
+}
+
+// Mobile Specific Adjustments
+@media (max-width: 767.98px) {
+    .logo-img {
+        max-height: 40px;
+    }
+}

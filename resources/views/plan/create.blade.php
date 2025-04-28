@@ -80,14 +80,6 @@ use App\Models\Utility;
 
     <div class="col-6"><br>
         <div class="form-check form-switch custom-switch-v1">
-            <input type="checkbox" class="form-check-input" name="enable_chatgpt" id="enable_chatgpt">
-            <label class="custom-control-label form-check-label"
-                for="enable_chatgpt">{{ __('Enable Chatgpt') }}</label>
-        </div>
-    </div>
-
-    <div class="col-6"><br>
-        <div class="form-check form-switch custom-switch-v1">
             <input type="checkbox" class="form-check-input" name="is_trial" id="trial">
             <label class="custom-control-label form-check-label" for="trial">{{ __('Is Trial Days') }}</label>
         </div>
@@ -140,7 +132,7 @@ use App\Models\Utility;
     @endif
 
     <div class="horizontal mt-3 mb-3">
-        <div class="verticals twelve">
+        <div class="verticals twelve d-none">
             <div class="form-group col-md-6">
 
                 {{ Form::label('Select Themes', __('Business Select Themes'), ['class' => 'form-control-label']) }}

@@ -1,9 +1,9 @@
 <?php
-    function pixelSourceCode($platform, $pixelId)
-    {
-    	// Facebook Pixel script
-    	if ($platform === 'facebook') {
-			$script = "
+function pixelSourceCode($platform, $pixelId)
+{
+    // Facebook Pixel script
+    if ($platform === 'facebook') {
+        $script = "
 				<script>
 					!function(f,b,e,v,n,t,s)
 					{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -20,13 +20,13 @@
 				<noscript><img height='1' width='1' style='display:none' src='https://www.facebook.com/tr?id=%d&ev=PageView&noscript=1'/></noscript>
 			";
 
-			return sprintf($script, $pixelId, $pixelId);
-		}
+        return sprintf($script, $pixelId, $pixelId);
+    }
 
 
-		// Twitter Pixel script
-    	if ($platform === 'twitter') {
-			$script = "
+    // Twitter Pixel script
+    if ($platform === 'twitter') {
+        $script = "
             <script>
             !function(e,t,n,s,u,a){e.twq||(s=e.twq=function(){s.exe?s.exe.apply(s,arguments):s.queue.push(arguments);
             },s.version='1.1',s.queue=[],u=t.createElement(n),u.async=!0,u.src='https://static.ads-twitter.com/uwt.js',
@@ -35,13 +35,13 @@
             </script>
 			";
 
-			return sprintf($script, $pixelId);
-		}
+        return sprintf($script, $pixelId);
+    }
 
 
-		// Linkedin Pixel script
-    	if ($platform === 'linkedin') {
-			$script = "
+    // Linkedin Pixel script
+    if ($platform === 'linkedin') {
+        $script = "
 				<script type='text/javascript'>
                     _linkedin_data_partner_id = %d;
                 </script>
@@ -58,13 +58,13 @@
                 <noscript><img height='1' width='1' style='display:none;' alt='' src='https://dc.ads.linkedin.com/collect/?pid=%d&fmt=gif'/></noscript>
 			";
 
-			return sprintf($script, $pixelId, $pixelId);
-		}
+        return sprintf($script, $pixelId, $pixelId);
+    }
 
 
-		// Pinterest Pixel script
-    	if ($platform === 'pinterest') {
-			$script = "
+    // Pinterest Pixel script
+    if ($platform === 'pinterest') {
+        $script = "
             <!-- Pinterest Tag -->
             <script>
             !function(e){if(!window.pintrk){window.pintrk = function () {
@@ -84,13 +84,13 @@
 
 			";
 
-			return sprintf($script, $pixelId, $pixelId);
-		}
+        return sprintf($script, $pixelId, $pixelId);
+    }
 
 
-		// Quora Pixel script
-    	if ($platform === 'quora') {
-			$script = "
+    // Quora Pixel script
+    if ($platform === 'quora') {
+        $script = "
                <script>
                     !function (q, e, v, n, t, s) {
                         if (q.qp) return;
@@ -111,28 +111,26 @@
                 <noscript><img height='1' width='1' style='display:none' src='https://q.quora.com/_/ad/%d/pixel?tag=ViewContent&noscript=1'/></noscript>
 			";
 
-			return sprintf($script, $pixelId, $pixelId);
-		}
+        return sprintf($script, $pixelId, $pixelId);
+    }
 
 
-
-		// Bing Pixel script
-    	if ($platform === 'bing') {
-			$script = '
+    // Bing Pixel script
+    if ($platform === 'bing') {
+        $script = '
 				<script>
 				(function(w,d,t,r,u){var f,n,i;w[u]=w[u]||[] ,f=function(){var o={ti:"%d"}; o.q=w[u],w[u]=new UET(o),w[u].push("pageLoad")} ,n=d.createElement(t),n.src=r,n.async=1,n.onload=n .onreadystatechange=function() {var s=this.readyState;s &&s!=="loaded"&& s!=="complete"||(f(),n.onload=n. onreadystatechange=null)},i= d.getElementsByTagName(t)[0],i. parentNode.insertBefore(n,i)})(window,document,"script"," //bat.bing.com/bat.js","uetq");
 				</script>
 				<noscript><img src="//bat.bing.com/action/0?ti=%d&Ver=2" height="0" width="0" style="display:none; visibility: hidden;" /></noscript>
 			';
 
-			return sprintf($script, $pixelId, $pixelId);
-		}
+        return sprintf($script, $pixelId, $pixelId);
+    }
 
 
-
-		// Google adwords Pixel script
-    	if ($platform === 'google-adwords') {
-			$script = "
+    // Google adwords Pixel script
+    if ($platform === 'google-adwords') {
+        $script = "
 				<script type='text/javascript'>
 
 				var google_conversion_id = '%s';
@@ -149,13 +147,13 @@
 				</noscript>
 			";
 
-			return sprintf($script, $pixelId, $pixelId);
-		}
+        return sprintf($script, $pixelId, $pixelId);
+    }
 
 
-		// Google tag manager Pixel script
-    	if ($platform === 'google-analytics') {
-			$script = "
+    // Google tag manager Pixel script
+    if ($platform === 'google-analytics') {
+        $script = "
 				<script async src='https://www.googletagmanager.com/gtag/js?id=%s'></script>
 				<script>
 
@@ -170,12 +168,12 @@
 				</script>
 			";
 
-			return sprintf($script, $pixelId, $pixelId);
-		}
+        return sprintf($script, $pixelId, $pixelId);
+    }
 
-        //snapchat
-        if ($platform === 'snapchat') {
-			$script = " <script type='text/javascript'>
+    //snapchat
+    if ($platform === 'snapchat') {
+        $script = " <script type='text/javascript'>
             (function(e,t,n){if(e.snaptr)return;var a=e.snaptr=function()
             {a.handleRequest?a.handleRequest.apply(a,arguments):a.queue.push(arguments)};
             a.queue=[];var s='script';r=t.createElement(s);r.async=!0;
@@ -190,12 +188,12 @@
             snaptr('track', 'PAGE_VIEW');
 
             </script>";
-			return sprintf($script, $pixelId, $pixelId);
-		}
+        return sprintf($script, $pixelId, $pixelId);
+    }
 
-        //tiktok
-        if ($platform === 'tiktok') {
-			$script = " <script>
+    //tiktok
+    if ($platform === 'tiktok') {
+        $script = " <script>
             !function (w, d, t) {
               w.TiktokAnalyticsObject=t;
               var ttq=w[t]=w[t]||[];
@@ -214,32 +212,97 @@
             }(window, document, 'ttq');
             </script>";
 
-			return sprintf($script, $pixelId, $pixelId);
-		}
-
-
-
-
+        return sprintf($script, $pixelId, $pixelId);
     }
 
-	if(! function_exists('get_device_type')){
-		function get_device_type($user_agent)
-		{
-				$mobile_regex = '/(?:phone|windows\s+phone|ipod|blackberry|(?:android|bb\d+|meego|silk|googlebot) .+? mobile|palm|windows\s+ce|opera mini|avantgo|mobilesafari|docomo)/i';
-				$tablet_regex = '/(?:ipad|playbook|(?:android|bb\d+|meego|silk)(?! .+? mobile))/i';
 
-				if(preg_match_all($mobile_regex, $user_agent)) {
-					return 'mobile';
-				} else {
+}
 
-					if(preg_match_all($tablet_regex, $user_agent)) {
-						return 'tablet';
-					} else {
-						return 'desktop';
-					}
+if (!function_exists('get_device_type')) {
+    function get_device_type($user_agent)
+    {
+        $mobile_regex = '/(?:phone|windows\s+phone|ipod|blackberry|(?:android|bb\d+|meego|silk|googlebot) .+? mobile|palm|windows\s+ce|opera mini|avantgo|mobilesafari|docomo)/i';
+        $tablet_regex = '/(?:ipad|playbook|(?:android|bb\d+|meego|silk)(?! .+? mobile))/i';
 
-				}
-		}
-	}
+        if (preg_match_all($mobile_regex, $user_agent)) {
+            return 'mobile';
+        } else {
+
+            if (preg_match_all($tablet_regex, $user_agent)) {
+                return 'tablet';
+            } else {
+                return 'desktop';
+            }
+
+        }
+    }
+}
+if (!function_exists('icons_path')) {
+    function icons_path(string $filename): string
+    {
+        return asset('public/assets/images/icons/' . ltrim($filename, '/'));
+    }
+}
+
+if (!function_exists('svg')) {
+    function svg(string $path, array $attributes = []): string
+    {
+        $fullPath = public_path('assets/images/icons/' . ltrim($path, '/'));
+
+        if (!file_exists($fullPath)) {
+            return '<!-- SVG not found: ' . e($path) . ' -->';
+        }
+
+        $svg = file_get_contents($fullPath);
+
+        // Merge classes properly if SVG already has a class
+        if (!empty($attributes)) {
+            foreach ($attributes as $key => $value) {
+                // Handle class attribute separately
+                if ($key === 'class') {
+                    if (preg_match('/<svg[^>]*class="([^"]*)"/i', $svg, $matches)) {
+                        // Merge classes
+                        $existingClasses = $matches[1];
+                        $newClasses = $existingClasses . ' ' . $value;
+                        $svg = preg_replace(
+                            '/(<svg[^>]*)class="[^"]*"/i',
+                            '$1class="' . trim($newClasses) . '"',
+                            $svg
+                        );
+                    } else {
+                        // No class yet, add it
+                        $svg = preg_replace(
+                            '/<svg\b([^>]*)>/i',
+                            '<svg$1 class="' . trim($value) . '">',
+                            $svg,
+                            1
+                        );
+                    }
+                } else {
+                    // Other attributes (like width, height, etc.)
+                    if (preg_match('/<svg[^>]*' . $key . '="/i', $svg)) {
+                        // Replace existing attribute
+                        $svg = preg_replace(
+                            '/(<svg[^>]*' . $key . '=")[^"]*(")/i',
+                            '$1' . $value . '$2',
+                            $svg
+                        );
+                    } else {
+                        // Add new attribute
+                        $svg = preg_replace(
+                            '/<svg\b([^>]*)>/i',
+                            '<svg$1 ' . $key . '="' . $value . '">',
+                            $svg,
+                            1
+                        );
+                    }
+                }
+            }
+        }
+
+        return $svg;
+    }
+}
+
 
 ?>

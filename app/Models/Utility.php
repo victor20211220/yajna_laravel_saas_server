@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CommonEmailTemplate;
 use Storage;
+
 // use Illuminate\Support\Facades\Storage;
 use Spatie\GoogleCalendar\Event as GoogleEvent;
 use Carbon\Carbon;
@@ -42,6 +43,7 @@ class Utility extends Model
     private static $layoutsetting = null;
     private static $adminpaymentsettings = null;
     private static $languages = null;
+
     public static function AddBusinessField()
     {
         $data = [
@@ -72,7 +74,7 @@ class Utility extends Model
         $slug = Str::slug($title, '-');
         $routes = array_map(function (\Illuminate\Routing\Route $route) {
             return $route->uri;
-        }, (array) Route::getRoutes()->getIterator());
+        }, (array)Route::getRoutes()->getIterator());
 
 
         // Get any that could possibly be related.
@@ -102,22 +104,15 @@ class Utility extends Model
     public static function getFields()
     {
         $icons = [
+            'Behance',
             'Facebook',
+            'WhatsApp',
             'Instagram',
             'LinkedIn',
-            'Phone',
             'Twitter',
-            'Youtube',
-            'Email',
-            'Behance',
-            'Dribbble',
-            'Figma',
-            'Messenger',
+            'YouTube',
             'Pinterest',
-            'Tiktok',
-            'Whatsapp',
-            'Address',
-            'Web_url',
+            'TikTok',
         ];
 
         return $icons;
@@ -125,9 +120,17 @@ class Utility extends Model
 
     public static function themeOne()
     {
-        $arr = [];
-
         $arr = [
+            'theme1' => [
+                'color1-theme1' => [
+                    'img_path' => asset(Storage::url('uploads/card_theme/theme1/color1.png')),
+                    'color' => '#7E3AE3',
+                    'theme_name' => 'theme1-v1'
+                ]
+            ]
+        ];
+
+        $arr1 = [
             'theme1' => [
                 'color1-theme1' => [
                     'img_path' => asset(Storage::url('uploads/card_theme/theme1/color1.png')),
@@ -699,11 +702,11 @@ class Utility extends Model
             ],
 
 
-
         ];
 
         return $arr;
     }
+
     public static function getCompanyPaymentSetting()
     {
         $data = \DB::table('admin_payment_settings');
@@ -720,6 +723,7 @@ class Utility extends Model
 
         return $settings;
     }
+
     public static function settings()
     {
         // if (self::$storesettings == null) {
@@ -989,6 +993,7 @@ class Utility extends Model
 
         return true;
     }
+
     public static function getAdminPaymentSetting()
     {
         $data = \DB::table('admin_payment_settings');
@@ -1058,29 +1063,21 @@ class Utility extends Model
             return true;
         } elseif (isset($payments['is_nepalste_enabled']) && $payments['is_nepalste_enabled'] == 'on') {
             return true;
-        }
-        elseif (isset($payments['is_paiement_enabled']) && $payments['is_paiement_enabled'] == 'on') {
+        } elseif (isset($payments['is_paiement_enabled']) && $payments['is_paiement_enabled'] == 'on') {
             return true;
-        }
-        elseif (isset($payments['is_cinetpay_enabled']) && $payments['is_cinetpay_enabled'] == 'on') {
+        } elseif (isset($payments['is_cinetpay_enabled']) && $payments['is_cinetpay_enabled'] == 'on') {
             return true;
-        }
-        elseif (isset($payments['is_payhere_enabled']) && $payments['is_payhere_enabled'] == 'on') {
+        } elseif (isset($payments['is_payhere_enabled']) && $payments['is_payhere_enabled'] == 'on') {
             return true;
-        }
-        elseif (isset($payments['is_fedapay_enabled']) && $payments['is_fedapay_enabled'] == 'on') {
+        } elseif (isset($payments['is_fedapay_enabled']) && $payments['is_fedapay_enabled'] == 'on') {
             return true;
-        }
-        elseif (isset($payments['is_tap_enabled']) && $payments['is_tap_enabled'] == 'on') {
+        } elseif (isset($payments['is_tap_enabled']) && $payments['is_tap_enabled'] == 'on') {
             return true;
-        }
-        elseif (isset($payments['is_authorizenet_enabled']) && $payments['is_authorizenet_enabled'] == 'on') {
+        } elseif (isset($payments['is_authorizenet_enabled']) && $payments['is_authorizenet_enabled'] == 'on') {
             return true;
-        }
-        elseif (isset($payments['is_khalti_enabled']) && $payments['is_khalti_enabled'] == 'on') {
+        } elseif (isset($payments['is_khalti_enabled']) && $payments['is_khalti_enabled'] == 'on') {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
 
@@ -1109,7 +1106,7 @@ class Utility extends Model
                 'google_map' => '12',
                 'appinfo' => '13',
                 'custom_html' => '14',
-                'svg'=>'15',
+                'svg' => '15',
             ];
         }
         if ($themename == 'theme2') {
@@ -1128,7 +1125,7 @@ class Utility extends Model
                 'google_map' => '12',
                 'appinfo' => '13',
                 'custom_html' => '14',
-                'svg'=>'15'
+                'svg' => '15'
             ];
         }
         if ($themename == 'theme3') {
@@ -1147,7 +1144,7 @@ class Utility extends Model
                 'google_map' => '12',
                 'appinfo' => '13',
                 'custom_html' => '14',
-                'svg'=>'15'
+                'svg' => '15'
             ];
         }
         if ($themename == 'theme4') {
@@ -1166,7 +1163,7 @@ class Utility extends Model
                 'google_map' => '12',
                 'appinfo' => '13',
                 'custom_html' => '14',
-                'svg'=>'15'
+                'svg' => '15'
             ];
         }
         if ($themename == 'theme5') {
@@ -1185,7 +1182,7 @@ class Utility extends Model
                 'google_map' => '12',
                 'appinfo' => '13',
                 'custom_html' => '14',
-                'svg'=>'15'
+                'svg' => '15'
             ];
         }
         if ($themename == 'theme6') {
@@ -1204,7 +1201,7 @@ class Utility extends Model
                 'google_map' => '12',
                 'appinfo' => '13',
                 'custom_html' => '14',
-                'svg'=>'15'
+                'svg' => '15'
             ];
         }
         if ($themename == 'theme7') {
@@ -1223,7 +1220,7 @@ class Utility extends Model
                 'google_map' => '12',
                 'appinfo' => '13',
                 'custom_html' => '14',
-                'svg'=>'15'
+                'svg' => '15'
             ];
         }
         if ($themename == 'theme8') {
@@ -1242,7 +1239,7 @@ class Utility extends Model
                 'google_map' => '12',
                 'appinfo' => '13',
                 'custom_html' => '14',
-                'svg'=>'15'
+                'svg' => '15'
             ];
         }
         if ($themename == 'theme9') {
@@ -1261,7 +1258,7 @@ class Utility extends Model
                 'google_map' => '12',
                 'appinfo' => '13',
                 'custom_html' => '14',
-                'svg'=>'15'
+                'svg' => '15'
             ];
         }
         if ($themename == 'theme10') {
@@ -1280,7 +1277,7 @@ class Utility extends Model
                 'google_map' => '12',
                 'appinfo' => '13',
                 'custom_html' => '14',
-                'svg'=>'15'
+                'svg' => '15'
             ];
         }
         if ($themename == 'theme11') {
@@ -1299,7 +1296,7 @@ class Utility extends Model
                 'google_map' => '12',
                 'appinfo' => '13',
                 'custom_html' => '14',
-                'svg'=>'15'
+                'svg' => '15'
             ];
         }
         if ($themename == 'theme12') {
@@ -1318,7 +1315,7 @@ class Utility extends Model
                 'appinfo' => '12',
                 'google_map' => '13',
                 'custom_html' => '14',
-                'svg'=>'15'
+                'svg' => '15'
 
             ];
         }
@@ -1338,7 +1335,7 @@ class Utility extends Model
                 'google_map' => '12',
                 'appinfo' => '13',
                 'custom_html' => '14',
-                'svg'=>'15'
+                'svg' => '15'
             ];
         }
         if ($themename == 'theme14') {
@@ -1357,7 +1354,7 @@ class Utility extends Model
                 'google_map' => '12',
                 'appinfo' => '13',
                 'custom_html' => '14',
-                'svg'=>'15'
+                'svg' => '15'
             ];
         }
         if ($themename == 'theme15') {
@@ -1376,7 +1373,7 @@ class Utility extends Model
                 'google_map' => '12',
                 'appinfo' => '13',
                 'custom_html' => '14',
-                'svg'=>'15'
+                'svg' => '15'
             ];
         }
         if ($themename == 'theme16') {
@@ -1394,7 +1391,7 @@ class Utility extends Model
                 'appinfo' => '11',
                 'custom_html' => '12',
                 'social' => '13',
-                'svg'=>'14'
+                'svg' => '14'
             ];
         }
         if ($themename == 'theme17') {
@@ -1413,7 +1410,7 @@ class Utility extends Model
                 'google_map' => '12',
                 'appinfo' => '13',
                 'custom_html' => '14',
-                'svg'=>'15'
+                'svg' => '15'
             ];
         }
         if ($themename == 'theme18') {
@@ -1432,7 +1429,7 @@ class Utility extends Model
                 'google_map' => '12',
                 'appinfo' => '13',
                 'custom_html' => '14',
-                'svg'=>'15'
+                'svg' => '15'
             ];
         }
         if ($themename == 'theme19') {
@@ -1451,7 +1448,7 @@ class Utility extends Model
                 'google_map' => '12',
                 'appinfo' => '13',
                 'custom_html' => '14',
-                'svg'=>'15'
+                'svg' => '15'
             ];
         }
         if ($themename == 'theme20') {
@@ -1470,7 +1467,7 @@ class Utility extends Model
                 'google_map' => '12',
                 'appinfo' => '13',
                 'custom_html' => '14',
-                'svg'=>'15'
+                'svg' => '15'
             ];
         }
         if ($themename == 'theme21') {
@@ -1489,11 +1486,12 @@ class Utility extends Model
                 'google_map' => '12',
                 'appinfo' => '13',
                 'custom_html' => '14',
-                'svg'=>'15'
+                'svg' => '15'
             ];
         }
         return $order;
     }
+
     public static function isEnableBlock($block, $id)
     {
         $isenable = 0;
@@ -1590,8 +1588,8 @@ class Utility extends Model
                 $isenable = '0';
             }
         }
-         //payment
-         if ($block == 'payment') {
+        //payment
+        if ($block == 'payment') {
             $block_data = CardPayment::where('business_id', $id)->first();
             if ($block_data != NULL) {
                 $isenable = $block_data->is_enabled;
@@ -1623,6 +1621,7 @@ class Utility extends Model
             return '';
         }
     }
+
     public static function getfonts()
     {
         $fonts = [
@@ -1674,6 +1673,7 @@ class Utility extends Model
 
         return $fonts;
     }
+
     public static function getvalueoffont($font)
     {
         $allfonts = Utility::getfonts();
@@ -1758,6 +1758,7 @@ class Utility extends Model
         }
         return $settings;
     }
+
     public static function delete_directory($dir)
     {
         if (!file_exists($dir)) {
@@ -1988,6 +1989,7 @@ class Utility extends Model
         }
 
     }
+
     // used for replace email variable (parameter 'template_name','id(get particular record by id for data)')
     public static function replaceVariables($content, $obj)
     {
@@ -2028,6 +2030,7 @@ class Utility extends Model
 
         return str_replace($arrVariable, array_values($arrValue), $content);
     }
+
     public static function paySettings()
     {
         $data = DB::table('admin_payment_settings');
@@ -2060,6 +2063,7 @@ class Utility extends Model
 
         return $settings;
     }
+
     public static function error_res($msg = "", $args = array())
     {
         $msg = $msg == "" ? "error" : $msg;
@@ -2087,6 +2091,7 @@ class Utility extends Model
 
         return $json;
     }
+
     public static function upload_file($request, $key_name, $name, $path, $custom_validation = [])
     {
         try {
@@ -2169,7 +2174,6 @@ class Utility extends Model
                         );
 
 
-
                     } else if ($settings['storage_setting'] == 's3') {
 
                         $path = Storage::disk('s3')->putFileAs(
@@ -2205,6 +2209,7 @@ class Utility extends Model
             return $res;
         }
     }
+
     public static function multipalFileUpload($request, $key_name, $name, $path, $data_key, $custom_validation = [])
     {
         $multifile = [
@@ -2443,7 +2448,6 @@ class Utility extends Model
                         );
 
 
-
                     } else if ($settings['storage_setting'] == 's3') {
 
                         $path = Storage::disk('s3')->putFileAs(
@@ -2542,6 +2546,7 @@ class Utility extends Model
 
         ]);
     }
+
     public static function addCalendarData($request, $type)
     {
         self::googleCalendarConfig();
@@ -2554,6 +2559,7 @@ class Utility extends Model
 
         $event->save();
     }
+
     public static function getCalendarData($type)
     {
         self::googleCalendarConfig();
@@ -2586,9 +2592,16 @@ class Utility extends Model
     public static function gallaryoption()
     {
         $gallaryOption = [
-            'video' => 'Video',
             'image' => 'Image',
             'custom_image_link' => 'Custom Image',
+        ];
+        return $gallaryOption;
+    }
+
+    public static function featured_videos_option()
+    {
+        $gallaryOption = [
+            'video' => 'Video',
             'custom_video_link' => 'Custom Video',
         ];
         return $gallaryOption;
@@ -2613,6 +2626,7 @@ class Utility extends Model
 
         return $plateforms;
     }
+
     //WebHook
     public static function webhookSetting($module, $id)
     {
@@ -3130,9 +3144,11 @@ class Utility extends Model
         }
 
     }
+
     public static $superadmin_activated_module = [
         'QRCode',
     ];
+
     public static function ActivatedModule($user_id = null)
     {
         $activated_module = self::$superadmin_activated_module;
@@ -3182,6 +3198,7 @@ class Utility extends Model
         }
         return $module_name;
     }
+
     public static function get_module_img($module)
     {
         $url = url("/Modules/" . $module . '/module_img.png');
@@ -3232,6 +3249,7 @@ class Utility extends Model
         return $newMenuItems;
 
     }
+
     public static function moduleIsActive()
     {
         $newMenuItems = [];
@@ -3239,12 +3257,12 @@ class Utility extends Model
         foreach ($module_name as $key => $menuItem) {
             $module = Module::find($menuItem['module']);
             if ($module && $module->isEnabled()) {
-                    $newMenuItems[] = [
-                        'module' => $menuItem['module'],
-                        'route' => $menuItem['route']
-                    ];
-                }
+                $newMenuItems[] = [
+                    'module' => $menuItem['module'],
+                    'route' => $menuItem['route']
+                ];
             }
+        }
         return $newMenuItems;
     }
 
@@ -3264,7 +3282,6 @@ class Utility extends Model
             // Handle case where no active modules are found for the user
             return redirect()->back()->with('error', 'No active modules found for the user.');
         }
-
 
 
     }
@@ -3333,14 +3350,14 @@ class Utility extends Model
 
         foreach ($enabledPayments as $payment) {
             $methodName = str_replace(['is_', '_enabled'], '', $payment);
-            if($methodName=="stripe" ||$methodName=="paypal")
-            {
+            if ($methodName == "stripe" || $methodName == "paypal") {
                 $paymentMethodNames[] = ucfirst($methodName);
             }
         }
         return $paymentMethodNames;
 
     }
+
     public static function file_validate()
     {
         try {
@@ -3348,19 +3365,19 @@ class Utility extends Model
             if (!empty($settings['storage_setting'])) {
                 if ($settings['storage_setting'] == 'wasabi') {
                     $max_size = !empty($settings['wasabi_max_upload_size']) ? $settings['wasabi_max_upload_size'] : '2048';
-                    $mimes =  !empty($settings['wasabi_storage_validation']) ? $settings['wasabi_storage_validation'] : '';
+                    $mimes = !empty($settings['wasabi_storage_validation']) ? $settings['wasabi_storage_validation'] : '';
                 } else if ($settings['storage_setting'] == 's3') {
                     $max_size = !empty($settings['s3_max_upload_size']) ? $settings['s3_max_upload_size'] : '2048';
-                    $mimes =  !empty($settings['s3_storage_validation']) ? $settings['s3_storage_validation'] : '';
+                    $mimes = !empty($settings['s3_storage_validation']) ? $settings['s3_storage_validation'] : '';
                 } else {
                     $max_size = !empty($settings['local_storage_max_upload_size']) ? $settings['local_storage_max_upload_size'] : '2048';
-                    $mimes =  !empty($settings['local_storage_validation']) ? $settings['local_storage_validation'] : '';
+                    $mimes = !empty($settings['local_storage_validation']) ? $settings['local_storage_validation'] : '';
                 }
-                    $res = [
-                        'types'  => $mimes,
-                        'max_size'  => $max_size,
-                    ];
-                    return $res;
+                $res = [
+                    'types' => $mimes,
+                    'max_size' => $max_size,
+                ];
+                return $res;
             } else {
                 $res = [
                     'flag' => 0,
@@ -3376,6 +3393,7 @@ class Utility extends Model
             return $res;
         }
     }
+
     public static function themeTitle()
     {
         $arr = [
@@ -3402,5 +3420,10 @@ class Utility extends Model
             'theme21' => 'Food Chef',
         ];
         return $arr;
+    }
+
+    public static function imagePlaceholderUrl()
+    {
+        return asset('assets/images/icons/user_interface/image_placeholder.svg');
     }
 }

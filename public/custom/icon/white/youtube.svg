@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 32 32">
+  <!-- Generator: Adobe Illustrator 29.5.0, SVG Export Plug-In . SVG Version: 2.1.0 Build 137)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: #fff;
+      }
+
+      .st1 {
+        fill: url(#Degradado_sin_nombre_7);
+      }
+    </style>
+    <linearGradient id="Degradado_sin_nombre_7" data-name="Degradado sin nombre 7" x1=".879" y1=".879" x2="31.121" y2="31.121" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="red"/>
+      <stop offset="1" stop-color="#9b0000"/>
+    </linearGradient>
+  </defs>
+  <rect class="st1" x="0" y="0" width="32" height="32" rx="3" ry="3"/>
+  <path class="st0" d="M23.771,13.92c0-1.883-1.527-3.41-3.41-3.41h-8.721c-1.884,0-3.41,1.527-3.41,3.41v4.058c0,1.884,1.527,3.41,3.41,3.41h8.721c1.884,0,3.41-1.527,3.41-3.41v-4.058ZM18.642,16.253l-3.911,1.935c-.153.083-.674-.028-.674-.202v-3.971c0-.177.525-.287.679-.2l3.743,2.037c.157.089.322.316.163.402Z"/>
+</svg>

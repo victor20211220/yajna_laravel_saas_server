@@ -23,13 +23,13 @@
         $themeColor = $color;
     }
 @endphp
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ $setting['SITE_RTL'] == 'on' ? 'rtl' : '' }}">
 
 <head>
     <style>
         :root {
-            --color-customColor: <?= $color ?>;
+            --color-customColor: #171717;
         }
     </style>
     <link rel="stylesheet" href="{{ asset('css/custom-color.css') }}">
@@ -37,25 +37,21 @@
         {{ Utility::getValByName('title_text') ? Utility::getValByName('title_text') : config('app.name', 'vCardGo SaaS') }}
         - @yield('page-title')</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,  initial-scale=1.0, user-scalable=0, minimal-ui" />
-    <meta name="description" content="Dashboard Template Description" />
-    <meta name="keywords" content="Dashboard Template" />
-    <meta name="author" content="Workdo" />
+    <meta name="viewport" content="width=device-width,  initial-scale=1.0, user-scalable=0, minimal-ui"/>
+    <meta name="description" content="Dashboard Template Description"/>
+    <meta name="keywords" content="Dashboard Template"/>
+    <meta name="author" content="Workdo"/>
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Favicon -->
 
-    <link rel="icon" href="{{ $logo . '/favicon.png' }}" type="image/x-icon" />
+    <link rel="icon" href="{{ $logo . '/favicon.png' }}" type="image/x-icon"/>
     <!-- font css -->
     <link rel="stylesheet" href="{{ asset('assets/fonts/tabler-icons.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/fonts/feather.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/fonts/fontawesome.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/fonts/material.css') }}">
-
-    <link rel="stylesheet" href="{{ asset('assets/css/customizer.css') }}">
-
-    <link rel="stylesheet" href="{{ asset('custom/css/custom.css') }}">
 
     @if ($setting['cust_darklayout'] == 'on')
         <link rel="stylesheet" href="{{ asset('assets/css/style-dark.css') }}">
@@ -82,102 +78,70 @@
     @endif
 
     @stack('css-page')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ asset('assets/css/new-custom.css?v='.time()) }}"/>
 
-    <style type="text/css">
-        img.navbar-brand-img {
-            width: 245px;
-            height: 61px;
-        }
-    </style>
 </head>
 
 
-<body class="{{ $themeColor }}">
+<body>
+<div class="container-fluid login-container d-flex flex-row min-vh-100 py-4 px-3 p-md-0">
 
-    <div class="custom-login">
-        <div class="login-bg-img">
-            @if($themeColor != $color)
-            <img src="{{ asset('assets/images/auth/theme-3.svg') }}" class="login-bg-1">
-            @else
-            <img src="{{ asset('assets/images/auth/' . $color . '.svg') }}" class="login-bg-1">
-            @endif
+    <!-- Left Side: Logo + Form -->
+    <div class="col-12 col-md-6 d-flex flex-column py-5 p-md-5">
 
-            <img src="{{ asset('assets/images/auth/common.svg') }}" class="login-bg-2">
+        <!-- Logo (top on desktop, center on mobile) -->
+        <div class="text-center text-md-start mb-4">
+            {!! svg('logo.svg', ['class' => 'logo-img fill-white fill-md-primary']) !!}
         </div>
-        <div class="bg-login bg-primary"></div>
-        <div class="custom-login-inner">
-            <header class="dash-header">
-                <nav class="navbar navbar-expand-md default">
-                    <div class="container-fluid pe-2">
-                        <a class="navbar-brand" href="#">
-                            @if ($setting['cust_darklayout'] == 'on')
-                                <img class="logo"
-                                    src="{{ $logo . (isset($company_logo) && !empty($company_logo) ? $company_logo : 'logo-light.png') . '?' . time() }}"
-                                    alt="" loading="lazy" />
-                            @else
-                                <img class="logo"
-                                    src="{{ $logo . (isset($company_logo) && !empty($company_logo) ? $company_logo : 'logo-dark.png') . '?' . time() }}"
-                                    alt="" loading="lazy" />
-                            @endif
-                        </a>
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#navbarlogin">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <div class="collapse navbar-collapse" id="navbarlogin">
-                            <ul class="navbar-nav align-items-center ms-auto mb-2 mb-lg-0">
-                                @if (Utility::getValByName('display_landing_page') == 'on')
-                                    @include('landingpage::layouts.buttons')
-                                @endif
-                                @yield('language-bar')
-                            </ul>
-                        </div>
-                    </div>
-                </nav>
-            </header>
-            <main class="custom-wrapper">
-                <div class="custom-row">
-                    <div class="card">
-                        @yield('content')
-                    </div>
-                </div>
-            </main>
-            <footer>
 
-                <div class="auth-footer">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-12">
-                                <span>&copy; {{ date('Y') }}&nbsp;
-                                    {{ isset($langSetting['footer_text']) ? $langSetting['footer_text'] : config('app.name', 'vCardGo-SaaS') }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </footer>
-
+        <!-- Form (centered left side desktop, centered mobile) -->
+        <div class="flex-grow-1 d-flex flex-column justify-content-center">
+            <div class="login-form mx-auto py-5 px-4 p-md-0">
+                @yield('content')
+            </div>
         </div>
+
+        <!-- Footer (always bottom) -->
+        <div class="text-center small mt-4">
+            <div class="footer-links">
+                <a href="#" class="text-decoration-none me-2 text-white text-md-primary">Terms of Use</a>
+                <span class="mx-1">|</span>
+                <a href="#" class="text-decoration-none ms-2 text-white text-md-primary">Privacy Policy</a>
+            </div>
+            <div class="mt-2 copyright text-white text-md-primary">
+                Copyright &copy; {{ date('Y') }} Tapeetap All Rights Reserved
+            </div>
+        </div>
+
     </div>
 
-    <!-- Required Js -->
-    <script src="{{ asset('assets/js/vendor-all.js') }}"></script>
-    <script src="{{ asset('assets/js/plugins/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('assets/js/plugins/feather.min.js') }}"></script>
-    <script src="{{ asset('custom/libs/jquery/dist/jquery.min.js') }}"></script>
-    <script src="{{ asset('custom/js/custom.js') }}"></script>
-    <script>
-        @if (isset($setting['cust_darklayout']) && $setting['cust_darklayout'] == 'on')
-            document.addEventListener('DOMContentLoaded', (event) => {
-                const recaptcha = document.querySelector('.g-recaptcha');
-                recaptcha.setAttribute("data-theme", "dark");
-            });
-        @endif
-    </script>
-    <script>
-        feather.replace();
-    </script>
-    @stack('custom-scripts')
+    <!-- Right Side: Background image (Desktop only) -->
+    <div class="col-md-6 d-none d-md-block login-desktop-bg"></div>
+
+</div>
+
+<!-- Mobile Background -->
+<div class="login-mobile-bg d-md-none"></div>
+
+<!-- Required Js -->
+<script src="{{ asset('assets/js/vendor-all.js') }}"></script>
+<script src="{{ asset('assets/js/plugins/bootstrap.min.js') }}"></script>
+<script src="{{ asset('assets/js/plugins/feather.min.js') }}"></script>
+<script src="{{ asset('custom/libs/jquery/dist/jquery.min.js') }}"></script>
+<script src="{{ asset('custom/js/custom.js') }}"></script>
+<script>
+    @if (isset($setting['cust_darklayout']) && $setting['cust_darklayout'] == 'on')
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const recaptcha = document.querySelector('.g-recaptcha');
+        recaptcha.setAttribute("data-theme", "dark");
+    });
+    @endif
+</script>
+<script>
+    feather.replace();
+</script>
+@stack('custom-scripts')
 
 </body>
 @if ($set_cookie['enable_cookie'] == 'on')

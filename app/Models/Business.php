@@ -12,7 +12,7 @@ class Business extends Model
     private static $businessDetailModal = null;
     private static $businessDetail = null;
     private static $businessSlugData = null;
-    
+
     protected $fillable = [
         'slug',
         'title',
@@ -45,23 +45,23 @@ class Business extends Model
     public function getLanguage(){
         if (\Auth::user()->type == 'company')
         {
-            
+
             $user = User::find($this->created_by);
         }
         else{
-            
+
             $user = User::where('created_by','=',$this->created_by)->first();
-            
+
         }
         return $user->currentLanguage();
-       
+
     }
 
     public static function pwa_business($slug){
 
         $business = self::getBusinessBySlug($slug);
         try {
-            
+
             $pwa_data = \File::get(storage_path('uploads/theme_app/business_' . $business->id. '/manifest.json'));
 
             $pwa_data = json_decode($pwa_data);
@@ -73,11 +73,11 @@ class Business extends Model
     }
 
     public static function allBusiness()
-    {   
+    {
         if(self::$businessDetailModal==null)
         {
             $businesses = self::getBusiness();
-           
+
             $business = $businesses->map(function ($business) {
                 return [
                     'id' => $business->id,
@@ -85,15 +85,15 @@ class Business extends Model
                     'admin_enable' => $business->admin_enable,
                 ];
             });
-        
+
             if(request()->route()->getName()=='appointments.index' || request()->route()->getName()=='contacts.index')
             {
                 $business->prepend(['id' => '0', 'title' => 'All', 'admin_enable' => 'on']);
             }
             self::$businessDetailModal=$business;
-        }     
-        
-        
+        }
+
+
         return self::$businessDetailModal;
     }
 
@@ -105,7 +105,6 @@ class Business extends Model
 
     public static $qr_type = [
         0 => 'Normal',
-        2 => 'Text',
         4 =>'Image',
     ];
 

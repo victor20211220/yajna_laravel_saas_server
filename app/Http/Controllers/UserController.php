@@ -93,6 +93,7 @@ class UserController extends Controller
                     //$user['email_verified_at'] = date("Y-m-d H:i:s");
                     $user['created_by'] = \Auth::user()->creatorId();
                     $user['plan'] = Plan::first()->id;
+                    $user['email_verified_at'] = date("Y-m-d H:i:s");
                     $user->save();
                     $role = Role::findByName('company');
                     $user->assignRole($role);
@@ -487,7 +488,6 @@ class UserController extends Controller
     }
     public function userPassword($id)
     {
-
         $eId = \Crypt::decrypt($id);
         $user = User::where('id', $eId)->first();
         return view('user.reset', compact('user'));
@@ -541,14 +541,14 @@ class UserController extends Controller
         $user = User::find($id);
         if ($user && auth()->check()) {
             Impersonate::take($request->user(), $user);
-            return redirect('/home');
+            return redirect('/');
         }
     }
 
     public function ExitCompany(Request $request)
     {
         Auth::user()->leaveImpersonation($request->user());
-        return redirect('/home');
+        return redirect('/');
     }
 
     public function userEnable(Request $request)

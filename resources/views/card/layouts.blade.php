@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <title></title>
     @include('card.header')
 </head>
-<body class="tech-card-body theme-preview-body">
+<body>
     @yield('contentCard')
 </body>
 

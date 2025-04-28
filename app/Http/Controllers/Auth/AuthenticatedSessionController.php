@@ -42,35 +42,11 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request)
     {
         $setting = Utility::settings();
-        $recaptcha = Utility::setCaptchaConfig();
         $validation = [];
-        if ($setting['RECAPTCHA_MODULE'] == 'yes') {
-            if($setting['RECAPTCHA_VERSION'] == 'v2'){
-                $validation['g-recaptcha-response'] = 'required|captcha';
-            }
-            elseif($setting['RECAPTCHA_VERSION'] == 'v3'){
-               
-                $result = event(new VerifyReCaptchaToken($request));
-                if (!isset($result[0]['status']) || $result[0]['status'] != true) {
-                   
-                    $key = 'g-recaptcha-response';
-                    $request->merge([$key => null]); // Set the key to null
-                    
-                    $validation['g-recaptcha-response'] = 'required';
-                }
-            }else{
-                $validation = [];
-            }
-        } else {
-            $validation = [];
-        }
         $this->validate($request, $validation);
         $request->authenticate();
-
-
         $userData = User::where('email', '=', $request->email)->first();
-
-        //Email Verification 
+        //Email Verification
         if (isset($setting['email_verification']) && $setting['email_verification'] == "on" && $userData->email_verified_at == null) {
             try {
                 $request->user()->sendEmailVerificationNotification();

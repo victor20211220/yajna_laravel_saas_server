@@ -9,7 +9,7 @@ $(document).ready(function () {
         $(".dataTable").dataTable({
             language: dataTabelLang,
             "columnDefs": [
-                { "visible": false, "targets": 0 }
+                {"visible": false, "targets": 0}
             ]
         });
     }
@@ -42,7 +42,7 @@ function validation() {
     });
 }
 
-$(document).on("click", '.bs-pass-para',function () {
+$(document).on("click", '.bs-pass-para', function () {
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success',
@@ -55,7 +55,7 @@ $(document).on("click", '.bs-pass-para',function () {
         text: $(this).data('text'),
         icon: 'warning',
         showCancelButton: true,
-    confirmButtonText: 'Yes',
+        confirmButtonText: 'Yes',
         cancelButtonText: 'No',
         reverseButtons: false,
     }).then((result) => {
@@ -126,7 +126,6 @@ $(document).on('click', 'a[data-ajax-popup="true"], button[data-ajax-popup="true
     });
 
 });
-
 
 
 function arrayToJson(form) {
@@ -519,7 +518,7 @@ function commonLoader() {
     // }
     // });
     if ($("#selector").length > 0)
-   $("#selector").select2();
+        $("#selector").select2();
 
     if ($(".summernote-simple").length) {
         $('.summernote-simple').summernote({
@@ -725,30 +724,121 @@ $('[data-confirm]').each(function () {
     })
 });
 
-function selectFile(elementid){
-  $(`.${elementid}`).trigger('click');
-  $(`.${elementid}`).change(function() {
-      var url = this.value;
-      var ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase();
-      if (this.files && this.files[0]&& (ext == "gif" || ext == "png" || ext == "jpeg" || ext == "jpg" || ext == "svg")) {
-          var reader = new FileReader();
-          reader.onload = function (e) {
-              $(`#${elementid}`).attr('src', e.target.result);
-              $(`#section_${elementid}`).attr('src', e.target.result);
-              $(`#${elementid}_preview`).attr('src', e.target.result);
-          }
-          reader.readAsDataURL(this.files[0]);
-      }else{
+let cropper;
+let currentTarget = '';
+let fileInput = null;
 
-        let file_error = $(this).closest('.img-validate-class-detail').find('.file-error-detail');
-        file_error.text("Please select a valid file type. Allowed types: jpg, jpeg, png, gif.").show();
-          $(`#${elementid}`).attr('src', '/assets/no_preview.png');
+function handleImageUpload(inputClass, targetId) {
+    fileInput = $(`.${inputClass}`)[0];
+    currentTarget = targetId;
 
-          $(`#section_${elementid}`).attr('src', '/assets/no_preview.png');
-      }
-  });
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        $('#cropperTarget').attr('src', e.target.result);
+        $('#zoomSlider').val(1);
+        $('#cropperModal').modal('show');
+    };
+    reader.readAsDataURL(file);
+}
+
+$('#cropperModal').on('shown.bs.modal', function () {
+    const image = document.getElementById('cropperTarget');
+    cropper = new Cropper(image, {
+        viewMode: 1,
+        scalable: true,
+        zoomable: true,
+        dragMode: 'move'
+    });
+
+    $('#zoomSlider').on('input', function () {
+        cropper.zoomTo(parseFloat(this.value));
+    });
+});
+
+$('#cropperModal').on('hidden.bs.modal', function () {
+    cropper.destroy();
+    cropper = null;
+});
+
+$('#saveCropped').on('click', function () {
+    const canvas = cropper.getCroppedCanvas({
+        width: 300,
+        height: 300,
+    });
+
+    canvas.toBlob(function (blob) {
+        // Preview
+        const url = URL.createObjectURL(blob);
+        $(`#${currentTarget}`).attr('src', url);
+        $(`#${currentTarget}_preview`).attr('src', url).removeClass('d-none');
+
+        // Convert blob to File and assign to input
+        const file = new File([blob], 'cropped-image.jpg', {type: 'image/jpeg'});
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+
+        $('#cropperModal').modal('hide');
+    }, 'image/jpeg');
+});
+
+$('.dropzone').on('dragover', function (e) {
+    e.preventDefault();
+    $(this).addClass('drag-over');
+}).on('dragleave', function () {
+    $(this).removeClass('drag-over');
+}).on('drop', function (e) {
+    e.preventDefault();
+    $(this).removeClass('drag-over');
+
+    const files = e.originalEvent.dataTransfer.files;
+    if (files.length && files[0].type.startsWith('image/')) {
+        const targetId = $(this).data('target');
+        const fileInput = $(`.${targetId}`)[0];
+
+        // Put dropped file into input manually
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(files[0]);
+        fileInput.files = dataTransfer.files;
+
+        // Trigger the crop modal
+        handleImageUpload(targetId, targetId);
+    }
+});
+
+function selectFile(targetId) {
+    $(`.${targetId}`).trigger('click').off('change').on('change', function () {
+        if (this.files && this.files[0]) {
+            handleImageUpload(targetId, targetId);
+        }
+    });
+}
+
+function selectFiles(elementid) {
+    const _this = $(`.${elementid}`);
+    _this.trigger('click');
+    _this.change(function () {
+        var url = this.value;
+        var ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase();
+        if (this.files && this.files[0] && (ext === "gif" || ext === "png" || ext === "jpeg" || ext === "jpg" || ext === "svg")) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $(`#${elementid}`).attr('src', e.target.result);
+                $(`#${elementid}_preview`).attr('src', e.target.result).removeClass('d-none');
+            }
+            reader.readAsDataURL(this.files[0]);
+        } else {
+            /*
+            let file_error = $(this).closest('.img-validate-class-detail').find('.file-error-detail');
+            file_error.text("Please select a valid file type. Allowed types: jpg, jpeg, png, gif.").show();
+            $(`#${elementid}`).attr('src', '/assets/images/icons/user_interface/image_placeholder.svg');
+             */
+        }
+    });
 
 }
+
 
 $(document).on('click', 'a[data-ajax-popup-over="true"], button[data-ajax-popup-over="true"], div[data-ajax-popup-over="true"]', function () {
     var validate = $(this).attr('data-validate');
@@ -780,10 +870,10 @@ $(document).on('click', 'a[data-ajax-popup-over="true"], button[data-ajax-popup-
 
 });
 
-$(document).ready(function() {
+$(document).ready(function () {
     $('.error-msg-video').hide();
 
-    $(document).on("change",".file-validate",function(){
+    $(document).on("change", ".file-validate", function () {
         let file_input = $(this)[0];
         let max_size = file_size;
         let allowed_extensions = file_types;
@@ -798,15 +888,13 @@ $(document).ready(function() {
             let extensions_array = allowed_extensions.split(',');
             if (!extensions_array.includes(file_extension)) {
 
-                if($(this).hasClass('upload_video'))
-                    {
-                       if(!allowed_extensions.includes('mp4'))
-                        {
-                            $('.error-msg-video').show();
-                        }else{
-                            $('.error-msg-video').hide();
-                        }
+                if ($(this).hasClass('upload_video')) {
+                    if (!allowed_extensions.includes('mp4')) {
+                        $('.error-msg-video').show();
+                    } else {
+                        $('.error-msg-video').hide();
                     }
+                }
                 file_error.text(type_err).show();
 
                 file_input.value = '';

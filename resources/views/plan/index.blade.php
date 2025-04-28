@@ -181,19 +181,6 @@
                                         <span class="text-danger">{{ __('Progressive Web App (PWA)') }}</span>
                                     </li>
                                 @endif
-                                @if ($plan->enable_chatgpt == 'on')
-                                    <li>
-                                        <span class="theme-avtar">
-                                            <i class="text-primary ti ti-circle-plus"></i></span>
-                                        {{ __('Chatgpt') }}
-                                    </li>
-                                @else
-                                    <li>
-                                        <span class="theme-avtar">
-                                            <i data-feather="x" class="text-danger"></i></span>
-                                        <span class="text-danger">{{ __('Chatgpt') }}</span>
-                                    </li>
-                                @endif
                                 <li>
                                     <span class="theme-avtar">
                                         <i class="text-primary ti ti-circle-plus"></i>

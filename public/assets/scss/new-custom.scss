@@ -1,0 +1,7 @@
+// 1. Override default Bootstrap variables BEFORE importing bootstrap
+@import "variables";
+
+// 2. Import only the parts you want (or full bootstrap)
+@import "../../../node_modules/bootstrap/scss/bootstrap";
+@import "main";
+@import "login";

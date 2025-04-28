@@ -85,8 +85,8 @@ class BusinessController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
@@ -114,6 +114,7 @@ class BusinessController extends Controller
                 $card_theme = [];
                 $card_theme['theme'] = $request->theme;
                 $card_theme['order'] = Utility::getDefaultThemeOrder($request->theme);
+
                 $business = Business::create([
                     'title' => $request->business_title,
                     'slug' => $slug,
@@ -123,6 +124,7 @@ class BusinessController extends Controller
                     'theme_color' => !empty($request->theme_color) ? $request->theme_color : 'color1-' . $request->theme,
                     'created_by' => \Auth::user()->creatorId()
                 ]);
+
                 $business->enable_businesslink = 'on';
                 $business->is_branding_enabled = 'on';
                 $business->theme = $request->theme;
@@ -144,7 +146,7 @@ class BusinessController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Business  $businessphp
+     * @param \App\Business $businessphp
      * @return \Illuminate\Http\Response
      */
     public function edit(Business $business, $id)
@@ -164,63 +166,19 @@ class BusinessController extends Controller
                 return redirect()->route('business.index')->with('error', __('This card number is not yours.'));
             }
         }
-        if ($business != NULL) {
-            if (json_decode($business->card_theme) == NULL) {
-                $card_order = [];
-                $card_order['theme'] = $business->card_theme;
-                $card_order['order'] = Utility::getDefaultThemeOrder($business->card_theme);
-                $business->card_theme = json_encode($card_order);
-                $business->save();
-            }
+        if ($business) {
             $businessfields = Utility::getFields();
 
-            $appoinment = appoinment::appointmentData($business->id);
-
-            $appoinment_hours = [];
-
-            if (!empty($appoinment->content)) {
-                $appoinment_hours = json_decode($appoinment->content);
-            }
-            $contactinfo = ContactInfo::contactData($business->id);
-            $contactinfo_content = [];
-            if (!empty($contactinfo->content)) {
-                $contactinfo_content = json_decode($contactinfo->content);
-            }
-            $services = service::serviceData($business->id);
-            $services_content = [];
-            if (!empty($services->content)) {
-                $services_content = json_decode($services->content);
-            }
-            $testimonials = testimonial::testimonialData($business->id);
-
-            $testimonials_content = [];
-            if (!empty($testimonials->content)) {
-                $testimonials_content = json_decode($testimonials->content);
-            }
             $sociallinks = social::socialData($business->id);
             $social_content = [];
             if (!empty($sociallinks->content)) {
                 $social_content = json_decode($sociallinks->content);
             }
-            $days = business_hours::$days;
-            $businesshours = business_hours::businessHour($business->id);
-            $business_hours = [];
-            if (!empty($businesshours->content)) {
-                $business_hours = json_decode($businesshours->content);
-            }
 
-            $customhtml = $business;
-
-            $custom_html = [];
-            if (!empty($customhtml->custom_html_text)) {
-                $custom_html = json_decode($customhtml->custom_html_text);
-            }
-
-            $branding = $business;
-
-            //$branding = [];
-            if (!empty($business->branding_text)) {
-                $branding = $business->branding_text;
+            $services = service::serviceData($business->id);
+            $services_content = [];
+            if (!empty($services->content)) {
+                $services_content = json_decode($services->content);
             }
 
             //Gallery
@@ -262,7 +220,6 @@ class BusinessController extends Controller
             $serverIp = gethostbyname($serverName);
 
             if ($serverIp != $_SERVER['SERVER_ADDR']) {
-                $serverIp;
             } else {
                 $serverIp = request()->server('SERVER_ADDR');
             }
@@ -272,7 +229,8 @@ class BusinessController extends Controller
             $business_url = $app_url . '/' . $business['slug'];
 
 
-            if (!empty($business->enable_subdomain) && $business->enable_subdomain == 'on') {
+            if (!empty($business->enable_subdomain) && $business->enable_subdomain == 'on')
+            {
                 // Remove the http://, www., and slash(/) from the URL
                 $input = env('APP_URL');
 
@@ -294,7 +252,9 @@ class BusinessController extends Controller
                 } else {
                     $subdomainPointing = 0;
                 }
-            } else {
+            }
+            else
+            {
                 $input = env('APP_URL');
 
                 // If URI is like, eg. www.way2tutorial.com/
@@ -303,9 +263,8 @@ class BusinessController extends Controller
                 if (!preg_match('#^http(s)?://#', $input)) {
                     $input = 'http://' . $input;
                 }
-
                 $urlParts = parse_url($input);
-                $subdomain_Ip = $urlParts['host'];
+                $subdomain_Ip = $urlParts ? $urlParts['host'] : '';
                 $subdomainPointing = 0;
                 $subdomain_name = str_replace(
                     [
@@ -411,12 +370,7 @@ class BusinessController extends Controller
             $url_link = env('APP_URL') . '/' . $business->slug;
             $meta_tag_image = $meta_image . '/' . $business->meta_image;
 
-            if (!is_null($contactinfo) && !is_null($contactinfo)) {
-                $contactinfo['is_enabled'] == '1' ? ($is_contact_enable = true) : ($is_contact_enable = false);
-            }
-            if (!is_null($custom_html) && !is_null($customhtml)) {
-                $customhtml->is_custom_html_enabled == '1' ? ($is_custom_html_enable = true) : ($is_custom_html_enable = false);
-            }
+
             if (!is_null($business->is_branding_enabled) && !is_null($business->is_branding_enabled)) {
                 !empty($business->is_branding_enabled) && $business->is_branding_enabled == 'on'
                     ? ($is_branding_enabled = true)
@@ -446,8 +400,7 @@ class BusinessController extends Controller
             }
 
             $themeName = \App\Models\Utility::themeOne()[$theme][$business->theme_color]['theme_name'] ?? null;
-
-            return view('business.edit', compact('category', 'businessfields', 'currencyData', 'appoinment_hours', 'contactinfo', 'contactinfo_content', 'appoinment', 'services_content', 'services', 'testimonials_content', 'testimonials', 'social_content', 'sociallinks', 'businesshours', 'business_hours', 'business', 'custom_html', 'customhtml', 'branding', 'branding', 'days', 'id', 'business_url', 'serverIp', 'subdomain_name', 'plan', 'pwa_data', 'gallery_contents', 'gallery', 'PixelFields', 'pixelScript', 'cookieDetail', 'filename', 'qr_code', 'qr_detail', 'subdomain_Ip', 'subdomainPointing', 'domainip', 'domainPointing', 'products', 'products_content', 'cardPayment', 'cardPayment_content', 'appInfo', 'social_nos', 'appointment_no', 'service_row_nos', 'product_row_nos', 'testimonials_row_nos', 'gallery_row_no', 'nos', 'stringid', 'custom_html', 'branding', 'is_branding_enabled', 'gdpr_text', 'card_theme', 'banner', 'logo', 'image', 's_image', 'pr_image', 'company_favicon', 'logo1', 'meta_image', 'gallery_path', 'qr_path', 'theme', 'color', 'url_link', 'is_custom_html_enable', 'is_gdpr_enabled', 'is_appinfo', 'is_svg_enabled', 'svg_text','is_enable_sociallinks','appointment_nos','meta_tag_image','is_enable','is_google_map_enabled','is_enabled','themeName'))->with('tab', $tab);
+            return view('business.edit', compact('category', 'businessfields', 'currencyData', 'services_content', 'services', 'social_content', 'sociallinks', 'business', 'custom_html', 'branding', 'branding', 'id', 'business_url', 'serverIp', 'subdomain_name', 'plan', 'pwa_data', 'gallery_contents', 'gallery', 'PixelFields', 'pixelScript', 'cookieDetail', 'filename', 'qr_code', 'qr_detail', 'subdomain_Ip', 'subdomainPointing', 'domainip', 'domainPointing', 'products', 'products_content', 'cardPayment', 'cardPayment_content', 'appInfo', 'social_nos', 'appointment_no', 'service_row_nos', 'product_row_nos', 'testimonials_row_nos', 'gallery_row_no', 'nos', 'stringid', 'custom_html', 'branding', 'is_branding_enabled', 'gdpr_text', 'card_theme', 'banner', 'logo', 'image', 's_image', 'pr_image', 'company_favicon', 'logo1', 'meta_image', 'gallery_path', 'qr_path', 'theme', 'color', 'url_link', 'is_custom_html_enable', 'is_gdpr_enabled', 'is_appinfo', 'is_svg_enabled', 'svg_text', 'is_enable_sociallinks', 'appointment_nos', 'meta_tag_image', 'is_enable', 'is_google_map_enabled', 'is_enabled', 'themeName'))->with('tab', $tab);
         } else {
 
             return abort('404', 'Not Found');
@@ -457,1162 +410,363 @@ class BusinessController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Business  $business
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Business $business
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, Business $business)
     {
-        if (\Auth::user()->can('edit business')) {
-            if (!is_null($business)) {
-                $count = Business::where('id', $business->id)->where('created_by', \Auth::user()->creatorId())->count();
-                if ($count == 0) {
-                    return redirect()->route('business.index')->with('error', __('This card number is not yours.'));
-                }
-                if (is_null($business->banner) || is_null($business->logo)) {
-                    $validator = \Validator::make(
-                        $request->all(),
-                        [
-                            'banner' => 'required',
-                            'logo' => 'required',
-                        ]
-                    );
-                    if ($validator->fails()) {
-                        $messages = $validator->getMessageBag();
-
-                        return redirect()->back()->with('error', $messages->first());
-                    }
-                }
-
-
-                $count = Business::where('slug', $request->slug)->count();
-                if (!is_null($business)) {
-                    if ($count == 0) {
-                        $business->slug = $request->slug;
-                    } elseif ($count == 1) {
-                        if ($business->slug != $request->slug) {
-                            return redirect()->route('business.index')->with('error', __('Slug is already used.........!'));
-                        }
-
-                    }
-                }
-                $business->title = $request->title;
-                $business->sub_title = $request->sub_title;
-                $business->description = $request->description;
-
-                if ($request->hasFile('logo')) {
-                    $logoname = $business['logo'] ? $business['logo'] : '';
-
-                    $image_path = 'card_logo/' . $logoname;
-
-                    $image_size = $request->file('logo')->getSize();
-                    $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
-                    if ($result == 1) {
-                        $result = Utility::changeStorageLimit(\Auth::user()->creatorId(), $image_path);
-                        $settings = Utility::getStorageSetting();
-                        $logo = $request->file('logo');
-                        $ext = $logo->getClientOriginalExtension();
-                        $fileName = 'logo_' . time() . rand() . '.' . $ext;
-
-                        $business->logo = $fileName;
-                        if ($settings['storage_setting'] == 'local') {
-                            $dir = 'card_logo/';
-                        } else {
-                            $dir = 'card_logo/';
-
-                        }
-                        $image_path = $dir . $business['logo'];
-                        if (File::exists($image_path)) {
-                            File::delete($image_path);
-                        }
-                        $path = Utility::upload_file($request, 'logo', $fileName, $dir, []);
-
-                        if ($path['flag'] == 1) {
-                            $url = $path['url'];
-                        } else {
-                            return redirect()->route('business.index', \Auth::user()->id)->with('error', __($path['msg']));
-                        }
-                    }
-                }
-
-                if ($request->hasFile('banner')) {
-                    $bannername = $business['banner'] ? $business['banner'] : '';
-                    $image_path1 = 'card_banner/' . $bannername;
-                    $image_size = $request->file('banner')->getSize();
-                    $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
-
-                    if ($result == 1) {
-                        $result = Utility::changeStorageLimit(\Auth::user()->creatorId(), $image_path1);
-
-                        $settings = Utility::getStorageSetting();
-                        $banner = $request->file('banner');
-                        $ext = $banner->getClientOriginalExtension();
-                        $fileName = 'banner' . time() . rand() . '.' . $ext;
-
-                        $business->banner = $fileName;
-
-
-                        if ($settings['storage_setting'] == 'local') {
-                            $dir = 'card_banner/';
-                        } else {
-                            $dir = 'card_banner/';
-
-                        }
-                        $image_path = $dir . $business['banner'];
-                        if (File::exists($image_path)) {
-                            File::delete($image_path);
-                        }
-                        $path = Utility::upload_file($request, 'banner', $fileName, $dir, []);
-
-                        if ($path['flag'] == 1) {
-                            $url = $path['url'];
-                        } else {
-                            return redirect()->route('business.index', \Auth::user()->id)->with('error', __($path['msg']));
-                        }
-                    }
-                }
-                $business_id = $request->business_id;
-
-
-                if ($request->is_business_hours_enabled == "on") {
-                    $requestAll = $request->all();
-                    $days = business_hours::$days;
-                    $business_hours = [];
-
-
-
-                    foreach ($days as $k => $day) {
-                        $time['days'] = isset($requestAll['days_' . $k]) ? 'on' : 'off';
-                        $time['start_time'] = $requestAll['start-' . $k];
-                        $time['end_time'] = $requestAll['end-' . $k];
-                        $business_hours[$k] = $time;
-                    }
-                    $business_hours = json_encode($business_hours);
-                    $businessHours = business_hours::where('business_id', $business_id)->first();
-                    if (!is_null($businessHours)) {
-                        $businessHours->content = $business_hours;
-                        $businessHours->is_enabled = '1';
-                        $businessHours->created_by = \Auth::user()->creatorId();
-                        $businessHours->save();
-                    } else {
-                        business_hours::create([
-                            'business_id' => $business_id,
-                            'content' => $business_hours,
-                            'is_enabled' => '1',
-                            'created_by' => \Auth::user()->creatorId()
-                        ]);
-                    }
-                } else {
-                    $businessHours = business_hours::where('business_id', $business_id)->first();
-                    if (!is_null($businessHours)) {
-                        $businessHours->is_enabled = '0';
-                        $businessHours->created_by = \Auth::user()->creatorId();
-                        $businessHours->save();
-                    } else {
-                        business_hours::create([
-                            'business_id' => $business_id,
-                            'is_enabled' => '0',
-                            'created_by' => \Auth::user()->creatorId()
-                        ]);
-                    }
-                }
-
-                if ($request->is_appoinment_enabled == "on") {
-
-                    $app_hours = $request->hours;
-
-                    $appointment_count = 1;
-                    $appoinment_hours = [];
-                    $hours = [];
-                    if (!empty($app_hours)) {
-                        foreach ($app_hours as $business_hours_key => $business_hours_val) {
-                            $hours['id'] = $appointment_count;
-                            $hours['start'] = $business_hours_val['start'];
-                            $hours['end'] = $business_hours_val['end'];
-                            $appoinment_hours[$business_hours_key] = $hours;
-                            $appointment_count++;
-                        }
-                        $appoinment_hours = json_encode($appoinment_hours);
-                        $appoinment = appoinment::where('business_id', $business_id)->first();
-                        if (!is_null($appoinment)) {
-                            $appoinment->content = $appoinment_hours;
-                            $appoinment->is_enabled = '1';
-                            $appoinment->created_by = \Auth::user()->creatorId();
-                            $appoinment->save();
-                        } else {
-                            appoinment::create([
-                                'business_id' => $business_id,
-                                'content' => $appoinment_hours,
-                                'is_enabled' => '1',
-                                'created_by' => \Auth::user()->creatorId()
-                            ]);
-                        }
-
-                    } else {
-                        $appoinment_hours = json_encode($appoinment_hours);
-                        $appoinment = appoinment::where('business_id', $business_id)->first();
-                        if (!is_null($appoinment)) {
-                            $appoinment->content = $appoinment_hours;
-                            $appoinment->is_enabled = '1';
-                            $appoinment->created_by = \Auth::user()->creatorId();
-                            $appoinment->save();
-                        } else {
-                            appoinment::create([
-                                'business_id' => $business_id,
-                                'content' => $appoinment_hours,
-                                'is_enabled' => '1',
-                                'created_by' => \Auth::user()->creatorId()
-                            ]);
-                        }
-
-                    }
-                } else {
-                    $appoinment = appoinment::where('business_id', $business_id)->first();
-                    if (!is_null($appoinment)) {
-                        $appoinment->is_enabled = '0';
-                        $appoinment->created_by = \Auth::user()->creatorId();
-                        $appoinment->save();
-                    } else {
-                        appoinment::create([
-                            'business_id' => $business_id,
-                            'is_enabled' => '0',
-                            'created_by' => \Auth::user()->creatorId()
-                        ]);
-                    }
-                }
-
-                if ($request->is_services_enabled == "on") {
-                    $servicedetails = $request->services;
-                    $service_count = 1;
-                    $service_details = [];
-                    $details = [];
-
-                    if (!empty($servicedetails)) {
-                        foreach ($servicedetails as $service_key => $service_val) {
-
-                            $images = $request->file('services');
-                            $details['id'] = $service_count;
-                            $details['title'] = $service_val['title'];
-                            $details['description'] = $service_val['description'];
-                            $details['purchase_link'] = $service_val['purchase_link'];
-                            $details['link_title'] = $service_val['link_title'];
-
-                            if (isset($images[$service_key])) {
-
-                                foreach ($images as $filekey => $file) {
-                                    $image_name = isset($service_val['get_image']) ? $service_val['get_image'] : '';
-                                    $image_path = 'service_images/' . $image_name;
-
-                                    $file_size = $file['image']->getSize();
-                                    $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $file_size);
-                                    if ($result == 1) {
-
-                                        $result = Utility::changeStorageLimit(\Auth::user()->creatorId(), $image_path);
-
-                                        $settings = Utility::getStorageSetting();
-                                        $img_ext = $images[$service_key]['image']->getClientOriginalExtension();
-                                        $img_fileName = 'img_' . time() . rand() . '.' . $img_ext;
-
-
-                                        $details['image'] = $img_fileName;
-                                        if ($settings['storage_setting'] == 'local') {
-                                            $dir = 'service_images/';
-                                        } else {
-                                            $dir = 'service_images/';
-
-                                        }
-                                        $image_path = $dir . $details['image'];
-                                        if (File::exists($image_path)) {
-                                            File::delete($image_path);
-                                        }
-
-
-                                        $path = Utility::keyWiseUpload_file($request, 'image', $img_fileName, $dir, 'services', $service_key, []);
-                                        if ($path['flag'] == 1) {
-                                            $url = $path['url'];
-                                        } else {
-                                            return redirect()->route('business.index', \Auth::user()->id)->with('error', __($path['msg']));
-                                        }
-                                    } else {
-                                        if (isset($service_val['get_image']) && !is_null($service_val['get_image'])) {
-                                            $details['image'] = $service_val['get_image'];
-                                        } else {
-                                            $details['image'] = "";
-                                        }
-                                    }
-                                }
-
-                            } else {
-
-                                if (isset($service_val['get_image']) && !is_null($service_val['get_image'])) {
-                                    $details['image'] = $service_val['get_image'];
-                                } else {
-                                    $details['image'] = "";
-                                }
-                            }
-
-                            $service_details[$service_key] = $details;
-                            $service_count++;
-
-                        }
-                        $service_details = json_encode($service_details);
-
-
-                        $services_data = service::where('business_id', $business_id)->first();
-                        if (!is_null($services_data)) {
-
-                            if ($service_details != 'null') {
-                                $services_data->content = $service_details;
-                                $services_data->is_enabled = '1';
-                                $services_data->created_by = \Auth::user()->creatorId();
-                                $services_data->save();
-                            } else {
-                                // $services_data->content = $service_details;
-                                $services_data->is_enabled = '1';
-                                $services_data->created_by = \Auth::user()->creatorId();
-                                $services_data->save();
-                            }
-                        } else {
-                            service::create([
-                                'business_id' => $business_id,
-                                'content' => $service_details,
-                                'is_enabled' => '1',
-                                'created_by' => \Auth::user()->creatorId()
-                            ]);
-                        }
-                    } else {
-                        $service_details = json_encode($service_details);
-                        $services_data = service::where('business_id', $business_id)->first();
-                        if (!is_null($services_data)) {
-
-                            if ($service_details != 'null') {
-                                $services_data->content = $service_details;
-                                $services_data->is_enabled = '1';
-                                $services_data->created_by = \Auth::user()->creatorId();
-                                $services_data->save();
-                            } else {
-                                // $services_data->content = $service_details;
-                                $services_data->is_enabled = '1';
-                                $services_data->created_by = \Auth::user()->creatorId();
-                                $services_data->save();
-                            }
-                        } else {
-                            service::create([
-                                'business_id' => $business_id,
-                                'content' => $service_details,
-                                'is_enabled' => '1',
-                                'created_by' => \Auth::user()->creatorId()
-                            ]);
-                        }
-                    }
-                } else {
-                    $services_data = service::where('business_id', $business_id)->first();
-                    if (!is_null($services_data)) {
-                        $services_data->is_enabled = '0';
-                        $services_data->created_by = \Auth::user()->creatorId();
-                        $services_data->save();
-                    } else {
-                        service::create([
-                            'business_id' => $business_id,
-                            'is_enabled' => '0',
-                            'created_by' => \Auth::user()->creatorId()
-                        ]);
-                    }
-                }
-
-                if ($request->is_testimonials_enabled == "on") {
-
-                    $testimonialsdetails = $request->testimonials;
-                    $testimonials_count = 1;
-                    $testimonials_details = [];
-                    $testi_details = [];
-
-                    if (!empty($testimonialsdetails)) {
-                        foreach ($testimonialsdetails as $testimonials_key => $testimonials_val) {
-                            $testimonials_images = $request->file('testimonials');
-                            $testi_details['id'] = $testimonials_count;
-                            if (isset($testimonials_val['rating'])) {
-                                $testi_details['rating'] = $testimonials_val['rating'];
-                            } else {
-                                $testi_details['rating'] = "0";
-                            }
-                            if (isset($testimonials_val['name']) && $testimonials_val['name'] != 'null') {
-                                $testi_details['name'] = $testimonials_val['name'];
-                            } else {
-                                $testi_details['name'] = '';
-                            }
-                            if (isset($testimonials_val['description']) && $testimonials_val['description'] != 'null') {
-                                $testi_details['description'] = $testimonials_val['description'];
-                            } else {
-                                $testi_details['description'] = '';
-                            }
-
-                            if (isset($testimonials_images[$testimonials_key])) {
-                                foreach ($testimonials_images as $filekey => $file) {
-                                    $image_name = isset($testimonials_val['get_image']) ? $testimonials_val['get_image'] : '';
-                                    $image_path = 'testimonials_images/' . $image_name;
-
-                                    $file_size = $file['image']->getSize();
-                                    $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $file_size);
-                                    if ($result == 1) {
-                                        $result = Utility::changeStorageLimit(\Auth::user()->creatorId(), $image_path);
-                                        $settings = Utility::getStorageSetting();
-                                        $testimonials_img_ext = $testimonials_images[$testimonials_key]['image']->getClientOriginalExtension();
-
-                                        $testimonials_img_fileName = 'img_' . time() . rand() . '.' . $testimonials_img_ext;
-                                        //$testimonials_images[$testimonials_key]['image'] = $testimonials_img_fileName;
-
-                                        $dir = 'testimonials_images/';
-                                        $testi_details['image'] = $testimonials_img_fileName;
-                                        $image_path = $dir . $testimonials_images[$testimonials_key]['image'];
-
-                                        if (File::exists($image_path)) {
-                                            File::delete($image_path);
-                                        }
-
-                                        $path = Utility::keyWiseUpload_file($request, 'image', $testimonials_img_fileName, $dir, 'testimonials', $testimonials_key, []);
-                                        if ($path['flag'] == 1) {
-                                            $url = $path['url'];
-                                        } else {
-                                            return redirect()->route('business.index', \Auth::user()->id)->with('error', __($path['msg']));
-                                        }
-                                    } else {
-                                        if (isset($testimonials_val['get_image']) && !is_null($testimonials_val['get_image'])) {
-                                            $testi_details['image'] = $testimonials_val['get_image'];
-                                        } else {
-                                            $testi_details['image'] = '';
-
-                                        }
-                                    }
-
-                                }
-
-                            } else {
-                                if (isset($testimonials_val['get_image']) && !is_null($testimonials_val['get_image'])) {
-                                    $testi_details['image'] = $testimonials_val['get_image'];
-                                } else {
-                                    $testi_details['image'] = '';
-
-                                }
-                            }
-
-                            $testimonials_details[$testimonials_key] = $testi_details;
-                            $testimonials_count++;
-                        }
-
-
-                        $testimonials_details = json_encode($testimonials_details);
-
-                        $testimonials_data = testimonial::where('business_id', $business_id)->first();
-                        if (!is_null($testimonials_data)) {
-                            if ($testimonials_details != 'null') {
-                                $testimonials_data->content = $testimonials_details;
-                                $testimonials_data->is_enabled = '1';
-                                $testimonials_data->created_by = \Auth::user()->creatorId();
-                                $testimonials_data->save();
-                            } else {
-                                $testimonials_data->is_enabled = '1';
-                                $testimonials_data->created_by = \Auth::user()->creatorId();
-                                $testimonials_data->save();
-                            }
-                        } else {
-                            testimonial::create([
-                                'business_id' => $business_id,
-                                'content' => $testimonials_details,
-                                'is_enabled' => '1',
-                                'created_by' => \Auth::user()->creatorId()
-                            ]);
-                        }
-                    } else {
-                        $testimonials_details = json_encode($testimonials_details);
-
-                        $testimonials_data = testimonial::where('business_id', $business_id)->first();
-                        if (!is_null($testimonials_data)) {
-                            if ($testimonials_details != 'null') {
-                                $testimonials_data->content = $testimonials_details;
-                                $testimonials_data->is_enabled = '1';
-                                $testimonials_data->created_by = \Auth::user()->creatorId();
-                                $testimonials_data->save();
-                            } else {
-                                $testimonials_data->is_enabled = '1';
-                                $testimonials_data->created_by = \Auth::user()->creatorId();
-                                $testimonials_data->save();
-                            }
-                        } else {
-                            testimonial::create([
-                                'business_id' => $business_id,
-                                'content' => $testimonials_details,
-                                'is_enabled' => '1',
-                                'created_by' => \Auth::user()->creatorId()
-                            ]);
-                        }
-                    }
-
-
-                } else {
-                    $testimonials_data = testimonial::where('business_id', $business_id)->first();
-                    if (!is_null($testimonials_data)) {
-                        $testimonials_data->is_enabled = '0';
-                        $testimonials_data->created_by = \Auth::user()->creatorId();
-                        $testimonials_data->save();
-                    } else {
-                        testimonial::create([
-                            'business_id' => $business_id,
-                            'is_enabled' => '0',
-                            'created_by' => \Auth::user()->creatorId()
-                        ]);
-                    }
-                }
-
-                if ($request->is_socials_enabled == "on") {
-
-                    $sociallinks_content = json_encode($request->socials);
-                    $sociallinks = social::where('business_id', $business_id)->first();
-
-
-                    if (!is_null($sociallinks)) {
-
-                        if ($sociallinks_content != 'null') {
-                            $sociallinks->content = $sociallinks_content;
-                            $sociallinks->is_enabled = '1';
-                            $sociallinks->created_by = \Auth::user()->creatorId();
-                            $sociallinks->save();
-                        } else {
-
-                            $sociallinks->content = $sociallinks_content;
-                            $sociallinks->is_enabled = '1';
-                            $sociallinks->created_by = \Auth::user()->creatorId();
-                            $sociallinks->save();
-                        }
-
-                    } else {
-                        if ($sociallinks_content != 'null') {
-                            social::create([
-                                'business_id' => $business_id,
-                                'content' => $sociallinks_content,
-                                'is_enabled' => '1',
-                                'created_by' => \Auth::user()->creatorId()
-                            ]);
-                        }
-                    }
-                } else {
-                    $sociallinks = social::where('business_id', $business_id)->first();
-                    if (!is_null($sociallinks)) {
-                        $sociallinks->is_enabled = '0';
-                        $sociallinks->created_by = \Auth::user()->creatorId();
-                        $sociallinks->save();
-                    } else {
-
-                        social::create([
-                            'business_id' => $business_id,
-                            'is_enabled' => '0',
-                            'created_by' => \Auth::user()->creatorId()
-                        ]);
-                    }
-                }
-
-                if ($request->is_contacts_enabled == "on") {
-
-
-                    $contacts_content = json_encode($request->contact);
-
-                    $contactsinfo = ContactInfo::where('business_id', $business_id)->first();
-                    if (!is_null($contactsinfo)) {
-                        if ($contacts_content != 'null') {
-                            $contactsinfo->content = $contacts_content;
-                            $contactsinfo->is_enabled = '1';
-                            $contactsinfo->created_by = \Auth::user()->creatorId();
-                            $contactsinfo->save();
-
-                        } else {
-                            $contactsinfo->content = $contacts_content;
-                            $contactsinfo->is_enabled = '1';
-                            $contactsinfo->created_by = \Auth::user()->creatorId();
-                            $contactsinfo->save();
-                        }
-
-                    } else {
-
-                        ContactInfo::create([
-                            'business_id' => $business_id,
-                            'content' => $contacts_content,
-                            'is_enabled' => '1',
-                            'created_by' => \Auth::user()->creatorId()
-                        ]);
-                    }
-                } else {
-                    $contactsinfo = ContactInfo::where('business_id', $business_id)->first();
-                    if (!is_null($contactsinfo)) {
-                        $contactsinfo->is_enabled = '0';
-                        $contactsinfo->created_by = \Auth::user()->creatorId();
-                        $contactsinfo->save();
-                    } else {
-                        ContactInfo::create([
-                            'business_id' => $business_id,
-                            'is_enabled' => '0',
-                            'created_by' => \Auth::user()->creatorId()
-                        ]);
-                    }
-                }
-
-                if ($request->is_custom_html_enabled == "on") {
-                    $custom_html = str_replace(array("\r\n"), "", $request->custom_html_text);
-                    $custom_html_text = Business::where('id', $business_id)->first();
-                    if (!is_null($custom_html_text)) {
-
-                        $custom_html_text->custom_html_text = $custom_html;
-                        $custom_html_text->is_custom_html_enabled = '1';
-                        $custom_html_text->created_by = \Auth::user()->creatorId();
-                        $custom_html_text->save();
-
-                    } else {
-                        Business::create([
-                            'id' => $business_id,
-                            'customhtml' => $custom_html,
-                            'is_enabled' => '1',
-                            'created_by' => \Auth::user()->creatorId()
-                        ]);
-                    }
-                } else {
-                    $custom_html = str_replace(array("\r\n"), "", $request->custom_html_text);
-                    $custom_html_text = Business::where('id', $business_id)->first();
-                    if (!is_null($custom_html_text)) {
-
-                        $custom_html_text->custom_html_text = $custom_html;
-                        $custom_html_text->is_custom_html_enabled = '0';
-                        $custom_html_text->created_by = \Auth::user()->creatorId();
-                        $custom_html_text->save();
-
-                    } else {
-                        Business::create([
-                            'id' => $business_id,
-                            'customhtml' => $custom_html,
-                            'is_enabled' => '0',
-                            'created_by' => \Auth::user()->creatorId()
-                        ]);
-                    }
-                }
-
-                //Gallary
-                if ($request->is_gallery_enabled == "on") {
-                    $gallery_data = explode(",", $request->galary_data); //pass when data is not empty
-
-                    $fileName = '';
-                    $details = [];
-                    $gallery_details = [];
-                    $gallery_content = [];
-                    $image_data = '';
-
-                    $galleryinfo = Gallery::where('business_id', $business_id)->first();
-                    if (!empty($galleryinfo->content)) {
-                        $gallery_content = (array) json_decode($galleryinfo->content);
-                        foreach ($gallery_content as $key => $data) {
-                            $image_data = $data->value;
-                        }
-                    }
-                    if ($request->upload_video) {
-                        if ($request->hasFile('upload_video')) {
-
-                            $image_size_video = $request->file('upload_video')->getSize();
-                            $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size_video);
-
-                            if ($result == 1) {
-                                $settings = Utility::getStorageSetting();
-                                $video = $request->file('upload_video');
-                                $ext = $video->getClientOriginalExtension();
-                                $fileName = 'video_' . time() . rand() . '.' . $ext;
-
-                                if ($settings['storage_setting'] == 'local') {
-                                    $dir = 'gallery/';
-                                } else {
-                                    $dir = 'gallery/';
-
-                                }
-                                $image_path = $dir . $image_data;
-                                if (File::exists($image_path)) {
-                                    File::delete($image_path);
-                                }
-
-                                $path = Utility::upload_file($request, 'upload_video', $fileName, $dir, []);
-
-                                if ($path['flag'] == 1) {
-                                    $url = $path['url'];
-                                } else {
-                                    return redirect()->route('business.index', \Auth::user()->id)->with('error', __($path['msg']));
-                                }
-                            }
-                        }
-                    }
-                    if ($request->upload_image) {
-                        if ($request->hasFile('upload_image')) {
-
-                            $image_size_img = $request->file('upload_image')->getSize();
-                            $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size_img);
-
-                            if ($result == 1) {
-                                $settings = Utility::getStorageSetting();
-                                $images = $request->file('upload_image');
-                                $ext = $images->getClientOriginalExtension();
-                                $fileName = 'image_' . time() . rand() . '.' . $ext;
-                                // $business->logo = $fileName;
-                                if ($settings['storage_setting'] == 'local') {
-                                    $dir = 'gallery/';
-                                } else {
-                                    $dir = 'gallery/';
-
-                                }
-                                $image_path = $dir . $image_data;
-                                if (File::exists($image_path)) {
-                                    File::delete($image_path);
-                                }
-                                $path = Utility::upload_file($request, 'upload_image', $fileName, $dir, []);
-
-                                if ($path['flag'] == 1) {
-                                    $url = $path['url'];
-                                } else {
-                                    return redirect()->route('business.index', \Auth::user()->id)->with('error', __($path['msg']));
-                                }
-                            } else {
-
-                            }
-                        }
-                    }
-
-
-                    if ($request->galleryoption == 'custom_image_link') {
-                        $fileName = $request->custom_image_link;
-                    }
-
-                    if ($request->galleryoption == 'custom_video_link') {
-                        $fileName = $request->custom_video_link;
-                    }
-
-                    if ($request->galleryoption != null && $fileName != '') {
-
-                        $details['id'] = $request->gallery_count;
-                        $details['type'] = $request->galleryoption;
-                        $details['value'] = $fileName;
-                        $gallery_details = (object) $details;
-                        $gallery_content[] = $gallery_details;
-                    }
-
-
-                    $gallery_contents = [];
-                    foreach ($gallery_content as $key => $value) {
-                        $gallery_contents[] = [
-                            'id' => $key,
-                            'type' => $value->type,
-                            'value' => $value->value,
-                        ];
-                    }
-                    if (!is_null($galleryinfo)) {
-                        if ($gallery_details != 'null') {
-                            $galleryinfo->content = json_encode($gallery_contents);
-                            $galleryinfo->is_enabled = '1';
-                            $galleryinfo->created_by = \Auth::user()->creatorId();
-                            $galleryinfo->save();
-
-                        } else {
-                            $galleryinfo->content = $gallery_details;
-                            $galleryinfo->is_enabled = '1';
-                            $galleryinfo->created_by = \Auth::user()->creatorId();
-                            $galleryinfo->save();
-                        }
-
-                    } else {
-
-                        Gallery::create([
-                            'business_id' => $business_id,
-                            'content' => json_encode($gallery_contents),
-                            'is_enabled' => '1',
-                            'created_by' => \Auth::user()->creatorId()
-                        ]);
-                    }
-
-
-                } else {
-
-                    $gallery_info = Gallery::where('business_id', $business_id)->first();
-                    if (!is_null($gallery_info)) {
-                        $gallery_info->is_enabled = '0';
-                        $gallery_info->created_by = \Auth::user()->creatorId();
-                        $gallery_info->save();
-                    } else {
-                        Gallery::create([
-                            'business_id' => $business_id,
-                            'is_enabled' => '0',
-                            'created_by' => \Auth::user()->creatorId()
-                        ]);
-                    }
-                }
-
-                //Product
-                if ($request->is_product_enabled == "on") {
-                    $productdetails = $request->product;
-                    $product_count = 1;
-                    $product_details = [];
-                    $prdetails = [];
-                    if (!empty($productdetails)) {
-                        foreach ($productdetails as $product_key => $product_val) {
-
-                            $pr_images = $request->file('product');
-                            $prdetails['id'] = $product_count;
-                            $prdetails['title'] = $product_val['title'];
-                            $prdetails['description'] = $product_val['description'];
-                            $prdetails['price'] = $product_val['price'];
-                            $prdetails['purchase_link'] = $product_val['purchase_link'];
-                            $prdetails['link_title'] = $product_val['link_title'];
-                            $prdetails['currency'] = $product_val['currency'];
-
-                            if (isset($pr_images[$product_key])) {
-
-                                foreach ($pr_images as $filekey => $file) {
-                                    $image_name = isset($product_val['get_image']) ? $product_val['get_image'] : '';
-                                    $image_path = 'product_images/' . $image_name;
-
-                                    $file_size = $file['image']->getSize();
-                                    $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $file_size);
-                                    if ($result == 1) {
-
-                                        $result = Utility::changeStorageLimit(\Auth::user()->creatorId(), $image_path);
-
-                                        $settings = Utility::getStorageSetting();
-                                        $img_ext = $pr_images[$product_key]['image']->getClientOriginalExtension();
-                                        $img_fileName = 'img_' . time() . rand() . '.' . $img_ext;
-
-
-                                        $prdetails['image'] = $img_fileName;
-                                        if ($settings['storage_setting'] == 'local') {
-                                            $dir = 'product_images/';
-                                        } else {
-                                            $dir = 'product_images/';
-
-                                        }
-                                        $image_path = $dir . $prdetails['image'];
-                                        if (File::exists($image_path)) {
-                                            File::delete($image_path);
-                                        }
-
-
-                                        $path = Utility::keyWiseUpload_file($request, 'image', $img_fileName, $dir, 'product', $product_key, []);
-                                        if ($path['flag'] == 1) {
-                                            $url = $path['url'];
-                                        } else {
-                                            return redirect()->route('business.index', \Auth::user()->id)->with('error', __($path['msg']));
-                                        }
-                                    } else {
-                                        if (isset($product_val['get_image']) && !is_null($product_val['get_image'])) {
-                                            $prdetails['image'] = $product_val['get_image'];
-                                        } else {
-                                            $prdetails['image'] = "";
-                                        }
-                                    }
-                                }
-
-                            } else {
-
-                                if (isset($product_val['get_image']) && !is_null($product_val['get_image'])) {
-                                    $prdetails['image'] = $product_val['get_image'];
-                                } else {
-                                    $prdetails['image'] = "";
-                                }
-                            }
-
-                            $product_details[$product_key] = $prdetails;
-                            $product_count++;
-
-                        }
-                        $product_details = json_encode($product_details);
-
-                        $product_data = Product::where('business_id', $business_id)->first();
-                        if (!is_null($product_data)) {
-
-                            if ($product_details != 'null') {
-                                $product_data->content = $product_details;
-                                $product_data->is_enabled = '1';
-                                $product_data->created_by = \Auth::user()->creatorId();
-                                $product_data->save();
-                            } else {
-                                $product_data->is_enabled = '1';
-                                $product_data->created_by = \Auth::user()->creatorId();
-                                $product_data->save();
-                            }
-                        } else {
-                            Product::create([
-                                'business_id' => $business_id,
-                                'content' => $product_details,
-                                'is_enabled' => '1',
-                                'created_by' => \Auth::user()->creatorId()
-                            ]);
-                        }
-                    } else {
-                        $product_details = json_encode($product_details);
-                        $product_data = Product::where('business_id', $business_id)->first();
-                        if (!is_null($product_data)) {
-
-                            if ($product_details != 'null') {
-                                $product_data->content = $product_details;
-                                $product_data->is_enabled = '1';
-                                $product_data->created_by = \Auth::user()->creatorId();
-                                $product_data->save();
-                            } else {
-                                $product_data->is_enabled = '1';
-                                $product_data->created_by = \Auth::user()->creatorId();
-                                $product_data->save();
-                            }
-                        } else {
-                            Product::create([
-                                'business_id' => $business_id,
-                                'content' => $product_details,
-                                'is_enabled' => '1',
-                                'created_by' => \Auth::user()->creatorId()
-                            ]);
-                        }
-                    }
-                } else {
-                    $product_data = Product::where('business_id', $business_id)->first();
-                    if (!is_null($product_data)) {
-                        $product_data->is_enabled = '0';
-                        $product_data->created_by = \Auth::user()->creatorId();
-                        $product_data->save();
-                    } else {
-                        Product::create([
-                            'business_id' => $business_id,
-                            'is_enabled' => '0',
-                            'created_by' => \Auth::user()->creatorId()
-                        ]);
-                    }
-                }
-                if ($request->is_google_map_enabled == "on") {
-                    $request->validate([
-                        'google_map_link' => ['required'], // Ensure it's a valid URL
-                    ]);
-                    $google_map_link = $request->google_map_link;
-                    if (strpos($google_map_link, '<iframe') !== false) {
-                        $businessData = Business::where('id', $business_id)->first();
-                        if (!is_null($businessData)) {
-
-                            $businessData->google_map_link = $google_map_link;
-                            $businessData->is_google_map_enabled = '1';
-                            $businessData->created_by = \Auth::user()->creatorId();
-                            $businessData->save();
-
-                        } else {
-                            Business::create([
-                                'id' => $business_id,
-                                'google_map_link' => $google_map_link,
-                                'is_enabled' => '1',
-                                'created_by' => \Auth::user()->creatorId()
-                            ]);
-                        }
-                    } else {
-                        $tab = 2;
-                        return redirect()->back()->with('error', __('Provided link is not an iframe in google map block.'))->with('tab', $tab);
-                    }
-                } else {
-                    $google_map_link = $request->google_map_link;
-                    $businessData = Business::where('id', $business_id)->first();
-                    if (!is_null($businessData)) {
-
-                        $businessData->google_map_link = $google_map_link;
-                        $businessData->is_google_map_enabled = '0';
-                        $businessData->created_by = \Auth::user()->creatorId();
-                        $businessData->save();
-
-                    } else {
-                        Business::create([
-                            'id' => $business_id,
-                            'google_map_link' => $google_map_link,
-                            'is_enabled' => '0',
-                            'created_by' => \Auth::user()->creatorId()
-                        ]);
-                    }
-                }
-                if ($request->is_app_info_enabled == "on") {
-                    $validator = \Validator::make(
-                        $request->all(),
-                        [
-                            'playstore_id' => 'required|url',
-                            'appstore_id' => 'required|url',
-                        ]
-                    );
-                    if ($validator->fails()) {
-                        $messages = $validator->getMessageBag();
-                        return redirect()->back()->with('error', $messages->first());
-                    }
-                    $appData = CardAppinfo::where('business_id', $business_id)->first();
-                    if (!is_null($appData)) {
-
-                        $appData->playstore_id = $request->playstore_id;
-                        $appData->appstore_id = $request->appstore_id;
-                        $appData->variant = !is_null($request->variant) ? $request->variant : 1;
-                        $appData->is_enabled = '1';
-                        $appData->created_by = \Auth::user()->creatorId();
-                        $appData->save();
-
-                    } else {
-                        CardAppinfo::create([
-                            'business_id' => $business_id,
-                            'playstore_id' => $request->playstore_id,
-                            'appstore_id' => $request->appstore_id,
-                            'variant' => !is_null($request->variant) ? $request->variant : 1,
-                            'is_enabled' => '1',
-                            'created_by' => \Auth::user()->creatorId()
-                        ]);
-                    }
-                } else {
-
-                    $appData = CardAppinfo::where('business_id', $business_id)->first();
-                    if (!is_null($appData)) {
-                        $appData->is_enabled = '0';
-                        $appData->created_by = \Auth::user()->creatorId();
-                        $appData->save();
-                    } else {
-                        CardAppinfo::create([
-                            'business_id' => $business_id,
-                            'is_enabled' => '0',
-                            'created_by' => \Auth::user()->creatorId()
-                        ]);
-                    }
-                }
-                // svg
-                if ($request->is_svg_enabled == "on") {
-                    if ($request->hasFile('svg_text')) {
-                        $validator = Validator::make($request->all(), [
-                            'svg_text' => 'mimes:svg|max:2048', // Allow only SVG files, with a size limit (optional)
-                        ]);
-
-                        // Check if the validation fails
-                        if ($validator->fails()) {
-                            return redirect()->route('business.index', \Auth::user()->id)->with('error', 'Please select a SVG image');
-                        }
-                        $logoname = $business['svg_text'] ? $business['svg_text'] : '';
-                        $image_path = 'svg/' . $logoname;
-                        $svg_text = $request->file('svg_text');
-                        $ext = $svg_text->getClientOriginalExtension();
-                        $fileName = 'svg_' . time() . rand() . '.' . $ext;
-
-                        $business->svg_text = $fileName;
-
-                        $dir = 'svg/';
-                        $image_path = $dir . $business['svg_text'];
-                        if (File::exists($image_path)) {
-                            File::delete($image_path);
-                        }
-                        $path = Utility::upload_file($request, 'svg_text', $fileName, $dir, []);
-
-                        if ($path['flag'] == 1) {
-                            $url = $path['url'];
-                        } else {
-                            return redirect()->route('business.index', \Auth::user()->id)->with('error', __($path['msg']));
-                        }
-                    }
-                    else{
-                        $business->is_svg_enabled = '1';
-                        $business->created_by = \Auth::user()->creatorId();
-                        $business->save();
-                    }
-                }else {
-                    $business->is_svg_enabled = '0';
-                    $business->created_by = \Auth::user()->creatorId();
-                    $business->save();
-                }
-                //payment block
-                if($request->is_payment_enabled == "on"){
-                    $paymentOptions = $request->input('paymentoption') ?? [];
-                    $stripeKey = $request->input('stripe_key');
-                    $stripeSecret = $request->input('stripe_secret');
-                    $paypalMode = $request->input('paypal_mode');
-                    $paypalClientId = $request->input('paypal_client_id');
-                    $paypalSecretKey = $request->input('paypal_secret_key');
-                    $paymentInfo = [];
-                    // Check if Stripe is selected
-                    if (in_array('stripe', $paymentOptions)) {
-                        $paymentInfo['stripe'] = [
-                            'status' => 'on',
-                            'stripe_key' => $request->input('stripe_key'),
-                            'stripe_secret' => $request->input('stripe_secret'),
-                        ];
-                    } else {
-                        $paymentInfo['stripe'] = [
-                            'status' => 'off',
-                            'stripe_key' => $request->input('stripe_key'),
-                            'stripe_secret' => $request->input('stripe_secret'),
-                        ];
-                    }
-                    // Check if Paypal is selected
-                    if (in_array('paypal', $paymentOptions)) {
-                        $paymentInfo['paypal'] = [
-                            'status' => 'on',
-                            'paypal_mode' => $request->input('paypal_mode'),
-                            'paypal_client_id' => $request->input('paypal_client_id'),
-                            'paypal_secret_key' => $request->input('paypal_secret_key'),
-                        ];
-                    } else {
-                        $paymentInfo['paypal'] = [
-                            'status' => 'off',
-                            'paypal_mode' => $request->input('paypal_mode'),
-                            'paypal_client_id' => $request->input('paypal_client_id'),
-                            'paypal_secret_key' => $request->input('paypal_secret_key'),
-                        ];
-                    }
-                    $jsonResult = json_encode($paymentInfo);
-                    $cardPayment = CardPayment::where('business_id', $business->id)->first();
-                    if ($cardPayment != null) {
-                        $cardPayment->business_id = $business->id;
-                        $cardPayment->payment_amount = $request->payment_amount;
-                        $cardPayment->content = $jsonResult;
-                        //$cardPayment->payment_status = 'Unpaid';
-                        $cardPayment->is_enabled = $request->is_payment_enabled == 'on' ? '1' : '0';
-                        $cardPayment->created_by = \Auth::user()->creatorId();
-                        $cardPayment->save();
-                    }
-                    else {
-                        $cardPayment = new CardPayment();
-                        $cardPayment->business_id = $business->id;
-                        $cardPayment->payment_amount = $request->payment_amount;
-                        $cardPayment->content = $jsonResult;
-                        $cardPayment->is_enabled = $request->is_payment_enabled == 'on' ? '1' : '0';
-                        $cardPayment->created_by = \Auth::user()->creatorId();
-                        $cardPayment->save();
-
-                    }
-
-
-                }else{
-                    $cardPayment = CardPayment::where('business_id', $business_id)->first();
-                    if (!is_null($cardPayment)) {
-                        $cardPayment->is_enabled = '0';
-                        $cardPayment->created_by = \Auth::user()->creatorId();
-                        $cardPayment->save();
-                    } else {
-                        CardPayment::create([
-                            'business_id' => $business_id,
-                            'is_enabled' => '0',
-                            'created_by' => \Auth::user()->creatorId()
-                        ]);
-                    }
-
-                }
-                $business->designation = $request->designation;
-                $business->business_category = $request->category;
-                $business->created_by = \Auth::user()->creatorId();
-                $business->save();
-                $tab = 2;
-                return redirect()->back()->with('success', __('Business Information Add Successfully') . ((isset($result) && $result != 1) ? '<br> <span class="text-danger">' . $result . '</span>' : ''))->with('tab', $tab);
-            } else {
-
-                return redirect()->back()->with('error', __('Business does not exist'));
-            }
-        } else {
+        $tab = 1;
+        if (!\Auth::user()->can('edit business'))
             return redirect()->back()->with('error', __('Permission denied.'));
+
+        if (is_null($business))
+            return redirect()->back()->with('error', __('Business does not exist'));
+
+        $count = Business::where('id', $business->id)->where('created_by', \Auth::user()->creatorId())->count();
+        if ($count === 0) {
+            return redirect()->route('business.index')->with('error', __('This card number is not yours.'));
         }
+
+        $count = Business::where('slug', $request->slug)->count();
+        if (!is_null($business)) {
+            if ($count == 0) {
+                $business->slug = $request->slug;
+            } elseif ($count == 1) {
+                if ($business->slug != $request->slug) {
+                    return redirect()->route('business.index')->with('error', __('Slug is already used.........!'));
+                }
+            }
+        }
+
+        if (is_null($business->banner) && is_null($business->logo)) {
+            $validator = \Validator::make(
+                $request->all(),
+                [
+                    'banner' => 'required',
+                    'logo' => 'required',
+                ]
+            );
+            if ($validator->fails()) {
+                $messages = $validator->getMessageBag();
+                return redirect()->back()->with('error', $messages->first());
+            }
+        }
+
+        if ($request->hasFile('logo')) {
+            $logoname = $business['logo'] ? $business['logo'] : '';
+            $image_path = 'card_logo/' . $logoname;
+            $image_size = $request->file('logo')->getSize();
+            $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
+            if ($result == 1) {
+                $result = Utility::changeStorageLimit(\Auth::user()->creatorId(), $image_path);
+                $settings = Utility::getStorageSetting();
+                $logo = $request->file('logo');
+                $ext = $logo->getClientOriginalExtension();
+                $fileName = 'logo_' . uniqid() . '.' . $ext;
+
+                $business->logo = $fileName;
+                if ($settings['storage_setting'] == 'local') {
+                    $dir = 'card_logo/';
+                } else {
+                    $dir = 'card_logo/';
+                }
+                $image_path = $dir . $business['logo'];
+                if (File::exists($image_path)) {
+                    File::delete($image_path);
+                }
+                $path = Utility::upload_file($request, 'logo', $fileName, $dir, []);
+
+                if ($path['flag'] == 1) {
+                    $url = $path['url'];
+                } else {
+                    return redirect()->route('business.index', \Auth::user()->id)->with('error', __($path['msg']));
+                }
+            }
+        }
+
+        if ($request->hasFile('banner')) {
+            $bannername = $business['banner'] ? $business['banner'] : '';
+            $image_path1 = 'card_banner/' . $bannername;
+            $image_size = $request->file('banner')->getSize();
+            $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
+
+            if ($result == 1) {
+                $result = Utility::changeStorageLimit(\Auth::user()->creatorId(), $image_path1);
+
+                $settings = Utility::getStorageSetting();
+                $banner = $request->file('banner');
+                $ext = $banner->getClientOriginalExtension();
+                $fileName = 'banner' . uniqid() . '.' . $ext;
+
+                $business->banner = $fileName;
+
+                if ($settings['storage_setting'] == 'local') {
+                    $dir = 'card_banner/';
+                } else {
+                    $dir = 'card_banner/';
+                }
+
+                $image_path = $dir . $business['banner'];
+                if (File::exists($image_path)) {
+                    File::delete($image_path);
+                }
+                $path = Utility::upload_file($request, 'banner', $fileName, $dir, []);
+
+                if ($path['flag'] == 1) {
+                    $url = $path['url'];
+                } else {
+                    return redirect()->route('business.index', \Auth::user()->id)->with('error', __($path['msg']));
+                }
+            }
+        }
+
+        if ($request->hasFile('company_logo')) {
+            $company_logo_name = $business['company_logo'] ? $business['company_logo'] : '';
+            $image_path1 = 'card_company_logo/' . $company_logo_name;
+            $image_size = $request->file('company_logo')->getSize();
+            $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
+
+            if ($result == 1) {
+                $result = Utility::changeStorageLimit(\Auth::user()->creatorId(), $image_path1);
+
+                $settings = Utility::getStorageSetting();
+                $company_logo = $request->file('company_logo');
+                $ext = $company_logo->getClientOriginalExtension();
+                $fileName = 'company_logo' . uniqid() . '.' . $ext;
+
+                $business->company_logo = $fileName;
+
+
+                if ($settings['storage_setting'] == 'local') {
+                    $dir = 'card_company_logo/';
+                } else {
+                    $dir = 'card_company_logo/';
+
+                }
+                $image_path = $dir . $business['company_logo'];
+                if (File::exists($image_path)) {
+                    File::delete($image_path);
+                }
+                $path = Utility::upload_file($request, 'company_logo', $fileName, $dir, []);
+
+                if ($path['flag'] == 1) {
+                    $url = $path['url'];
+                } else {
+                    return redirect()->route('business.index', \Auth::user()->id)->with('error', __($path['msg']));
+                }
+            }
+        }
+
+        $business_id = $request->business_id;
+        $business->title = $request->title;
+        $business->designation = $request->designation;
+        $business->sub_title = $request->sub_title;
+        $business->description = $request->description;
+
+        $sociallinks_content = json_encode($request->socials);
+        $sociallinks = social::where('business_id', $business_id)->first();
+        if (!is_null($sociallinks)) {
+            $sociallinks->content = $sociallinks_content === "null" ? null : $sociallinks_content;
+            $sociallinks->created_by = \Auth::user()->creatorId();
+            $sociallinks->save();
+        } else {
+            if ($sociallinks_content !== "null") {
+                social::create([
+                    'business_id' => $business_id,
+                    'content' => $sociallinks_content,
+                    'created_by' => \Auth::user()->creatorId()
+                ]);
+            }
+        }
+
+        $business->phone = $request->phone;
+        $business->address = $request->address;
+        $business->email = $request->email;
+        $business->website = $request->website;
+
+
+        $business->card_bg_color = $request->card_bg_color;
+        $business->button_bg_color = $request->button_bg_color;
+        $business->card_text_color = $request->card_text_color;
+        $business->button_text_color = $request->button_text_color;
+
+
+        $services_data = service::where('business_id', $business_id)->first();
+        $servicedetails = $request->services;
+        $is_service_enabled = $request->is_services_enabled === "on";
+        $service_details = null;
+        if ($servicedetails) {
+            $service_details = [];
+            $service_count = 1;
+            foreach ($servicedetails as $service_key => $service_val) {
+                $service_details[$service_key] = [
+                    'id' => $service_count,
+                    'title' => $service_val['title'],
+                ];
+                $service_count++;
+            }
+            $service_details = json_encode($service_details);
+        }
+        if (!is_null($services_data)) {
+            $services_data->content = $service_details;
+            $services_data->is_enabled = $is_service_enabled;
+            $services_data->created_by = \Auth::user()->creatorId();
+            $services_data->save();
+        } else {
+            service::create([
+                'business_id' => $business_id,
+                'content' => $service_details,
+                'is_enabled' => $is_service_enabled,
+                'created_by' => \Auth::user()->creatorId()
+            ]);
+        }
+
+        //Gallery
+        $fileName = "";
+        $gallery_content = [];
+        $galleryinfo = Gallery::where('business_id', $business_id)->first();
+        if ($galleryinfo && $galleryinfo->content) {
+            $gallery_content = (array)json_decode($galleryinfo->content);
+        }
+        if ($request->hasFile('upload_video')) {
+            $image_size_video = $request->file('upload_video')->getSize();
+            $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size_video);
+            if ($result == 1) {
+                $settings = Utility::getStorageSetting();
+                $video = $request->file('upload_video');
+                $ext = $video->getClientOriginalExtension();
+                $fileName = 'video_' . uniqid() . '.' . $ext;
+                if ($settings['storage_setting'] == 'local') {
+                    $dir = 'gallery/';
+                } else {
+                    $dir = 'gallery/';
+                }
+                $path = Utility::upload_file($request, 'upload_video', $fileName, $dir);
+
+                if ($path['flag'] == 1) {
+                    $url = $path['url'];
+                } else {
+                    return redirect()->route('business.index', \Auth::user()->id)->with('error', __($path['msg']));
+                }
+            }
+        }
+
+        if ($request->hasFile('upload_image')) {
+            $image_size_img = $request->file('upload_image')->getSize();
+            $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size_img);
+            if ($result == 1) {
+                $settings = Utility::getStorageSetting();
+                $images = $request->file('upload_image');
+                $ext = $images->getClientOriginalExtension();
+                $fileName = 'image_' . uniqid() . '.' . $ext;
+                if ($settings['storage_setting'] == 'local') {
+                    $dir = 'gallery/';
+                } else {
+                    $dir = 'gallery/';
+                }
+                $path = Utility::upload_file($request, 'upload_image', $fileName, $dir, []);
+
+                if ($path['flag'] == 1) {
+                    $url = $path['url'];
+                } else {
+                    return redirect()->route('business.index', \Auth::user()->id)->with('error', __($path['msg']));
+                }
+            }
+        }
+
+        if ($request->galleryoption === "custom_image_link" && $request->custom_image_link) {
+            $fileName = $request->custom_image_link;
+        }
+        if ($request->galleryoption === "custom_video_link" && $request->custom_video_link) {
+            $fileName = $request->custom_video_link;
+        }
+
+        $gallery_contents = [];
+        if ($fileName) {
+            $gallery_content[] = (object)[
+                'id' => count($gallery_content),
+                'type' => $request->galleryoption,
+                'value' => $fileName,
+            ];
+            foreach ($gallery_content as $key => $value) {
+                $gallery_contents[] = [
+                    'id' => $key,
+                    'type' => $value->type,
+                    'value' => $value->value,
+                ];
+            }
+        }
+        $is_gallery_enabled = $request->is_gallery_enabled === "on";
+        $is_video_enabled = $request->is_video_enabled === "on";
+        if ($galleryinfo) {
+            $galleryinfo->is_enabled = $is_gallery_enabled;
+            $galleryinfo->is_video_enabled = $is_video_enabled;
+            if ($fileName) {
+                $galleryinfo->content = json_encode($gallery_contents);
+            }
+            $galleryinfo->created_by = \Auth::user()->creatorId();
+            $galleryinfo->save();
+        } else {
+            Gallery::create([
+                'business_id' => $business_id,
+                'content' => $fileName ? json_encode($gallery_contents): null,
+                'is_enabled' => $is_gallery_enabled,
+                'is_video_enabled' => $is_video_enabled,
+                'created_by' => \Auth::user()->creatorId()
+            ]);
+        }
+
+
+        $business->google_review_link = $request->google_review_link;
+        $business->google_review_enabled = $request->google_review_enabled === "on";
+
+        //Qr Code
+        $business_qr = Businessqr::where('business_id', $business_id)->first();
+        if (!$business_qr) $business_qr = new Businessqr();
+        if ($request->hasFile('qrcode_image')) {
+            $image_size = $request->file('qrcode_image')->getSize();
+            $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
+            if ($result === 1) {
+                $old_qrcode_image = $business_qr && $business_qr->image ? $business_qr->image : null;
+                if($old_qrcode_image){
+                    $result = Utility::changeStorageLimit(\Auth::user()->creatorId(), 'qrcode/' . $old_qrcode_image);
+                }
+                $settings = Utility::getStorageSetting();
+                if ($settings['storage_setting'] == 'local') {
+                    $dir = 'qrcode/';
+                } else {
+                    $dir = 'qrcode/';
+                }
+                $qrcode = $request->file('qrcode_image');
+                $ext = $qrcode->getClientOriginalExtension();
+                $fileName = 'qrcode' . uniqid() . '.' . $ext;
+                $image_path = $dir . $fileName;
+                if (File::exists($image_path)) {
+                    File::delete($image_path);
+                }
+                Utility::upload_file($request, 'qrcode_image', $fileName, $dir, []);
+                $business_qr->image = $fileName;
+            }
+        }
+        $business_qr->business_id = $business_id;
+        $business_qr->background_color = "#FFFFFF";
+        $business_qr->radius = 26;
+        $business_qr->size = 32;
+        $business_qr->foreground_color = $request->qrcode_foreground_color;
+        $business_qr->qr_type = $request->qrcode_type;
+        $business_qr->save();
+
+        $business->created_by = \Auth::user()->creatorId();
+        $business->save();
+        return redirect()->back()->with('success', __('Business Information Updated Successfully') . ((isset($result) && $result != 1) ? '<br> <span class="text-danger">' . $result . '</span>' : ''))->with('tab', $tab);
+
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Business  $business
+     * @param \App\Business $business
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -1663,6 +817,7 @@ class BusinessController extends Controller
             return redirect()->back()->with('error', __('Permission denied.'));
         }
     }
+
     public function addField(Request $request)
     {
         return $request->all();
@@ -1686,375 +841,185 @@ class BusinessController extends Controller
         }
         $business = Business::getBusinessBySlug($slug);
         if (!is_null($business)) {
-            $domain = DomainRequest::where('status', '1')->where('business_id', $business->id)->first();
-            if ($business->enable_domain == 'on') {
-                if ($domain) {
-
-                    if ($business->admin_enable == 'on') {
-                        if (\Auth::check()) {
-                            $lang = \App\Models\Utility::settings();
-                            \App::setLocale($lang['company_default_language']);
-                        } else {
-
-                            $data = DB::table('settings');
-                            $data = $data->where('created_by', '=', $business->created_by)->where('name', 'company_default_language')->first();
-                            \App::setLocale(!empty($data->value) ? $data->value : 'en');
-                        }
-
-                        $is_slug = "true";
-
-                        $businessfields = Utility::getFields();
-                        $businesshours = business_hours::where('business_id', $business->id)->first();
-                        $appoinment = appoinment::where('business_id', $business->id)->first();
-                        $appoinment_hours = [];
-                        if (!empty($appoinment->content)) {
-                            $appoinment_hours = json_decode($appoinment->content);
-                        }
-
-                        $services = service::where('business_id', $business->id)->first();
-                        $services_content = [];
-                        if (!empty($services->content)) {
-                            $services_content = json_decode($services->content);
-                        }
-
-                        $testimonials = testimonial::where('business_id', $business->id)->first();
-                        $testimonials_content = [];
-                        if (!empty($testimonials->content)) {
-                            $testimonials_content = json_decode($testimonials->content);
-                        }
-
-                        $contactinfo = ContactInfo::where('business_id', $business->id)->first();
-                        $contactinfo_content = [];
-                        if (!empty($contactinfo->content)) {
-                            $contactinfo_content = json_decode($contactinfo->content);
-                        }
-
-                        $sociallinks = social::where('business_id', $business->id)->first();
-                        $social_content = [];
-                        if (!empty($sociallinks->content)) {
-                            $social_content = json_decode($sociallinks->content);
-                        }
-
-                        //Gallery
-                        $gallery = gallery::where('business_id', $business->id)->first();
-                        $gallery_contents = [];
-                        if (!empty($gallery->content)) {
-                            $gallery_contents = json_decode($gallery->content);
-                        }
-
-
-                        $customhtml = Business::where('id', $business->id)->first();
-                        $user = User::find($business->created_by);
-                        $plan = Plan::find($user->plan);
-                        $days = business_hours::$days;
-                        $business_hours = '';
-                        if (!empty($businesshours->content)) {
-                            $business_hours = json_decode($businesshours->content);
-                        }
-                        if (json_decode($business->card_theme) == NULL) {
-                            $card_order = [];
-                            $card_order['theme'] = $business->card_theme;
-                            $card_order['order'] = Utility::getDefaultThemeOrder($business->card_theme);
-                            $business->card_theme = json_encode($card_order);
-                            $business->save();
-                        }
-                        $card_theme = json_decode($business->card_theme);
-
-                        $pixels = PixelFields::where('business_id', $business->id)->get();
-                        $pixelScript = [];
-                        foreach ($pixels as $pixel) {
-
-                            if (!$pixel->disabled) {
-                                $pixelScript[] = pixelSourceCode($pixel['platform'], $pixel['pixel_id']);
-                            }
-                        }
-
-                        $qr_detail = Businessqr::where('business_id', $business->id)->first();
-                        //Product
-                        $products = Product::where('business_id', $business->id)->first();
-                        $products_content = [];
-                        if (!empty($products->content)) {
-                            $products_content = json_decode($products->content);
-                        }
-                        $cardPayment = CardPayment::cardPaymentData($business->id);
-                        $cardPayment_content = [];
-                        if (!empty($cardPayment->content)) {
-                            $cardPayment_content = json_decode($cardPayment->content);
-                        }
-                        $appInfo = CardAppinfo::cardAppData($business->id);
-                         //
-                         $social_nos = 1;
-                         $appointment_nos = 0;
-                         $service_row_nos = 0;
-                         $product_row_nos = 0;
-                         $testimonials_row_nos = 0;
-                         $gallery_row_no = 0;
-
-                         $nos = 1;
-                         $stringid = $business->id;
-                         $is_enable = false;
-                         $is_enabled= false;
-                         $is_contact_enable = false;
-                         $is_enable_appoinment = false;
-                         $is_enable_service = false;
-                         $is_enable_product = false;
-                         $is_enable_testimonials = false;
-                         $is_enable_sociallinks = false;
-                         $is_custom_html_enable = false;
-                         $is_google_map_enabled = false;
-                         $is_enable_gallery = false;
-                         $is_payment = false;
-                         $is_appinfo = false;
-                         $custom_html = $business->custom_html_text;
-                         $is_branding_enabled = false;
-                         $branding = $business->branding_text;
-                         $is_gdpr_enabled = false;
-                         $gdpr_text = $business->gdpr_text;
-                         $card_theme = json_decode($business->card_theme);
-
-                         $banner = \App\Models\Utility::get_file('card_banner');
-                         $logo = \App\Models\Utility::get_file('card_logo');
-                         $image = \App\Models\Utility::get_file('testimonials_images');
-                         $s_image = \App\Models\Utility::get_file('service_images');
-                         $pr_image = \App\Models\Utility::get_file('product_images');
-
-                         $company_favicon = \App\Models\Utility::getsettingsbyid($business->created_by);
-                         $company_favicon = $company_favicon['company_favicon'];
-                         $logo1 = \App\Models\Utility::get_file('uploads/logo/');
-
-                         $meta_image = \App\Models\Utility::get_file('meta_image');
-                         $gallery_path = \App\Models\Utility::get_file('gallery');
-                         $qr_path = \App\Models\Utility::get_file('qrcode');
-                         $svg_text = \App\Models\Utility::get_file('svg');
-
-                         $theme = $business->theme;
-                         $color = substr($business->theme_color, 0, 6);
-                         $meta_tag_image = $meta_image . '/' . $business->meta_image;
-                         if (!is_null($custom_html) && !is_null($customhtml)) {
-                             $customhtml->is_custom_html_enabled == '1' ? ($is_custom_html_enable = true) : ($is_custom_html_enable = false);
-                         }
-                         if (!is_null($business->is_branding_enabled) && !is_null($business->is_branding_enabled)) {
-                             !empty($business->is_branding_enabled) && $business->is_branding_enabled == 'on'
-                                 ? ($is_branding_enabled = true)
-                                 : ($is_branding_enabled = false);
-                         } else {
-                             $is_branding_enabled = false;
-                         }
-                         if (!is_null($business->is_gdpr_enabled) && !is_null($business->is_gdpr_enabled)) {
-                             !empty($business->is_gdpr_enabled) && $business->is_gdpr_enabled == 'on'
-                                 ? ($is_gdpr_enabled = true)
-                                 : ($is_gdpr_enabled = false);
-                         }
-                         if (!is_null($appInfo)) {
-                             $appInfo['is_enabled'] == '1' ? ($is_appinfo = true) : ($is_appinfo = false);
-                         }
-                         if (!is_null($business) && !is_null($business)) {
-                             $business->is_svg_enabled == '1' ? ($is_svg_enabled = true) : ($is_svg_enabled = false);
-                         }
-                         if (!is_null($social_content) && !is_null($sociallinks)) {
-                             $sociallinks['is_enabled'] == '1' ? ($is_enable_sociallinks = true) : ($is_enable_sociallinks = false);
-                         }
-                         if (!is_null($business) && !is_null($business)) {
-                             $business->is_google_map_enabled == '1' ? ($is_google_map_enabled = true) : ($is_google_map_enabled = false);
-                         }
-                         if (!is_null($cardPayment) && !is_null($cardPayment)) {
-                             $cardPayment->is_enabled == '1' ? ($is_enabled = true) : ($is_enabled = false);
-                         }
-                         $SITE_RTL = \App\Models\Utility::settings()['SITE_RTL'];
-                         $url_link = env('APP_URL') . '/' . $business->slug;
-                         $theme=$business->theme;
-                         $themeName = \App\Models\Utility::themeOne()[$theme][$business->theme_color]['theme_name'] ?? null;
-                        return view('card.' . $card_theme->theme . '.index', compact('appInfo', 'businessfields', 'contactinfo', 'contactinfo_content', 'appoinment_hours', 'appoinment', 'services_content', 'services', 'testimonials_content', 'testimonials', 'social_content', 'sociallinks', 'customhtml', 'businesshours', 'business_hours', 'business', 'days', 'is_slug', 'plan', 'gallery', 'gallery_contents', 'pixelScript', 'qr_detail', 'products', 'products_content', 'cardPayment', 'cardPayment_content', 'social_nos', 'service_row_nos', 'product_row_nos', 'testimonials_row_nos', 'gallery_row_no', 'nos', 'stringid', 'is_custom_html_enable', 'is_branding_enabled', 'branding', 'is_gdpr_enabled', 'gdpr_text', 'card_theme', 'banner', 'logo', 'image', 's_image', 'pr_image', 'company_favicon', 'logo1', 'meta_image', 'gallery_path', 'qr_path', 'theme', 'color', 'SITE_RTL', 'url_link', 'is_appinfo', 'is_svg_enabled', 'svg_text','is_enable_sociallinks','appointment_nos','is_google_map_enabled','custom_html','is_enabled','meta_tag_image','themeName'));
-                    } else {
-                        return abort('403', 'The Link You Followed Has Disactive');
-                    }
+            if ($business->admin_enable == 'on') {
+                if (\Auth::check()) {
+                    $lang = \App\Models\Utility::settings();
+                    \App::setLocale($lang['company_default_language']);
                 } else {
-                    abort(404);
+
+                    $data = DB::table('settings');
+                    $data = $data->where('created_by', '=', $business->created_by)->where('name', 'company_default_language')->first();
+                    \App::setLocale(!empty($data->value) ? $data->value : 'en');
                 }
-            } else {
 
-                if ($business->admin_enable == 'on') {
+                $is_slug = "true";
+
+                $businessfields = Utility::getFields();
+                $businesshours = business_hours::where('business_id', $business->id)->first();
+                $appoinment = appoinment::where('business_id', $business->id)->first();
+                $appoinment_hours = [];
+                if (!empty($appoinment->content)) {
+                    $appoinment_hours = json_decode($appoinment->content);
+                }
+
+                $services = service::where('business_id', $business->id)->first();
+                $services_content = [];
+                if (!empty($services->content)) {
+                    $services_content = json_decode($services->content);
+                }
+
+                $testimonials = testimonial::where('business_id', $business->id)->first();
+                $testimonials_content = [];
+                if (!empty($testimonials->content)) {
+                    $testimonials_content = json_decode($testimonials->content);
+                }
+
+                $contactinfo = ContactInfo::where('business_id', $business->id)->first();
+                $contactinfo_content = [];
+                if (!empty($contactinfo->content)) {
+                    $contactinfo_content = json_decode($contactinfo->content);
+                }
+
+                $sociallinks = social::where('business_id', $business->id)->first();
+                $social_content = [];
+                if (!empty($sociallinks->content)) {
+                    $social_content = json_decode($sociallinks->content);
+                }
+
+                //Gallery
+                $gallery = gallery::where('business_id', $business->id)->first();
+                $gallery_contents = [];
+                if (!empty($gallery->content)) {
+                    $gallery_contents = json_decode($gallery->content);
+                }
 
 
-                    if (\Auth::check()) {
-                        $lang = \App\Models\Utility::settings();
-                        \App::setLocale($lang['company_default_language']);
-                    } else {
+                $customhtml = Business::where('id', $business->id)->first();
+                $user = User::find($business->created_by);
+                $plan = Plan::find($user->plan);
+                $days = business_hours::$days;
+                $business_hours = '';
+                if (!empty($businesshours->content)) {
+                    $business_hours = json_decode($businesshours->content);
+                }
+                if (json_decode($business->card_theme) == NULL) {
+                    $card_order = [];
+                    $card_order['theme'] = $business->card_theme;
+                    $card_order['order'] = Utility::getDefaultThemeOrder($business->card_theme);
+                    $business->card_theme = json_encode($card_order);
+                    $business->save();
+                }
+                $card_theme = json_decode($business->card_theme);
 
-                        $data = DB::table('settings');
-                        $data = $data->where('created_by', '=', $business->created_by)->where('name', 'company_default_language')->first();
-                        \App::setLocale(!empty($data->value) ? $data->value : 'en');
+                $pixels = PixelFields::where('business_id', $business->id)->get();
+                $pixelScript = [];
+                foreach ($pixels as $pixel) {
+
+                    if (!$pixel->disabled) {
+                        $pixelScript[] = pixelSourceCode($pixel['platform'], $pixel['pixel_id']);
                     }
+                }
 
-                    $is_slug = "true";
+                $qr_detail = Businessqr::where('business_id', $business->id)->first();
+                //Product
+                $products = Product::where('business_id', $business->id)->first();
+                $products_content = [];
+                if (!empty($products->content)) {
+                    $products_content = json_decode($products->content);
+                }
+                $cardPayment = CardPayment::cardPaymentData($business->id);
+                $cardPayment_content = [];
+                if (!empty($cardPayment->content)) {
+                    $cardPayment_content = json_decode($cardPayment->content);
+                }
+                $appInfo = CardAppinfo::cardAppData($business->id);
+                //
+                $social_nos = 1;
+                $appointment_nos = 0;
+                $service_row_nos = 0;
+                $product_row_nos = 0;
+                $testimonials_row_nos = 0;
+                $gallery_row_no = 0;
 
-                    $businessfields = Utility::getFields();
-                    $businesshours = business_hours::where('business_id', $business->id)->first();
-                    $appoinment = appoinment::where('business_id', $business->id)->first();
-                    $appoinment_hours = [];
-                    if (!empty($appoinment->content)) {
-                        $appoinment_hours = json_decode($appoinment->content);
-                    }
+                $nos = 1;
+                $stringid = $business->id;
+                $is_enable = false;
+                $is_enabled = false;
+                $is_contact_enable = false;
+                $is_enable_appoinment = false;
+                $is_enable_service = false;
+                $is_enable_product = false;
+                $is_enable_testimonials = false;
+                $is_enable_sociallinks = false;
+                $is_custom_html_enable = false;
+                $is_google_map_enabled = false;
+                $is_enable_gallery = false;
+                $is_payment = false;
+                $is_appinfo = false;
+                $custom_html = $business->custom_html_text;
+                $is_branding_enabled = false;
+                $branding = $business->branding_text;
+                $is_gdpr_enabled = false;
+                $gdpr_text = $business->gdpr_text;
+                $card_theme = json_decode($business->card_theme);
 
-                    $services = service::where('business_id', $business->id)->first();
-                    $services_content = [];
-                    if (!empty($services->content)) {
-                        $services_content = json_decode($services->content);
-                    }
+                $banner = \App\Models\Utility::get_file('card_banner');
+                $logo = \App\Models\Utility::get_file('card_logo');
+                $company_logo = \App\Models\Utility::get_file('card_company_logo');
+                $image = \App\Models\Utility::get_file('testimonials_images');
+                $s_image = \App\Models\Utility::get_file('service_images');
+                $pr_image = \App\Models\Utility::get_file('product_images');
 
-                    $testimonials = testimonial::where('business_id', $business->id)->first();
-                    $testimonials_content = [];
-                    if (!empty($testimonials->content)) {
-                        $testimonials_content = json_decode($testimonials->content);
-                    }
+                $company_favicon = \App\Models\Utility::getsettingsbyid($business->created_by);
+                $company_favicon = $company_favicon['company_favicon'];
+                $logo1 = \App\Models\Utility::get_file('uploads/logo/');
 
-                    $contactinfo = ContactInfo::where('business_id', $business->id)->first();
-                    $contactinfo_content = [];
-                    if (!empty($contactinfo->content)) {
-                        $contactinfo_content = json_decode($contactinfo->content);
-                    }
+                $meta_image = \App\Models\Utility::get_file('meta_image');
+                $gallery_path = \App\Models\Utility::get_file('gallery');
+                $qr_path = \App\Models\Utility::get_file('qrcode');
+                $svg_text = \App\Models\Utility::get_file('svg');
 
-                    $sociallinks = social::where('business_id', $business->id)->first();
-                    $social_content = [];
-                    if (!empty($sociallinks->content)) {
-                        $social_content = json_decode($sociallinks->content);
-                    }
+                $theme = $business->theme;
+                $color = substr($business->theme_color, 0, 6);
+                $meta_tag_image = $meta_image . '/' . $business->meta_image;
 
-                    //Gallery
-                    $gallery = gallery::where('business_id', $business->id)->first();
-                    $gallery_contents = [];
-                    if (!empty($gallery->content)) {
-                        $gallery_contents = json_decode($gallery->content);
-                    }
-
-
-                    $customhtml = Business::where('id', $business->id)->first();
-                    $user = User::find($business->created_by);
-                    $plan = Plan::find($user->plan);
-                    $days = business_hours::$days;
-                    $business_hours = '';
-                    if (!empty($businesshours->content)) {
-                        $business_hours = json_decode($businesshours->content);
-                    }
-                    if (json_decode($business->card_theme) == NULL) {
-                        $card_order = [];
-                        $card_order['theme'] = $business->card_theme;
-                        $card_order['order'] = Utility::getDefaultThemeOrder($business->card_theme);
-                        $business->card_theme = json_encode($card_order);
-                        $business->save();
-                    }
-                    $card_theme = json_decode($business->card_theme);
-
-                    $pixels = PixelFields::where('business_id', $business->id)->get();
-                    $pixelScript = [];
-                    foreach ($pixels as $pixel) {
-
-                        if (!$pixel->disabled) {
-                            $pixelScript[] = pixelSourceCode($pixel['platform'], $pixel['pixel_id']);
-                        }
-                    }
-
-                    $qr_detail = Businessqr::where('business_id', $business->id)->first();
-                    //Product
-                    $products = Product::where('business_id', $business->id)->first();
-                    $products_content = [];
-                    if (!empty($products->content)) {
-                        $products_content = json_decode($products->content);
-                    }
-                    $cardPayment = CardPayment::cardPaymentData($business->id);
-                    $cardPayment_content = [];
-                    if (!empty($cardPayment->content)) {
-                        $cardPayment_content = json_decode($cardPayment->content);
-                    }
-                    $appInfo = CardAppinfo::cardAppData($business->id);
-                    //
-                    $social_nos = 1;
-                    $appointment_nos = 0;
-                    $service_row_nos = 0;
-                    $product_row_nos = 0;
-                    $testimonials_row_nos = 0;
-                    $gallery_row_no = 0;
-
-                    $nos = 1;
-                    $stringid = $business->id;
-                    $is_enable = false;
-                    $is_enabled= false;
-                    $is_contact_enable = false;
-                    $is_enable_appoinment = false;
-                    $is_enable_service = false;
-                    $is_enable_product = false;
-                    $is_enable_testimonials = false;
-                    $is_enable_sociallinks = false;
-                    $is_custom_html_enable = false;
-                    $is_google_map_enabled = false;
-                    $is_enable_gallery = false;
-                    $is_payment = false;
-                    $is_appinfo = false;
-                    $custom_html = $business->custom_html_text;
+                if (!is_null($custom_html) && !is_null($customhtml)) {
+                    $customhtml->is_custom_html_enabled == '1' ? ($is_custom_html_enable = true) : ($is_custom_html_enable = false);
+                }
+                if (!is_null($business->is_branding_enabled) && !is_null($business->is_branding_enabled)) {
+                    !empty($business->is_branding_enabled) && $business->is_branding_enabled == 'on'
+                        ? ($is_branding_enabled = true)
+                        : ($is_branding_enabled = false);
+                } else {
                     $is_branding_enabled = false;
-                    $branding = $business->branding_text;
-                    $is_gdpr_enabled = false;
-                    $gdpr_text = $business->gdpr_text;
-                    $card_theme = json_decode($business->card_theme);
-
-                    $banner = \App\Models\Utility::get_file('card_banner');
-                    $logo = \App\Models\Utility::get_file('card_logo');
-                    $image = \App\Models\Utility::get_file('testimonials_images');
-                    $s_image = \App\Models\Utility::get_file('service_images');
-                    $pr_image = \App\Models\Utility::get_file('product_images');
-
-                    $company_favicon = \App\Models\Utility::getsettingsbyid($business->created_by);
-                    $company_favicon = $company_favicon['company_favicon'];
-                    $logo1 = \App\Models\Utility::get_file('uploads/logo/');
-
-                    $meta_image = \App\Models\Utility::get_file('meta_image');
-                    $gallery_path = \App\Models\Utility::get_file('gallery');
-                    $qr_path = \App\Models\Utility::get_file('qrcode');
-                    $svg_text = \App\Models\Utility::get_file('svg');
-
-                    $theme = $business->theme;
-                    $color = substr($business->theme_color, 0, 6);
-                    $meta_tag_image = $meta_image . '/' . $business->meta_image;
-
-                    if (!is_null($custom_html) && !is_null($customhtml)) {
-                        $customhtml->is_custom_html_enabled == '1' ? ($is_custom_html_enable = true) : ($is_custom_html_enable = false);
-                    }
-                    if (!is_null($business->is_branding_enabled) && !is_null($business->is_branding_enabled)) {
-                        !empty($business->is_branding_enabled) && $business->is_branding_enabled == 'on'
-                            ? ($is_branding_enabled = true)
-                            : ($is_branding_enabled = false);
-                    } else {
-                        $is_branding_enabled = false;
-                    }
-                    if (!is_null($business->is_gdpr_enabled) && !is_null($business->is_gdpr_enabled)) {
-                        !empty($business->is_gdpr_enabled) && $business->is_gdpr_enabled == 'on'
-                            ? ($is_gdpr_enabled = true)
-                            : ($is_gdpr_enabled = false);
-                    }
-                    if (!is_null($appInfo)) {
-                        $appInfo['is_enabled'] == '1' ? ($is_appinfo = true) : ($is_appinfo = false);
-                    }
-                    if (!is_null($business) && !is_null($business)) {
-                        $business->is_svg_enabled == '1' ? ($is_svg_enabled = true) : ($is_svg_enabled = false);
-                    }
-                    if (!is_null($social_content) && !is_null($sociallinks)) {
-                        $sociallinks['is_enabled'] == '1' ? ($is_enable_sociallinks = true) : ($is_enable_sociallinks = false);
-                    }
-                    if (!is_null($business) && !is_null($business)) {
-                        $business->is_google_map_enabled == '1' ? ($is_google_map_enabled = true) : ($is_google_map_enabled = false);
-                    }
-                    if (!is_null($cardPayment) && !is_null($cardPayment)) {
-                        $cardPayment->is_enabled == '1' ? ($is_enabled = true) : ($is_enabled = false);
-                    }
-                    $SITE_RTL = \App\Models\Utility::settings()['SITE_RTL'];
-                    $url_link = env('APP_URL') . '/' . $business->slug;
-                    $theme=$business->theme;
-                    $themeName = \App\Models\Utility::themeOne()[$theme][$business->theme_color]['theme_name'] ?? null;
-                    return view('card.' . $card_theme->theme . '.index', compact('appInfo', 'businessfields', 'contactinfo', 'contactinfo_content', 'appoinment_hours', 'appoinment', 'services_content', 'services', 'testimonials_content', 'testimonials', 'social_content', 'sociallinks', 'customhtml', 'businesshours', 'business_hours', 'business', 'days', 'is_slug', 'plan', 'gallery', 'gallery_contents', 'pixelScript', 'qr_detail', 'products', 'products_content', 'cardPayment', 'cardPayment_content', 'social_nos', 'service_row_nos', 'product_row_nos', 'testimonials_row_nos', 'gallery_row_no', 'nos', 'stringid', 'is_custom_html_enable', 'is_branding_enabled', 'branding', 'is_gdpr_enabled', 'gdpr_text', 'card_theme', 'banner', 'logo', 'image', 's_image', 'pr_image', 'company_favicon', 'logo1', 'meta_image', 'gallery_path', 'qr_path', 'theme', 'color', 'SITE_RTL', 'url_link', 'is_appinfo', 'is_svg_enabled', 'svg_text','is_enable_sociallinks','appointment_nos','is_google_map_enabled','custom_html','is_enabled','meta_tag_image','themeName'));
-                } else {
-                    return abort('403', 'The Link You Followed Has Disactive');
                 }
-
+                if (!is_null($business->is_gdpr_enabled) && !is_null($business->is_gdpr_enabled)) {
+                    !empty($business->is_gdpr_enabled) && $business->is_gdpr_enabled == 'on'
+                        ? ($is_gdpr_enabled = true)
+                        : ($is_gdpr_enabled = false);
+                }
+                if (!is_null($appInfo)) {
+                    $appInfo['is_enabled'] == '1' ? ($is_appinfo = true) : ($is_appinfo = false);
+                }
+                if (!is_null($business) && !is_null($business)) {
+                    $business->is_svg_enabled == '1' ? ($is_svg_enabled = true) : ($is_svg_enabled = false);
+                }
+                if (!is_null($social_content) && !is_null($sociallinks)) {
+                    $sociallinks['is_enabled'] == '1' ? ($is_enable_sociallinks = true) : ($is_enable_sociallinks = false);
+                }
+                if (!is_null($business) && !is_null($business)) {
+                    $business->is_google_map_enabled == '1' ? ($is_google_map_enabled = true) : ($is_google_map_enabled = false);
+                }
+                if (!is_null($cardPayment) && !is_null($cardPayment)) {
+                    $cardPayment->is_enabled == '1' ? ($is_enabled = true) : ($is_enabled = false);
+                }
+                $SITE_RTL = \App\Models\Utility::settings()['SITE_RTL'];
+                $url_link = env('APP_URL') . '/' . $business->slug;
+                $theme = $business->theme;
+                $themeName = \App\Models\Utility::themeOne()[$theme][$business->theme_color]['theme_name'] ?? null;
+                return view('card.' . $card_theme->theme . '.index', compact('appInfo', 'businessfields', 'contactinfo', 'contactinfo_content', 'appoinment_hours', 'appoinment', 'services_content', 'services', 'testimonials_content', 'testimonials', 'social_content', 'sociallinks', 'customhtml', 'businesshours', 'business_hours', 'business', 'days', 'is_slug', 'plan', 'gallery', 'gallery_contents', 'pixelScript', 'qr_detail', 'products', 'products_content', 'cardPayment', 'cardPayment_content', 'social_nos', 'service_row_nos', 'product_row_nos', 'testimonials_row_nos', 'gallery_row_no', 'nos', 'stringid', 'is_custom_html_enable', 'is_branding_enabled', 'branding', 'is_gdpr_enabled', 'gdpr_text', 'card_theme', 'banner', 'logo', 'company_logo', 'image', 's_image', 'pr_image', 'company_favicon', 'logo1', 'meta_image', 'gallery_path', 'qr_path', 'theme', 'color', 'SITE_RTL', 'url_link', 'is_appinfo', 'is_svg_enabled', 'svg_text', 'is_enable_sociallinks', 'appointment_nos', 'is_google_map_enabled', 'custom_html', 'is_enabled', 'meta_tag_image', 'themeName'));
+            } else {
+                return abort('403', 'The Link You Followed Has Disactive');
             }
         } else {
             return abort('404', 'Not Found');
@@ -2086,13 +1051,13 @@ class BusinessController extends Controller
             $card_order['order'] = Utility::getDefaultThemeOrder($request->themefile);
             $businesss = Business::where('id', $id)->first();
             if ($request->color_flag == 'true') {
-                $businesss['theme_color']  = $request->custom_color;
+                $businesss['theme_color'] = $request->custom_color;
             } else {
                 $businesss['theme_color'] = $request->theme_color;
             }
 
             $businesss['card_theme'] = json_encode($card_order);
-            $businesss['theme']= $request->themefile;
+            $businesss['theme'] = $request->themefile;
             $businesss->save();
             $tab = 1;
             return redirect()->back()->with('success', __('Theme Successfully Updated.'))->with('tab', $tab);
@@ -2100,6 +1065,7 @@ class BusinessController extends Controller
             return redirect()->back()->with('error', __('Permission denied.'));
         }
     }
+
     public function getVcardDownload($slug)
     {
         $business = Business::where('slug', $slug)->first();
@@ -2181,8 +1147,8 @@ class BusinessController extends Controller
         self::download($path . '/' . $file);
 
 
-
     }
+
     function download($file)
     {
         if (file_exists($file)) {
@@ -2289,7 +1255,7 @@ class BusinessController extends Controller
                 $promotionPeriodData['data'][] = $promote->total_days;
             }
 
-            return view('business.analytics', compact('platformarray', 'chartData', 'browserarray', 'devicearray', 'id', 'isFiltered', 'promoteData', 'annotations','promotionData','promotionPeriodData'));
+            return view('business.analytics', compact('platformarray', 'chartData', 'browserarray', 'devicearray', 'id', 'isFiltered', 'promoteData', 'annotations', 'promotionData', 'promotionPeriodData'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
@@ -2600,7 +1566,7 @@ class BusinessController extends Controller
             $is_gdpr_enabled = false;
             $is_google_map_enabled = false;
             $is_enable_sociallinks = false;
-            $is_enabled=false;
+            $is_enabled = false;
             $gdpr_text = $business->gdpr_text;
             $card_theme = json_decode($business->card_theme);
 
@@ -2656,14 +1622,15 @@ class BusinessController extends Controller
             }
             $SITE_RTL = \App\Models\Utility::settings()['SITE_RTL'];
             $url_link = env('APP_URL') . '/' . $business->slug;
-            $theme=$business->theme;
+            $theme = $business->theme;
             $themeName = \App\Models\Utility::themeOne()[$theme][$business->theme_color]['theme_name'] ?? null;
 
-            return view('card.' . $card_theme->theme . '.index', compact('appInfo', 'businessfields', 'contactinfo', 'contactinfo_content', 'appoinment_hours', 'appoinment', 'services_content', 'services', 'testimonials_content', 'testimonials', 'social_content', 'sociallinks', 'customhtml', 'businesshours', 'business_hours', 'business', 'days', 'is_slug', 'is_pdf', 'plan', 'gallery', 'gallery_contents', 'pixelScript', 'products', 'products_content', 'cardPayment', 'cardPayment_content', 'social_nos', 'service_row_nos', 'product_row_nos', 'testimonials_row_nos', 'gallery_row_no', 'nos', 'stringid', 'is_custom_html_enable','custom_html', 'is_branding_enabled', 'branding', 'is_gdpr_enabled', 'gdpr_text', 'card_theme', 'banner', 'logo', 'image', 's_image', 'pr_image', 'company_favicon', 'logo1', 'meta_image', 'gallery_path', 'qr_path', 'theme', 'color', 'SITE_RTL', 'url_link', 'is_appinfo', 'is_svg_enabled', 'svg_text','is_enable_sociallinks','appointment_nos','meta_tag_image','is_google_map_enabled','is_enabled','themeName'));
+            return view('card.' . $card_theme->theme . '.index', compact('appInfo', 'businessfields', 'contactinfo', 'contactinfo_content', 'appoinment_hours', 'appoinment', 'services_content', 'services', 'testimonials_content', 'testimonials', 'social_content', 'sociallinks', 'customhtml', 'businesshours', 'business_hours', 'business', 'days', 'is_slug', 'is_pdf', 'plan', 'gallery', 'gallery_contents', 'pixelScript', 'products', 'products_content', 'cardPayment', 'cardPayment_content', 'social_nos', 'service_row_nos', 'product_row_nos', 'testimonials_row_nos', 'gallery_row_no', 'nos', 'stringid', 'is_custom_html_enable', 'custom_html', 'is_branding_enabled', 'branding', 'is_gdpr_enabled', 'gdpr_text', 'card_theme', 'banner', 'logo', 'image', 's_image', 'pr_image', 'company_favicon', 'logo1', 'meta_image', 'gallery_path', 'qr_path', 'theme', 'color', 'SITE_RTL', 'url_link', 'is_appinfo', 'is_svg_enabled', 'svg_text', 'is_enable_sociallinks', 'appointment_nos', 'meta_tag_image', 'is_google_map_enabled', 'is_enabled', 'themeName'));
         } else {
             return abort('403', 'The Link You Followed Has Expired');
         }
     }
+
     public function downloadqr(Request $request)
     {
         $user = \Auth::user();
@@ -2779,11 +1746,13 @@ class BusinessController extends Controller
             $gallery_data = Gallery::where('business_id', $id)->first();
             if ($gallery_data != NULL) {
                 $gallery_data['is_enabled'] = $request->is_gallery_enabled == 'on' ? '1' : '0';
+                $gallery_data['is_video_enabled'] = $request->is_video_enabled == 'on' ? '1' : '0';
                 $gallery_data->save();
             } else {
                 Gallery::create([
                     'business_id' => $id,
                     'is_enabled' => $request->is_gallery_enabled == 'on' ? '1' : '0',
+                    'is_video_enabled' => $request->is_video_enabled == 'on' ? '1' : '0',
                     'created_by' => \Auth::user()->creatorId()
                 ]);
             }
@@ -2848,7 +1817,6 @@ class BusinessController extends Controller
     }
 
 
-
     public function saveseo(Request $request, $id)
     {
         if (\Auth::user()->can('SEO settings business')) {
@@ -2873,23 +1841,23 @@ class BusinessController extends Controller
                     $fileName = 'meta_image_' . time() . rand() . '.' . $ext;
 
                     $business->meta_image = $fileName;
-                        $dir = 'meta_image/';
-                    } else {
-                        $dir = 'meta_image/';
+                    $dir = 'meta_image/';
+                } else {
+                    $dir = 'meta_image/';
 
-                    }
-                    $image_path = $dir . $business['meta_image'];
-                    if (File::exists($image_path)) {
-                        File::delete($image_path);
-                    }
-                    $path = Utility::upload_file($request, 'meta_image', $fileName, $dir, []);
-
-                    if ($path['flag'] == 1) {
-                        $url = $path['url'];
-                    } else {
-                        return redirect()->route('business.index', \Auth::user()->id)->with('error', __($path['msg']));
-                    }
                 }
+                $image_path = $dir . $business['meta_image'];
+                if (File::exists($image_path)) {
+                    File::delete($image_path);
+                }
+                $path = Utility::upload_file($request, 'meta_image', $fileName, $dir, []);
+
+                if ($path['flag'] == 1) {
+                    $url = $path['url'];
+                } else {
+                    return redirect()->route('business.index', \Auth::user()->id)->with('error', __($path['msg']));
+                }
+            }
             $business->save();
             $tab = 5;
             return redirect()->back()->with('success', __('SEO Successfully Updated.') . ((isset($result) && $result != 1) ? '<br> <span class="text-danger">' . $result . '</span>' : ''))->with('tab', $tab);
@@ -2911,14 +1879,18 @@ class BusinessController extends Controller
         $gallery_detailss = [];
         foreach ($gallery_details as $key => $data) {
             // if we found it,
-            if ($data->id != $data_id) {
+            if ($data->id === (int)$data_id) {
+                if(in_array($data->type, ['image', 'video']) ){
+                    Utility::changeStorageLimit(\Auth::user()->creatorId(), 'gallery/'.$data->value);
+                }
+            }else{
                 $gallery_detailss[] = $data;
             }
         }
         $gallery_content = json_encode($gallery_detailss);
         $gallery->content = $gallery_content;
         $gallery->save();
-        Session::put(['tab' => 2]);
+        Session::put(['tab' => 3]);
         return true;
 
     }
@@ -2950,13 +1922,13 @@ class BusinessController extends Controller
         }
     }
 
-    public function pixel_edit($business_id,$id)
+    public function pixel_edit($business_id, $id)
     {
         $PixelField = PixelFields::where('id', $id)->first();
-        return view('pixelfield.edit', compact('pixals_platforms', 'business_id','PixelField'));
+        return view('pixelfield.edit', compact('pixals_platforms', 'business_id', 'PixelField'));
     }
 
-    public function pixel_update(Request $request,$id)
+    public function pixel_update(Request $request, $id)
     {
         if (\Auth::user()->can('pixel settings business')) {
             $request->validate([
@@ -3099,6 +2071,7 @@ class BusinessController extends Controller
             return redirect()->back()->with('error', __('Permission denied.'));
         }
     }
+
     public function saveCookiesetting(Request $request, $id)
     {
         $count = Business::where('id', $id)->where('created_by', \Auth::user()->creatorId())->count();
@@ -3127,6 +2100,7 @@ class BusinessController extends Controller
         return redirect()->back()->with('success', __('Cookie-Setting Successfully Updated.'))->with('tab', $tab);
 
     }
+
     public function cardCookieConsent(Request $request)
     {
         $data = Business::where('slug', '=', $request->slug)->first();
@@ -3187,63 +2161,63 @@ class BusinessController extends Controller
         return redirect()->back();
     }
 
-     //Custom Qr code
-     public function saveCustomQrsetting(Request $request, $id)
-     {
-         $business = Businessqr::where('business_id', $id)->first();
-         if ($request->hasFile('image')) {
-             $fileName1 = isset($business->image) ? $business->image : null;
+    //Custom Qr code
+    public function saveCustomQrsetting(Request $request, $id)
+    {
+        $business_qr = Businessqr::where('business_id', $id)->first();
+        if ($request->hasFile('image')) {
+            $fileName1 = isset($business_qr->image) ? $business_qr->image : null;
 
-             $image_path1 = 'qrcode/' . $fileName1;
+            $image_path1 = 'qrcode/' . $fileName1;
 
-             $image_size = $request->file('image')->getSize();
-             $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
-             if ($result == 1) {
-                 $result = Utility::changeStorageLimit(\Auth::user()->creatorId(), $image_path1);
-                 $settings = Utility::getStorageSetting();
-                 $qrcode = $request->file('image');
-                 $ext = $qrcode->getClientOriginalExtension();
-                 $fileName = 'qrcode' . time() . rand() . '.' . $ext;
-
-
-                 if ($settings['storage_setting'] == 'local') {
-                     $dir = 'qrcode/';
-                 } else {
-                     $dir = 'qrcode/';
-
-                 }
-                 $image_path = $dir . $fileName;
-                 if (File::exists($image_path)) {
-                     File::delete($image_path);
-                 }
-                 $path = Utility::upload_file($request, 'image', $fileName, $dir, []);
+            $image_size = $request->file('image')->getSize();
+            $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
+            if ($result == 1) {
+                $result = Utility::changeStorageLimit(\Auth::user()->creatorId(), $image_path1);
+                $settings = Utility::getStorageSetting();
+                $qrcode = $request->file('image');
+                $ext = $qrcode->getClientOriginalExtension();
+                $fileName = 'qrcode' . time() . rand() . '.' . $ext;
 
 
-             }
-         }
-         if (empty($business)) {
-             $business = new Businessqr();
+                if ($settings['storage_setting'] == 'local') {
+                    $dir = 'qrcode/';
+                } else {
+                    $dir = 'qrcode/';
 
-         }
+                }
+                $image_path = $dir . $fileName;
+                if (File::exists($image_path)) {
+                    File::delete($image_path);
+                }
+                $path = Utility::upload_file($request, 'image', $fileName, $dir, []);
 
-         if (!isset($fileName)) {
-             $fileName = isset($business->image) ? $business->image : null;
-         }
 
-         $business->business_id = $id;
-         $business->foreground_color = isset($request->foreground_color) ? $request->foreground_color : '#000000';
-         $business->background_color = isset($request->background_color) ? $request->background_color : '#ffffff';
-         $business->radius = isset($request->radius) ? $request->radius : 26;
-         $business->qr_type = isset($request->qr_type) ? $request->qr_type : 0;
-         $business->qr_text = isset($request->qr_text) ? $request->qr_text : "vCard";
-         $business->qr_text_color = isset($request->qr_text_color) ? $request->qr_text_color : '#f50a0a';
-         $business->size = isset($request->size) ? $request->size : 9;
-         $business->image = isset($fileName) ? $fileName : null;
-         $business->save();
-         $tab = 8;
-         return redirect()->back()->with('success', 'QrCode generated successfully' . ((isset($result) && $result != 1) ? '<br> <span class="text-danger">' . $result . '</span>' : ''))->with('tab', $tab);
+            }
+        }
+        if (empty($business_qr)) {
+            $business_qr = new Businessqr();
 
-     }
+        }
+
+        if (!isset($fileName)) {
+            $fileName = isset($business_qr->image) ? $business_qr->image : null;
+        }
+
+        $business_qr->business_id = $id;
+        $business_qr->foreground_color = isset($request->foreground_color) ? $request->foreground_color : '#000000';
+        $business_qr->background_color = isset($request->background_color) ? $request->background_color : '#ffffff';
+        $business_qr->radius = isset($request->radius) ? $request->radius : 26;
+        $business_qr->qr_type = isset($request->qr_type) ? $request->qr_type : 0;
+        $business_qr->qr_text = isset($request->qr_text) ? $request->qr_text : "vCard";
+        $business_qr->qr_text_color = isset($request->qr_text_color) ? $request->qr_text_color : '#f50a0a';
+        $business_qr->size = isset($request->size) ? $request->size : 9;
+        $business_qr->image = isset($fileName) ? $fileName : null;
+        $business_qr->save();
+        $tab = 4;
+        return redirect()->back()->with('success', 'QrCode generated successfully' . ((isset($result) && $result != 1) ? '<br> <span class="text-danger">' . $result . '</span>' : ''))->with('tab', $tab);
+
+    }
 
     public function ChangeStatus($id)
     {
@@ -3273,6 +2247,7 @@ class BusinessController extends Controller
         $totalUserDisable = User::where('created_by', $id)->where('admin_enable', '=', 'off')->count();
         return view('business.businessList', compact('businessDetails', 'totalBusiness', 'totalBusinessEnable', 'totalBusinessDisable', 'userDetails', 'totalUser', 'totalUserEnable', 'totalUserDisable'));
     }
+
     public function businessEnable(Request $request)
     {
         $data = [];
@@ -3359,8 +2334,8 @@ class BusinessController extends Controller
                 $business_new->custom_html_text = $business->custom_html_text;
                 $business_new->is_google_map_enabled = $business->is_google_map_enabled;
                 $business_new->google_map_link = $business->google_map_link;
-                $business_new->is_svg_enabled=  $business->is_svg_enabled;
-                $business_new->svg_text=  $business->svg_text;
+                $business_new->is_svg_enabled = $business->is_svg_enabled;
+                $business_new->svg_text = $business->svg_text;
                 $business_new->is_gdpr_enabled = $business->is_gdpr_enabled;
                 $business_new->gdpr_text = $business->gdpr_text;
                 $business_new->is_branding_enabled = $business->is_branding_enabled;
@@ -3622,6 +2597,7 @@ class BusinessController extends Controller
         $business = Business::where('id', $id)->first();
         return view('business.whatsappShare', compact('business'));
     }
+
     public function Viewqrcode($id)
     {
         $business = Business::where('id', $id)->first();

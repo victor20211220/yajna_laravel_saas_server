@@ -1,0 +1,76 @@
+// Background Images
+.login-desktop-bg {
+    background-image: url('/assets/images/login_desktop.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+}
+
+.login-mobile-bg {
+    background-image: url('/assets/images/login_mobile.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.login-container {
+    position: relative;
+    z-index: 2;
+    background: white;
+
+    .form-control::placeholder {
+        color: #bbb;
+    }
+
+
+    /* Smooth input background + placeholder */
+    .form-control {
+        background-color: #f5f6f7 !important;
+        border: none !important;
+        border-radius: 10px;
+        color: #333;
+    }
+
+    /* Placeholder style */
+    .form-control::placeholder {
+        color: #a3a3a3;
+        opacity: 1;
+    }
+}
+
+// Login form card
+.login-form {
+    width: 100%;
+    max-width: 500px;
+}
+
+// Footer
+.footer-links {
+    font-size: 0.875rem;
+}
+
+
+// Mobile Specific Adjustments
+@media (max-width: 767.98px) {
+    .login-form {
+        background: white;
+        padding: 2rem 1.5rem;
+        border-radius: 20px;
+        max-width: 330px;
+    }
+
+    .login-container {
+        background: transparent;
+    }
+
+    .logo-img {
+        max-height: 40px;
+    }
+}

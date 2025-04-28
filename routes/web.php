@@ -6,7 +6,6 @@ use App\Http\Controllers\FedaPayController;
 use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\NFCCardController;
 use App\Http\Controllers\OrderRequestController;
-use App\Http\Controllers\QRCodeController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\XenditPaymentController;
 use App\Http\Controllers\YooKassaController;
@@ -74,7 +73,6 @@ use App\Http\Controllers\LoginSecurityController;
 |
 */
 
-
 require __DIR__ . '/auth.php';
 
 Route::get('/config-cache', function () {
@@ -87,7 +85,7 @@ Route::get('/config-cache', function () {
 Route::any('card-pay-with-stripe/{id}', [StripePaymentController::class, 'cardPayWithStripe'])->name('card.pay.with.stripe');
 Route::any('stripe-get-card-payment/', [StripePaymentController::class, 'cardGetStripePaymentStatus'])->name('card.stripe');
 
-Route::get('/', [BaseHomeController::class, 'landingPage'])->middleware('XSS')->name('home');
+//Route::get('/', [BaseHomeController::class, 'index'])->middleware('XSS')->name('landing');
 Route::any('cookie_consent', [SystemController::class, 'CookieConsent'])->name('cookie-consent');
 Route::any('card_cookie_consent', [BusinessController::class, 'cardCookieConsent'])->name('card-cookie-consent');
 
@@ -107,8 +105,7 @@ Route::middleware(['web'])->group(function ()
 
 
 Route::group(['middleware' => ['verified']], function () {
-
-    Route::get('/home', [BaseHomeController::class, 'index'])->middleware('XSS', 'auth', 'CheckPlan')->name('home');
+    Route::get('/', [BaseHomeController::class, 'index'])->middleware('XSS', 'auth', 'CheckPlan')->name('home');
     Route::get('/dashboard', [BaseHomeController::class, 'index'])->middleware('XSS', 'auth', 'CheckPlan')->name('dashboard');
     Route::get('/dashboard/{id}', [BaseHomeController::class, 'changeCurrantBusiness'])->name('business.change');
     Route::get('/appointment-calendar/{id?}', [AppointmentDeatailController::class, 'getCalenderAllData'])->middleware('XSS', 'auth')->name('appointment.calendar');
@@ -165,7 +162,7 @@ Route::group(['middleware' => ['verified']], function () {
 
         //Role
         Route::resource('roles', RoleController::class);
-        Route::resource('permissions', PermissionController::class);
+        Route::resource('permissions', \App\Http\Controllers\PermissionController::class);
 
         //Contact Notes
         Route::get('/contact-note/{id?}', [ContactsController::class, 'add_note'])->middleware('XSS', 'auth')->name('contact.add-note');
@@ -406,7 +403,7 @@ Route::group(['middleware' => ['verified']], function () {
     Route::post('business/card_payment/{id}', [BusinessController::class, 'saveCardPaymentSetting'])->name('business.payment_setting');
     /*==============================================================================================================================*/
 
-    Route::any('user-reset-password/{id}', [UserController::class, 'userPassword'])->name('user.reset');
+    Route::get('user-reset-password/{id}', [UserController::class, 'userPassword'])->name('user.reset');
     Route::post('user-reset-password/{id}', [UserController::class, 'userPasswordReset'])->name('user.password.update');
 
 
@@ -483,7 +480,7 @@ Route::group(['middleware' => ['verified']], function () {
 
     // Business Releated New routes
     Route::get('business/qrcode/{id}', [BusinessController::class, 'Viewqrcode'])->name('business.qrcode');
-    Route::post('business/status/{id}', 'BusinessController@ChangeStatus')->middleware(['auth'])->name('business.status');
+    Route::post('business/status/{id}', [BusinessController::class, 'ChangeStatus'])->middleware(['auth'])->name('business.status');
 
     //Coupon Replated New Routes
     Route::get('coupon/export', [CouponController::class, 'export'])->name('coupons.export');

@@ -58,7 +58,7 @@
 
     <link rel="stylesheet" href="{{ asset('assets/css/customizer.css') }}">
      <!-- custom css -->
-     <link rel="stylesheet" href="{{asset('assets/css/custom.css')}}">
+     <link rel="stylesheet" href="{{asset('assets/css/custom.css?v='.time())}}">
 
     <link rel="stylesheet" href="{{ asset('custom/css/emojionearea.min.css') }}">
     <link rel="stylesheet" href="{{ asset('custom/css/custom.css') }}">

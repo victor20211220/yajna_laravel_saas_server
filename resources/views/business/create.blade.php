@@ -30,7 +30,8 @@
         @enderror
     </div>
 
-    <div class="horizontal mt-3">
+    {{ Form::hidden('theme', 'theme1', ['id' => 'themefile1']) }}
+    {{--<div class="horizontal mt-3">
         <div class="verticals twelve">
             <div class="form-group col-md-6">
                 {{ Form::label('Select Themes', __('Select Themes'), ['class' => 'form-control-label']) }}<x-required></x-required>
@@ -74,14 +75,14 @@
                 @endforeach
             </div>
         </div>
-    </div>
+    </div>--}}
 </div>
 <div class="modal-footer p-0 pt-3 mt-3">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
     <input class="btn btn-primary" type="submit" value="{{ __('Create') }}">
 </div>
 <script src="{{ asset('custom/js/custom.js') }}"></script>
-<script>
+{{--<script>
     $(document).on('click', 'input[name="theme_color"]', function() {
         var eleParent = $(this).attr('data-theme');
         $('#themefile1').val(eleParent);
@@ -107,4 +108,4 @@
         $('#themefile1').val(checked.attr('data-theme'));
         $(checked).closest('.theme-view-card').addClass('selected-theme');
     });
-</script>
+</script>--}}

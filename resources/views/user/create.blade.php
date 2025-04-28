@@ -27,7 +27,7 @@
     <div class="col-md-6" id="password">
         <div class="form-group">
             {{ Form::label('password', __('Password'), ['class' => 'form-label']) }}<x-required></x-required>
-            {{ Form::password('password', ['class' => 'form-control', 'placeholder' => __('Enter ' . (Auth::user()->type === 'super admin' ? 'Company' : 'User') . ' Password'), 'minlength' => '6','autocomplete'=>"off",'id'=>'passwordInput']) }}
+            {{ Form::password('password', ['class' => 'form-control', 'placeholder' => __('Enter ' . (Auth::user()->type === 'super admin' ? 'Company' : 'User') . ' Password'), 'minlength' => '6','autocomplete'=>"off",'id'=>'passwordInput', 'required' => 'required']) }}
             @error('password')
                 <small class="invalid-password" role="alert">
                     <strong class="text-danger">{{ $message }}</strong>
@@ -51,7 +51,7 @@
 <div class="col-md-6 mb-3 form-group">
     <label for="is_login">{{__('Login is enable')}}</label>
     <div class="form-check form-switch custom-switch-v1 float-end">
-        <input type="checkbox" name="is_login" class="form-check-input input-primary pointer" id="is_login">
+        <input type="checkbox" name="is_login" class="form-check-input input-primary pointer" id="is_login" checked hidden>
         <label class="form-check-label" for="is_login"></label>
     </div>
 </div>
@@ -61,6 +61,7 @@
 </div>
 {{Form::close()}}
 <script>
+    /*
     $(document).ready(function(){
         // Initially hide the password field
         $('#password').hide();
@@ -78,4 +79,6 @@
             }
         });
     });
+
+     */
 </script>
