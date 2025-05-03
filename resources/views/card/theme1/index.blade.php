@@ -171,7 +171,7 @@
             </section>
             <div class="py-3"></div>
             <section id="vcard-google-review-section"
-                     class="pt-0 px-5 border-0 {{ isset($business['google_review_enabled']) && $business['google_review_enabled'] ? "" : "d-none" }}">
+                     class="py-0 px-5 border-0 {{ isset($business['google_review_enabled']) && $business['google_review_enabled'] ? "" : "d-none" }}">
                 <div class="d-flex justify-content-center gap-2">
                     {!! svg('vcard/google_review_star.svg', ['class' => 'fill-button-bg']) !!}
                     {!! svg('vcard/google_review_star.svg', ['class' => 'fill-button-bg']) !!}
@@ -189,6 +189,7 @@
                 </a>
             </section>
         @endif
+        <div class="py-3"></div>
         <section class="border-0 py-0">
             <a class="mt-4 mt-xl-2 mb-4" href="{{ url('/') }}">
                 {!! svg('logo.svg', ['class' => 'fill-text-color mx-auto d-block', 'id' => 'vcard-logo']) !!}

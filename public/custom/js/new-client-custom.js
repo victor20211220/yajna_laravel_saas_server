@@ -53,7 +53,6 @@ let fileInput = null;
 
 $(document).on('click', '#myDropdown', function (e) {
     e.preventDefault();
-    debugger;
     console.log('clicked');
     const $this = $(this);
     $this.toggleClass('show');
