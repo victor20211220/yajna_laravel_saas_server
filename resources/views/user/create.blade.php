@@ -48,10 +48,10 @@
     @endif
 
 </div>
-<div class="col-md-6 mb-3 form-group">
+<div class="col-md-6 mb-3 form-group d-none">
     <label for="is_login">{{__('Login is enable')}}</label>
     <div class="form-check form-switch custom-switch-v1 float-end">
-        <input type="checkbox" name="is_login" class="form-check-input input-primary pointer" id="is_login" checked hidden>
+        <input type="checkbox" name="is_login" class="form-check-input input-primary pointer" id="is_login" checked>
         <label class="form-check-label" for="is_login"></label>
     </div>
 </div>

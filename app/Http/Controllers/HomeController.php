@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BusinessAnalytics;
 use App\Models\DomainRequest;
 use Illuminate\Http\Request;
 use Stripe;
@@ -36,7 +37,7 @@ class HomeController extends Controller
     /**
      * Show the application dashboard.
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function index()
     {
@@ -49,12 +50,17 @@ class HomeController extends Controller
                     header('location:install');
                     die;
                 } else {
-                    if(\Auth::user()->type == 'company'){
+                    if (\Auth::user()->type == 'company') {
+                        $user = \Auth::user();
                         if (auth()->user()->isImpersonated()) {
                             return view('business.superadmin-create');
                         }
-                        $user = \Auth::user();
-                        return redirect()->route('business.edit', $user->current_business);
+                        if ($user->current_business)
+                            return redirect()->route('business.edit', $user->current_business);
+                        else {
+                            Auth::logout();
+                            return redirect()->back()->with('error', __('No business created yet.'));
+                        }
                     }
 
                     $uri = url()->full();
@@ -94,7 +100,14 @@ class HomeController extends Controller
                         $user['total_plan'] = Plan::total_plan();
                         $user['most_purchese_plan'] = (!empty(Plan::most_purchese_plan()) ? Plan::most_purchese_plan()->name : 0);
                         $chartData = $this->getPlanOrderChart(['duration' => 'week']);
-                        return view('dashboard.admin_dashboard', compact('user', 'chartData'));
+
+                        $new_stats_data = [
+                            'total_businesses' => Business::count(),
+                            'total_views' => BusinessAnalytics::where('type', 'view')->count(),
+                            'total_clicks' => BusinessAnalytics::where('type', 'click')->count(),
+                        ];
+
+                        return view('dashboard.admin_dashboard', compact('user',  'new_stats_data', 'chartData'));
                     } else {
                         $cards = Business::getBusiness();
 
@@ -203,6 +216,7 @@ class HomeController extends Controller
             }
         }
     }
+
     public function getOrderChart($arrParam)
     {
         $user = \Auth::user();
@@ -244,6 +258,7 @@ class HomeController extends Controller
         $arrTask['data'] = $array_app;
         return $arrTask;
     }
+
     public function getPlanOrderChart($arrParam)
     {
         $arrDuration = [];
@@ -301,51 +316,51 @@ class HomeController extends Controller
                 return app('App\Http\Controllers\BusinessController')->getcard($sub_business->slug);
             }
             $businessQuery = Business::join('campaigns', 'businesses.id', '=', 'campaigns.business')
-                        ->where('campaigns.status', 1)
-                        ->select('businesses.*', 'campaigns.status as campaign_status', 'campaigns.name', 'campaigns.start_date', 'campaigns.end_date');
+                ->where('campaigns.status', 1)
+                ->select('businesses.*', 'campaigns.status as campaign_status', 'campaigns.name', 'campaigns.start_date', 'campaigns.end_date');
 
-                    // Determine the sorting order, default to 'latest' if not specified
-                    $orderby = $request->get('orderby', 'latest');
-                    if ($orderby == 'popularity') {
-                        // Join the 'visitor' table to count visits using the slug for popularity
-                        $businessQuery->leftJoin('visitor', 'businesses.slug', '=', 'visitor.slug')
-                            ->leftJoin('campaigns as c', 'businesses.id', '=', 'c.business') // Use an alias 'c' for campaigns
-                            ->select(
-                                'businesses.id',
-                                'businesses.slug',
-                                'businesses.title',
-                                'businesses.logo',
-                                'businesses.sub_title',
-                                'businesses.designation',
-                                'businesses.description',
-                                'c.status as campaign_status',
-                                'c.name as campaign_name',
-                                'c.start_date as campaign_start_date',
-                                'c.end_date as campaign_end_date',
-                                DB::raw('COUNT(visitor.id) as visit_count')
-                            )
-                            ->where('c.status', 1)
-                            ->groupBy(
-                                'businesses.id',
-                                'businesses.slug',
-                                'businesses.title',
-                                'businesses.logo',
-                                'businesses.sub_title',
-                                'businesses.designation',
-                                'businesses.description',
-                                'c.status',
-                                'c.name',
-                                'c.start_date',
-                                'c.end_date'
-                            ) // Group by all non-aggregated columns using alias
-                            ->orderBy('visit_count', 'desc');
-                    } elseif ($orderby == 'latest') {
-                        $businessQuery->orderBy('businesses.created_at', 'desc');
-                    } else {
-                        $businessQuery->orderBy('businesses.created_at', 'asc');
-                    }
-                    // Filter based on campaign status
-                    $businessDetail = $businessQuery->get();
+            // Determine the sorting order, default to 'latest' if not specified
+            $orderby = $request->get('orderby', 'latest');
+            if ($orderby == 'popularity') {
+                // Join the 'visitor' table to count visits using the slug for popularity
+                $businessQuery->leftJoin('visitor', 'businesses.slug', '=', 'visitor.slug')
+                    ->leftJoin('campaigns as c', 'businesses.id', '=', 'c.business') // Use an alias 'c' for campaigns
+                    ->select(
+                        'businesses.id',
+                        'businesses.slug',
+                        'businesses.title',
+                        'businesses.logo',
+                        'businesses.sub_title',
+                        'businesses.designation',
+                        'businesses.description',
+                        'c.status as campaign_status',
+                        'c.name as campaign_name',
+                        'c.start_date as campaign_start_date',
+                        'c.end_date as campaign_end_date',
+                        DB::raw('COUNT(visitor.id) as visit_count')
+                    )
+                    ->where('c.status', 1)
+                    ->groupBy(
+                        'businesses.id',
+                        'businesses.slug',
+                        'businesses.title',
+                        'businesses.logo',
+                        'businesses.sub_title',
+                        'businesses.designation',
+                        'businesses.description',
+                        'c.status',
+                        'c.name',
+                        'c.start_date',
+                        'c.end_date'
+                    ) // Group by all non-aggregated columns using alias
+                    ->orderBy('visit_count', 'desc');
+            } elseif ($orderby == 'latest') {
+                $businessQuery->orderBy('businesses.created_at', 'desc');
+            } else {
+                $businessQuery->orderBy('businesses.created_at', 'asc');
+            }
+            // Filter based on campaign status
+            $businessDetail = $businessQuery->get();
 
 
             if (\Auth::check()) {
@@ -357,7 +372,7 @@ class HomeController extends Controller
                 if ($settings['display_landing_page'] == 'on' && \Schema::hasTable('landing_page_settings')) {
                     $plans = Plan::get();
                     $get_section = LandingPageSection::orderBy('section_order', 'ASC')->get();
-                    return view('landingpage::layouts.landingpage', compact('plans', 'get_section','businessDetail'));
+                    return view('landingpage::layouts.landingpage', compact('plans', 'get_section', 'businessDetail'));
                 } elseif (Utility::getValByName('display_landing_page') == 'directory_page') {
                     return redirect()->route('marketplace.home');
                 } else {

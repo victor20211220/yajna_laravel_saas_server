@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+
 use App\Models\User;
 use App\Models\Campaigns;
 use Illuminate\Database\Eloquent\Model;
@@ -34,35 +35,34 @@ class Business extends Model
         'subdomain',
         'enable_domain',
         'created_by'
-
     ];
 
     public function campaigns()
-{
-    return $this->belongsToMany(Campaigns::class, 'business');
-}
+    {
+        return $this->belongsToMany(Campaigns::class, 'business');
+    }
 
-    public function getLanguage(){
-        if (\Auth::user()->type == 'company')
-        {
+    public function getLanguage()
+    {
+        if (\Auth::user()->type == 'company') {
 
             $user = User::find($this->created_by);
-        }
-        else{
+        } else {
 
-            $user = User::where('created_by','=',$this->created_by)->first();
+            $user = User::where('created_by', '=', $this->created_by)->first();
 
         }
         return $user->currentLanguage();
 
     }
 
-    public static function pwa_business($slug){
+    public static function pwa_business($slug)
+    {
 
         $business = self::getBusinessBySlug($slug);
         try {
 
-            $pwa_data = \File::get(storage_path('uploads/theme_app/business_' . $business->id. '/manifest.json'));
+            $pwa_data = \File::get(storage_path('uploads/theme_app/business_' . $business->id . '/manifest.json'));
 
             $pwa_data = json_decode($pwa_data);
         } catch (\Throwable $th) {
@@ -74,8 +74,7 @@ class Business extends Model
 
     public static function allBusiness()
     {
-        if(self::$businessDetailModal==null)
-        {
+        if (self::$businessDetailModal == null) {
             $businesses = self::getBusiness();
 
             $business = $businesses->map(function ($business) {
@@ -86,11 +85,10 @@ class Business extends Model
                 ];
             });
 
-            if(request()->route()->getName()=='appointments.index' || request()->route()->getName()=='contacts.index')
-            {
+            if (request()->route()->getName() == 'appointments.index' || request()->route()->getName() == 'contacts.index') {
                 $business->prepend(['id' => '0', 'title' => 'All', 'admin_enable' => 'on']);
             }
-            self::$businessDetailModal=$business;
+            self::$businessDetailModal = $business;
         }
 
 
@@ -105,27 +103,29 @@ class Business extends Model
 
     public static $qr_type = [
         0 => 'Normal',
-        4 =>'Image',
+        4 => 'Image',
     ];
 
     public static function getBusiness()
     {
-        if(self::$businessDetail == null) {
+        if (self::$businessDetail == null) {
             $business = Business::where('created_by', \Auth::user()->creatorId())->get();
-            self::$businessDetail =$business;
+            self::$businessDetail = $business;
         }
         return self::$businessDetail;
     }
+
     public static function getBusinessBySlug($slug)
     {
-        if(self::$businessSlugData == null) {
+        if (self::$businessSlugData == null) {
             $data = Business::where('slug', '=', $slug)->first();
             self::$businessSlugData = $data;
         }
         return self::$businessSlugData;
     }
+
     // for enable disable
-    public static function EnableOrNot($var1 = null , $var2 = null)
+    public static function EnableOrNot($var1 = null, $var2 = null)
     {
         $a = false;
 
@@ -135,4 +135,14 @@ class Business extends Model
 
         return $a;
     }
+
+    // app/Models/Business.php
+
+    public function shareContactField()
+    {
+        return $this->hasOne(ShareContactField::class);
+    }
+
+    protected $with = ['shareContactField'];
+
 }

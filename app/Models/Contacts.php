@@ -13,15 +13,17 @@ class Contacts extends Model
     protected $fillable = [
         'business_id',
         'name',
-        'email',
         'phone',
+        'email',
+        'company',
+        'job_title',
         'message',
         'created_by'
     ];
 
     public static function getBusinessData($id)
     {
-        
+
             $business=Business::where('id', $id)->pluck('title')->first();
            return $business;
     }

@@ -7,7 +7,6 @@
 <body>
     @yield('contentCard')
 </body>
-
 @include('card.footer')
 </html>
 

@@ -59,8 +59,9 @@ use App\Http\Controllers\AuthorizeNetController;
 use App\Http\Controllers\KhaltiController;
 use App\Http\Controllers\EasebuzzController;
 use App\Http\Controllers\LoginSecurityController;
-
-
+use \App\Http\Controllers\BusinessAnalyticsController;
+use \App\Http\Controllers\SupportController;
+use App\Http\Controllers\NewSettingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -90,13 +91,12 @@ Route::any('cookie_consent', [SystemController::class, 'CookieConsent'])->name('
 Route::any('card_cookie_consent', [BusinessController::class, 'cardCookieConsent'])->name('card-cookie-consent');
 
 // google authantication
-Route::group(['middleware' => ['auth','web']], function () {
-    Route::post('/generateSecret', [LoginSecurityController::class,'generate2faSecret'])->name('generate2faSecret');
-    Route::post('/enable2fa', [LoginSecurityController::class,'enable2fa'])->name('enable2fa');
-    Route::post('/disable2fa', [LoginSecurityController::class,'disable2fa'])->name('disable2fa');
+Route::group(['middleware' => ['auth', 'web']], function () {
+    Route::post('/generateSecret', [LoginSecurityController::class, 'generate2faSecret'])->name('generate2faSecret');
+    Route::post('/enable2fa', [LoginSecurityController::class, 'enable2fa'])->name('enable2fa');
+    Route::post('/disable2fa', [LoginSecurityController::class, 'disable2fa'])->name('disable2fa');
 });
-Route::middleware(['web'])->group(function ()
-{
+Route::middleware(['web'])->group(function () {
     Route::post('/2faVerify', function () {
         return redirect(request()->get('2fa_referrer'));
     })->name('2faVerify')->middleware('2fa');
@@ -134,7 +134,6 @@ Route::group(['middleware' => ['verified']], function () {
         Route::get('user/{id}/plan', [UserController::class, 'upgradePlan'])->name('plan.upgrade')->middleware('XSS');
         Route::get('user/{id}/plan/{pid}', [UserController::class, 'activePlan'])->name('plan.active');
         Route::get('user/list', [UserController::class, 'list'])->name('user.list');
-
 
 
         Route::get('business/preview/card/{slug}', [BusinessController::class, 'getcard'])->name('business.template');
@@ -195,15 +194,28 @@ Route::group(['middleware' => ['verified']], function () {
         //Company Email settings
         Route::post('company-email-settings', [SystemController::class, 'saveCompanyEmailSettings'])->name('company.email.settings');
         Route::get('user/{id}/business', [BusinessController::class, 'adminBusiness'])->name('business.upgrade')->middleware(['XSS', 'auth']);
-        Route::post('business-unable', [BusinessController::class,'businessEnable'])->name('business.unable')->middleware(['auth', 'XSS']);
-        Route::get('user-login/{id}', [UserController::class,'LoginManage'])->name('users.login')->middleware(['auth']);
+        Route::post('business-unable', [BusinessController::class, 'businessEnable'])->name('business.unable')->middleware(['auth', 'XSS']);
+        Route::get('user-login/{id}', [UserController::class, 'LoginManage'])->name('users.login')->middleware(['auth']);
         Route::get('users/{id}/login-with-company', [UserController::class, 'LoginWithCompany'])->name('login.with.company');
         Route::get('login-with-company/exit', [UserController::class, 'ExitCompany'])->name('exit.company');
-        Route::post('user-unable', [UserController::class,'userEnable'])->name('user.unable')->middleware(['auth', 'XSS']);
+        Route::post('user-unable', [UserController::class, 'userEnable'])->name('user.unable')->middleware(['auth', 'XSS']);
         Route::post('plan-enable', [PlanController::class, 'planEnable'])->name('plan.enable')->middleware(['auth', 'XSS']);
-        Route::any('refund/{order_id}/{user_id}', [PlanController::class,'refundPlan'])->name('plan.refund')->middleware(['auth', 'XSS']);
-    });
+        Route::any('refund/{order_id}/{user_id}', [PlanController::class, 'refundPlan'])->name('plan.refund')->middleware(['auth', 'XSS']);
 
+
+        Route::get('/business/{business}/analytics', [BusinessAnalyticsController::class, 'index'])
+            ->name('business.analytics.index');
+        Route::get('/support', [SupportController::class, 'index'])->name('support.index');
+        Route::post('/support/send', [SupportController::class, 'send'])->name('support.send');
+
+        Route::prefix('new-settings')->group(function () {
+            Route::get('/', [NewSettingController::class, 'index'])->name('new-settings.index');
+            Route::post('/update-profile', [NewSettingController::class, 'updateProfile'])->name('new-settings.updateProfile');
+            Route::post('/update-password', [NewSettingController::class, 'updatePassword'])->name('new-settings.updatePassword');
+            Route::delete('/delete-account', [NewSettingController::class, 'deleteAccount'])->name('new-settings.deleteAccount');
+        });
+
+    });
 
 
     Route::post('stripe-settings', [SystemController::class, 'savePaymentSettings'])->middleware('XSS', 'auth')->name('payment.settings');
@@ -216,7 +228,6 @@ Route::group(['middleware' => ['verified']], function () {
 
     Route::get('order', [StripePaymentController::class, 'index'])->middleware('XSS', 'auth')->name('order.index');
     Route::any('/plan/error/{flag}', [PaymentWallPaymentController::class, 'paymenterror'])->name('callback.error');
-
 
 
     Route::any('plan-mercado-callback/{plan_id}', [MercadoPaymentController::class, 'mercadopagoPaymentCallback'])->middleware('auth')->name('plan.mercado.callback');
@@ -233,23 +244,18 @@ Route::group(['middleware' => ['verified']], function () {
     //================================= Custom Landing Page ====================================//
 
 
-
-
     Route::post('change-password', [UserController::class, 'updatePassword'])->name('update.password');
 
 
     // Route::get('/apply-coupon', [CouponController::class, 'applyCoupon'])->middleware('XSS','auth')->name('apply.coupon');
 
 
-
     Route::post('prepare-payment', [PlanController::class, 'preparePayment'])->middleware('XSS', 'auth')->name('prepare.payment');
     Route::get('/payment/{code}', [PlanController::class, 'payment'])->middleware('XSS', 'auth')->name('payment');
 
 
-
     //================================= Plan Payment Gateways  ====================================//
     Route::post('plan-pay-with-paypal', [PaypalController::class, 'planPayWithPaypal'])->middleware('XSS', 'auth')->name('plan.pay.with.paypal');
-
 
 
     Route::post('/plan-pay-with-paystack', [PaystackPaymentController::class, 'planPayWithPaystack'])->middleware('XSS', 'auth')->name('plan.pay.with.paystack');
@@ -337,7 +343,7 @@ Route::group(['middleware' => ['verified']], function () {
 
     //ozow plan
     Route::post('plan-pay-with/ozow', [OzowPaymentController::class, 'planPayWithOzow'])->name('plan.pay.with.ozow');
-    Route::get('plan-get-ozow-status/{plan_id}',[OzowPaymentController::class,'planGetOzowStatus'])->name('plan.get.ozow.status');
+    Route::get('plan-get-ozow-status/{plan_id}', [OzowPaymentController::class, 'planGetOzowStatus'])->name('plan.get.ozow.status');
 
     Route::post('plan-pay-with/paiementpro', [PaiementProController::class, 'planPayWithpaiementpro'])->name('plan.pay.with.paiementpro');
     Route::get('plan-get-paiementpro-status/{plan}', [PaiementProController::class, 'planGetpaiementproStatus'])->name('plan.get.paiementpro.status');
@@ -352,17 +358,17 @@ Route::group(['middleware' => ['verified']], function () {
     Route::any('plan-get-fedapay-status/{plan_id}', [FedaPayController::class, 'planGetFedapayStatus'])->name('plan.get.fedapay.status')->middleware('auth');
 
     Route::post('plan-pay-with/tap', [TapController::class, 'planPayWithTap'])->name('plan.pay.with.tap');
-    Route::get('plan-get-tap-status/{plan_id}',[TapController::class,'planGetTapStatus'])->name('plan.get.tap.status');
+    Route::get('plan-get-tap-status/{plan_id}', [TapController::class, 'planGetTapStatus'])->name('plan.get.tap.status');
 
     Route::any('/plan-pay-with-authorize-net', [AuthorizeNetController::class, 'planPayWithAuthorizeNet'])->name('plan.pay.with.authorizenet');
-    Route::post('/plan-get-authorizenet-status',[AuthorizeNetController::class,'planPayWithAuthorizeNetData'])->name('plan.get.authorizenet.status');
+    Route::post('/plan-get-authorizenet-status', [AuthorizeNetController::class, 'planPayWithAuthorizeNetData'])->name('plan.get.authorizenet.status');
 
     Route::post('plan-pay-with-khalti', [KhaltiController::class, 'planPayWithKhalti'])->name('plan.pay.with.khalti');
-    Route::post('plan-get-khalti-status',[KhaltiController::class,'planGetKhaltiStatus'])->name('plan.get.khalti.status');
+    Route::post('plan-get-khalti-status', [KhaltiController::class, 'planGetKhaltiStatus'])->name('plan.get.khalti.status');
 
-    Route::post('/plan-pay-with-easebuzz', [EasebuzzController::class,'planPayWithEasebuzz'])->name('plan.pay.with.easebuzz');
-    Route::match(['get','post'],'/plan-easebuzz-payment-return', [EasebuzzController::class,'return_url'])->name('plan.easebuzz.return');
-    Route::match(['get','post'],'plan-easebuzz-payment-notify', [EasebuzzController::class,'notify_url'])->name('plan.get.easebuzz.notify');
+    Route::post('/plan-pay-with-easebuzz', [EasebuzzController::class, 'planPayWithEasebuzz'])->name('plan.pay.with.easebuzz');
+    Route::match(['get', 'post'], '/plan-easebuzz-payment-return', [EasebuzzController::class, 'return_url'])->name('plan.easebuzz.return');
+    Route::match(['get', 'post'], 'plan-easebuzz-payment-notify', [EasebuzzController::class, 'notify_url'])->name('plan.get.easebuzz.notify');
     //=================================Plan Request Module ====================================//
 
     Route::get('plan_request/index', [PlanRequestController::class, 'index'])->middleware('XSS', 'auth')->name('plan_request.index');
@@ -370,7 +376,6 @@ Route::group(['middleware' => ['verified']], function () {
     Route::get('request_send/{id}', [PlanRequestController::class, 'userRequest'])->middleware('XSS', 'auth')->name('send.request');
     Route::get('request_response/{id}/{response}', [PlanRequestController::class, 'acceptRequest'])->middleware('XSS', 'auth')->name('response.request');
     Route::get('request_cancel/{id}', [PlanRequestController::class, 'cancelRequest'])->middleware('XSS', 'auth')->name('request.cancel');
-
 
 
     /*==================================Recaptcha====================================================*/
@@ -405,7 +410,6 @@ Route::group(['middleware' => ['verified']], function () {
 
     Route::get('user-reset-password/{id}', [UserController::class, 'userPassword'])->name('user.reset');
     Route::post('user-reset-password/{id}', [UserController::class, 'userPasswordReset'])->name('user.password.update');
-
 
 
     /*=============================*/
@@ -470,12 +474,12 @@ Route::group(['middleware' => ['verified']], function () {
     Route::post('campaigns/business', [CampaignsController::class, 'businessData'])->name('campaigns.business')->middleware(['auth', 'XSS']);
     Route::get('campaigns-view/{id}', [CampaignsController::class, 'viewCampaigns'])->middleware('XSS', 'auth')->name('view.status.campaigns');
     Route::get('campaigns-status/{id}/{response}', [CampaignsController::class, 'ChangeStatus'])->middleware('XSS', 'auth')->name('change.status.campaigns');
-    Route::post('campaigns-enable', [CampaignsController::class,'campaignsEnable'])->name('campaigns.enable')->middleware(['auth', 'XSS']);
+    Route::post('campaigns-enable', [CampaignsController::class, 'campaignsEnable'])->name('campaigns.enable')->middleware(['auth', 'XSS']);
     Route::get('campaigns/analytics/{id}', [CampaignsController::class, 'businessAnalytics'])->name('campaigns.business.analytics');
     Route::get('marketplace_setup', [CampaignsController::class, 'campaignsSetup'])->name('campaigns.setup');
     Route::get('business_setup', [CampaignsController::class, 'campaignsSetup'])->name('business.setup');
     Route::post('business_setup/store', [CampaignsController::class, 'businessEnable'])->name('campaigns.business.settings');
-    Route::any('business_setup/cost-settings', [CampaignsController::class,'WholesaleCost'])->middleware(['auth'])->name('wholesale.cost-setting');
+    Route::any('business_setup/cost-settings', [CampaignsController::class, 'WholesaleCost'])->middleware(['auth'])->name('wholesale.cost-setting');
     Route::post('campaigns/costing', [CampaignsController::class, 'costData'])->name('campaigns.costing')->middleware(['auth', 'XSS']);
 
     // Business Releated New routes
@@ -486,7 +490,7 @@ Route::group(['middleware' => ['verified']], function () {
     Route::get('coupon/export', [CouponController::class, 'export'])->name('coupons.export');
     Route::get('applycouponpromote', [CouponController::class, 'applyCouponPromote'])->name('apply.coupon.promote')->middleware(['auth', 'XSS']);
 
-Route::any('promote-get-card-payment/', [CampaignsController::class, 'paymentSuccess'])->name('promote.success');
+    Route::any('promote-get-card-payment/', [CampaignsController::class, 'paymentSuccess'])->name('promote.success');
 });
 
 Route::get('/{slug}', [BusinessController::class, 'getcard'])->name('get.vcard')->middleware('domainActive');
@@ -496,3 +500,5 @@ Route::post('/contacts/store/', [ContactsController::class, 'store'])->name('con
 
 Route::any('card-pay-with-paypal/{id}', [PaypalController::class, 'cardPayWithPaypal'])->middleware('XSS')->name('card.pay.with.paypal');
 Route::get('get-payment-status/{id}', [PaypalController::class, 'cardGetPaymentStatus'])->name('card.get.payment.status');
+
+Route::post('/analytics/track', [BusinessAnalyticsController::class, 'track'])->name('analytics.track');

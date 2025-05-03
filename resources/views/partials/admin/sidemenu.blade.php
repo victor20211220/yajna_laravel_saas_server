@@ -116,7 +116,7 @@
                 </li>
             @endif
             @if (Auth::user()->type == 'super admin')
-                <li class="dash-item dash-hasmenu {{ Request::segment(1) == 'nfc' ? 'active dash-trigger' : '' }}">
+                <li class="d-none dash-item dash-hasmenu {{ Request::segment(1) == 'nfc' ? 'active dash-trigger' : '' }}">
                     <a class="dash-link " data-toggle="collapse" role="button"
                         aria-expanded="{{ Request::segment(1) == 'nfc' ? 'true' : 'false' }}"
                         aria-controls="navbar-getting-started"><span class="dash-micon"><i
@@ -219,7 +219,7 @@
                 </li>
             @endif
             @if (Auth::user()->type == 'company')
-                <li class="dash-item {{ Request::route()->getName() == 'referral.index' ? 'active' : '' }}">
+                <li class="dash-item d-none {{ Request::route()->getName() == 'referral.index' ? 'active' : '' }}">
                     <a href="{{ route('referral.index') }}" class="dash-link"><span class="dash-micon"><i
                                 class="ti ti-discount-2"></i></span><span
                             class="dash-mtext">{{ __('Referral Program') }}</span></a>
@@ -227,7 +227,7 @@
                 </li>
             @endif
             @if (Auth::user()->type == 'super admin')
-                <li class="dash-item {{ Request::route()->getName() == 'plan_request.index' ? 'active' : '' }}">
+                <li class="dash-item d-none {{ Request::route()->getName() == 'plan_request.index' ? 'active' : '' }}">
                     <a href="{{ route('plan_request.index') }}" class="dash-link"><span class="dash-micon"><i
                                 class="ti ti-brand-telegram"></i></span><span
                             class="dash-mtext">{{ __('Plan Request') }}</span></a>
@@ -239,13 +239,13 @@
                             class="dash-mtext">{{ __('Referral Program') }}</span></a>
 
                 </li>
-                <li class="dash-item {{ Request::route()->getName() == 'domain_request.index' ? 'active' : '' }}">
+                <li class="dash-item d-none {{ Request::route()->getName() == 'domain_request.index' ? 'active' : '' }}">
                     <a href="{{ route('domain_request.index') }}" class="dash-link"><span class="dash-micon"><i
                                 class="ti ti-browser"></i></span><span
                             class="dash-mtext">{{ __('Domain Request') }}</span></a>
 
                 </li>
-                <li class="dash-item {{ Request::segment(1) == 'coupons' ? 'active' : '' }}">
+                <li class="dash-item d-none {{ Request::segment(1) == 'coupons' ? 'active' : '' }}">
                     <a href="{{ route('coupons.index') }}" class="dash-link"><span class="dash-micon"><i
                                 class="ti ti-gift"></i></span><span class="dash-mtext">{{ __('Coupons') }}</span></a>
 
@@ -280,7 +280,7 @@
             @endif
             @if (\Auth::user()->type == 'super admin')
             <li
-                class="dash-item {{ \Request::route()->getName() == 'marketplace' || \Request::route()->getName() == 'marketplace' ? 'active' : '' }}">
+                class="dash-item d-none {{ \Request::route()->getName() == 'marketplace' || \Request::route()->getName() == 'marketplace' ? 'active' : '' }}">
                 <a href="{{ route('marketplace.home') }}" class="dash-link" target="_blank"><span class="dash-micon"><i
                             class="ti ti-briefcase "></i></span><span class="dash-mtext">{{ __('Business Directory') }}</span></a>
 
@@ -288,7 +288,7 @@
             @endif
             @if (\Auth::user()->type == 'super admin')
                 <li
-                    class="dash-item dash-hasmenu {{ Request::segment(1) == 'campaigns' ? 'active dash-trigger' : '' }}">
+                    class="dash-item d-none dash-hasmenu {{ Request::segment(1) == 'campaigns' ? 'active dash-trigger' : '' }}">
                     <a class="dash-link " data-toggle="collapse" role="button"
                         aria-expanded="{{ Request::segment(1) == 'campaigns' ? 'true' : 'false' }}"
                         aria-controls="navbar-getting-started"><span class="dash-micon"><i

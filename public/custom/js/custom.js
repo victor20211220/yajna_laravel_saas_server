@@ -815,31 +815,6 @@ function selectFile(targetId) {
     });
 }
 
-function selectFiles(elementid) {
-    const _this = $(`.${elementid}`);
-    _this.trigger('click');
-    _this.change(function () {
-        var url = this.value;
-        var ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase();
-        if (this.files && this.files[0] && (ext === "gif" || ext === "png" || ext === "jpeg" || ext === "jpg" || ext === "svg")) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                $(`#${elementid}`).attr('src', e.target.result);
-                $(`#${elementid}_preview`).attr('src', e.target.result).removeClass('d-none');
-            }
-            reader.readAsDataURL(this.files[0]);
-        } else {
-            /*
-            let file_error = $(this).closest('.img-validate-class-detail').find('.file-error-detail');
-            file_error.text("Please select a valid file type. Allowed types: jpg, jpeg, png, gif.").show();
-            $(`#${elementid}`).attr('src', '/assets/images/icons/user_interface/image_placeholder.svg');
-             */
-        }
-    });
-
-}
-
-
 $(document).on('click', 'a[data-ajax-popup-over="true"], button[data-ajax-popup-over="true"], div[data-ajax-popup-over="true"]', function () {
     var validate = $(this).attr('data-validate');
     var id = '';

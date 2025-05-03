@@ -129,15 +129,11 @@
 <script src="{{ asset('assets/js/plugins/bootstrap.min.js') }}"></script>
 <script src="{{ asset('assets/js/plugins/feather.min.js') }}"></script>
 <script src="{{ asset('custom/libs/jquery/dist/jquery.min.js') }}"></script>
+<script src="{{ asset('custom/libs/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
+<script src="{{ asset('custom/js/custom-toast.js') }}"></script>
+@include('components.custom-toast')
+
 <script src="{{ asset('custom/js/custom.js') }}"></script>
-<script>
-    @if (isset($setting['cust_darklayout']) && $setting['cust_darklayout'] == 'on')
-    document.addEventListener('DOMContentLoaded', (event) => {
-        const recaptcha = document.querySelector('.g-recaptcha');
-        recaptcha.setAttribute("data-theme", "dark");
-    });
-    @endif
-</script>
 <script>
     feather.replace();
 </script>

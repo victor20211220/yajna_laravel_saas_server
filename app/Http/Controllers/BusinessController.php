@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment_deatail;
+use App\Models\BusinessAnalytics;
 use App\Models\BusinessCategory;
 use App\Models\Campaigns;
 use App\Models\CardAppinfo;
@@ -10,6 +11,7 @@ use App\Models\CardPayment;
 use App\Models\DomainRequest;
 use App\Models\Product;
 
+use App\Models\ShareContactField;
 use Illuminate\Support\Facades\Http;
 use JeroenDesloovere\VCard\VCard;
 use App\Models\Business;
@@ -147,7 +149,7 @@ class BusinessController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param \App\Business $businessphp
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
      */
     public function edit(Business $business, $id)
     {
@@ -172,13 +174,13 @@ class BusinessController extends Controller
             $sociallinks = social::socialData($business->id);
             $social_content = [];
             if (!empty($sociallinks->content)) {
-                $social_content = json_decode($sociallinks->content);
+                $social_content = (array)json_decode($sociallinks->content);
             }
 
             $services = service::serviceData($business->id);
             $services_content = [];
             if (!empty($services->content)) {
-                $services_content = json_decode($services->content);
+                $services_content = (array)json_decode($services->content);
             }
 
             //Gallery
@@ -229,8 +231,7 @@ class BusinessController extends Controller
             $business_url = $app_url . '/' . $business['slug'];
 
 
-            if (!empty($business->enable_subdomain) && $business->enable_subdomain == 'on')
-            {
+            if (!empty($business->enable_subdomain) && $business->enable_subdomain == 'on') {
                 // Remove the http://, www., and slash(/) from the URL
                 $input = env('APP_URL');
 
@@ -252,9 +253,7 @@ class BusinessController extends Controller
                 } else {
                     $subdomainPointing = 0;
                 }
-            }
-            else
-            {
+            } else {
                 $input = env('APP_URL');
 
                 // If URI is like, eg. www.way2tutorial.com/
@@ -317,7 +316,6 @@ class BusinessController extends Controller
 
             $currencyData = Utility::getCurrency();
             $category = BusinessCategory::get()->pluck('name', 'id');
-            $tab = 1;
 
             //
             $social_nos = 1;
@@ -398,9 +396,14 @@ class BusinessController extends Controller
             if (!is_null($cardPayment) && !is_null($cardPayment)) {
                 $cardPayment->is_enabled == '1' ? ($is_enabled = true) : ($is_enabled = false);
             }
-
+            $tab = 1;
+            if (session('tab')) {
+                $tab = session('tab');
+                session()->forget('tab');
+            }
             $themeName = \App\Models\Utility::themeOne()[$theme][$business->theme_color]['theme_name'] ?? null;
-            return view('business.edit', compact('category', 'businessfields', 'currencyData', 'services_content', 'services', 'social_content', 'sociallinks', 'business', 'custom_html', 'branding', 'branding', 'id', 'business_url', 'serverIp', 'subdomain_name', 'plan', 'pwa_data', 'gallery_contents', 'gallery', 'PixelFields', 'pixelScript', 'cookieDetail', 'filename', 'qr_code', 'qr_detail', 'subdomain_Ip', 'subdomainPointing', 'domainip', 'domainPointing', 'products', 'products_content', 'cardPayment', 'cardPayment_content', 'appInfo', 'social_nos', 'appointment_no', 'service_row_nos', 'product_row_nos', 'testimonials_row_nos', 'gallery_row_no', 'nos', 'stringid', 'custom_html', 'branding', 'is_branding_enabled', 'gdpr_text', 'card_theme', 'banner', 'logo', 'image', 's_image', 'pr_image', 'company_favicon', 'logo1', 'meta_image', 'gallery_path', 'qr_path', 'theme', 'color', 'url_link', 'is_custom_html_enable', 'is_gdpr_enabled', 'is_appinfo', 'is_svg_enabled', 'svg_text', 'is_enable_sociallinks', 'appointment_nos', 'meta_tag_image', 'is_enable', 'is_google_map_enabled', 'is_enabled', 'themeName'))->with('tab', $tab);
+            $shareContactFields = ShareContactField::where('business_id', $id)->first();
+            return view('business.edit', compact('category', 'businessfields', 'currencyData', 'services_content', 'services', 'social_content', 'sociallinks', 'business', 'custom_html', 'branding', 'branding', 'id', 'business_url', 'serverIp', 'subdomain_name', 'plan', 'pwa_data', 'gallery_contents', 'gallery', 'PixelFields', 'pixelScript', 'cookieDetail', 'filename', 'qr_code', 'qr_detail', 'subdomain_Ip', 'subdomainPointing', 'domainip', 'domainPointing', 'products', 'products_content', 'cardPayment', 'cardPayment_content', 'appInfo', 'social_nos', 'appointment_no', 'service_row_nos', 'product_row_nos', 'testimonials_row_nos', 'gallery_row_no', 'nos', 'stringid', 'custom_html', 'branding', 'is_branding_enabled', 'gdpr_text', 'card_theme', 'banner', 'logo', 'image', 's_image', 'pr_image', 'company_favicon', 'logo1', 'meta_image', 'gallery_path', 'qr_path', 'theme', 'color', 'url_link', 'is_custom_html_enable', 'is_gdpr_enabled', 'is_appinfo', 'is_svg_enabled', 'svg_text', 'is_enable_sociallinks', 'appointment_nos', 'meta_tag_image', 'is_enable', 'is_google_map_enabled', 'is_enabled', 'themeName', 'shareContactFields'))->with('tab', $tab);
         } else {
 
             return abort('404', 'Not Found');
@@ -416,7 +419,6 @@ class BusinessController extends Controller
      */
     public function update(Request $request, Business $business)
     {
-        $tab = 1;
         if (!\Auth::user()->can('edit business'))
             return redirect()->back()->with('error', __('Permission denied.'));
 
@@ -592,31 +594,28 @@ class BusinessController extends Controller
         $business->button_text_color = $request->button_text_color;
 
 
-        $services_data = service::where('business_id', $business_id)->first();
-        $servicedetails = $request->services;
+        $service = service::where('business_id', $business_id)->first();
+        $services_payload = $request->services;
         $is_service_enabled = $request->is_services_enabled === "on";
-        $service_details = null;
-        if ($servicedetails) {
-            $service_details = [];
-            $service_count = 1;
-            foreach ($servicedetails as $service_key => $service_val) {
-                $service_details[$service_key] = [
-                    'id' => $service_count,
+        $service_content = null;
+        if ($services_payload) {
+            $service_content = [];
+            foreach ($services_payload as $service_key => $service_val) {
+                $service_content[$service_key] = [
                     'title' => $service_val['title'],
                 ];
-                $service_count++;
             }
-            $service_details = json_encode($service_details);
+            $service_content = json_encode($service_content);
         }
-        if (!is_null($services_data)) {
-            $services_data->content = $service_details;
-            $services_data->is_enabled = $is_service_enabled;
-            $services_data->created_by = \Auth::user()->creatorId();
-            $services_data->save();
+        if (!is_null($service)) {
+            $service->content = $service_content;
+            $service->is_enabled = $is_service_enabled;
+            $service->created_by = \Auth::user()->creatorId();
+            $service->save();
         } else {
             service::create([
                 'business_id' => $business_id,
-                'content' => $service_details,
+                'content' => $service_content,
                 'is_enabled' => $is_service_enabled,
                 'created_by' => \Auth::user()->creatorId()
             ]);
@@ -710,7 +709,7 @@ class BusinessController extends Controller
         } else {
             Gallery::create([
                 'business_id' => $business_id,
-                'content' => $fileName ? json_encode($gallery_contents): null,
+                'content' => $fileName ? json_encode($gallery_contents) : null,
                 'is_enabled' => $is_gallery_enabled,
                 'is_video_enabled' => $is_video_enabled,
                 'created_by' => \Auth::user()->creatorId()
@@ -721,6 +720,26 @@ class BusinessController extends Controller
         $business->google_review_link = $request->google_review_link;
         $business->google_review_enabled = $request->google_review_enabled === "on";
 
+        ShareContactField::updateOrCreate(
+            ['business_id' => $business->id],
+            [
+                'is_name_required' => $request->has('is_name_required'),
+                'is_name_enabled' => $request->has('is_name_enabled'),
+                'is_phone_required' => $request->has('is_phone_required'),
+                'is_phone_enabled' => $request->has('is_phone_enabled'),
+                'is_email_required' => $request->has('is_email_required'),
+                'is_email_enabled' => $request->has('is_email_enabled'),
+                'is_company_required' => $request->has('is_company_required'),
+                'is_company_enabled' => $request->has('is_company_enabled'),
+                'is_job_title_required' => $request->has('is_job_title_required'),
+                'is_job_title_enabled' => $request->has('is_job_title_enabled'),
+                'is_notes_required' => $request->has('is_notes_required'),
+                'is_notes_enabled' => $request->has('is_notes_enabled'),
+            ]
+        );
+
+        $business->is_lead_direct_download_enabled = $request->is_lead_direct_download_enabled === "on";
+
         //Qr Code
         $business_qr = Businessqr::where('business_id', $business_id)->first();
         if (!$business_qr) $business_qr = new Businessqr();
@@ -729,7 +748,7 @@ class BusinessController extends Controller
             $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
             if ($result === 1) {
                 $old_qrcode_image = $business_qr && $business_qr->image ? $business_qr->image : null;
-                if($old_qrcode_image){
+                if ($old_qrcode_image) {
                     $result = Utility::changeStorageLimit(\Auth::user()->creatorId(), 'qrcode/' . $old_qrcode_image);
                 }
                 $settings = Utility::getStorageSetting();
@@ -759,7 +778,10 @@ class BusinessController extends Controller
 
         $business->created_by = \Auth::user()->creatorId();
         $business->save();
-        return redirect()->back()->with('success', __('Business Information Updated Successfully') . ((isset($result) && $result != 1) ? '<br> <span class="text-danger">' . $result . '</span>' : ''))->with('tab', $tab);
+
+        $tab = (int)$request->edit_tab_key;
+        session()->flash('tab', $tab);
+        return redirect()->back()->with('success', __('Business Information Updated Successfully') . ((isset($result) && $result != 1) ? '<br> <span class="text-danger">' . $result . '</span>' : ''));
 
     }
 
@@ -883,7 +905,7 @@ class BusinessController extends Controller
                 $sociallinks = social::where('business_id', $business->id)->first();
                 $social_content = [];
                 if (!empty($sociallinks->content)) {
-                    $social_content = json_decode($sociallinks->content);
+                    $social_content = (array)json_decode($sociallinks->content);
                 }
 
                 //Gallery
@@ -1017,6 +1039,16 @@ class BusinessController extends Controller
                 $url_link = env('APP_URL') . '/' . $business->slug;
                 $theme = $business->theme;
                 $themeName = \App\Models\Utility::themeOne()[$theme][$business->theme_color]['theme_name'] ?? null;
+                // If the logged-in user is the owner, skip analytics
+                if (!auth()->check() || auth()->id() !== $business->created_by) {
+                    BusinessAnalytics::create([
+                        'business_id' => $business->id,
+                        'type' => 'view',
+                        'source' => detectDevice(request()->userAgent()),
+                        'created_at' => now(),
+                    ]);
+                }
+
                 return view('card.' . $card_theme->theme . '.index', compact('appInfo', 'businessfields', 'contactinfo', 'contactinfo_content', 'appoinment_hours', 'appoinment', 'services_content', 'services', 'testimonials_content', 'testimonials', 'social_content', 'sociallinks', 'customhtml', 'businesshours', 'business_hours', 'business', 'days', 'is_slug', 'plan', 'gallery', 'gallery_contents', 'pixelScript', 'qr_detail', 'products', 'products_content', 'cardPayment', 'cardPayment_content', 'social_nos', 'service_row_nos', 'product_row_nos', 'testimonials_row_nos', 'gallery_row_no', 'nos', 'stringid', 'is_custom_html_enable', 'is_branding_enabled', 'branding', 'is_gdpr_enabled', 'gdpr_text', 'card_theme', 'banner', 'logo', 'company_logo', 'image', 's_image', 'pr_image', 'company_favicon', 'logo1', 'meta_image', 'gallery_path', 'qr_path', 'theme', 'color', 'SITE_RTL', 'url_link', 'is_appinfo', 'is_svg_enabled', 'svg_text', 'is_enable_sociallinks', 'appointment_nos', 'is_google_map_enabled', 'custom_html', 'is_enabled', 'meta_tag_image', 'themeName'));
             } else {
                 return abort('403', 'The Link You Followed Has Disactive');
@@ -1880,17 +1912,17 @@ class BusinessController extends Controller
         foreach ($gallery_details as $key => $data) {
             // if we found it,
             if ($data->id === (int)$data_id) {
-                if(in_array($data->type, ['image', 'video']) ){
-                    Utility::changeStorageLimit(\Auth::user()->creatorId(), 'gallery/'.$data->value);
+                if (in_array($data->type, ['image', 'video'])) {
+                    Utility::changeStorageLimit(\Auth::user()->creatorId(), 'gallery/' . $data->value);
                 }
-            }else{
+            } else {
                 $gallery_detailss[] = $data;
             }
         }
         $gallery_content = json_encode($gallery_detailss);
         $gallery->content = $gallery_content;
         $gallery->save();
-        Session::put(['tab' => 3]);
+        session()->flash('tab', 3);
         return true;
 
     }

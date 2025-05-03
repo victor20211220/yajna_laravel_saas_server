@@ -1,6 +1,13 @@
 :root {
-    --bs-border-color: #C8C9CB;
+    --bs-border-color: #E5E5E5;
     --bs-body-color: #171717;
+    --bs-body-font-family: 'Inter', sans-serif !important;
+}
+
+html, body {
+    height: 100%;
+    min-height: 100%;
+    margin: 0;
 }
 
 body {
@@ -14,6 +21,10 @@ body {
     box-shadow: none;
 }
 
+.form-control {
+    //color: #9D9DA1 !important;
+    //color: darkgray !important;
+}
 
 /* Remove autofill background (Chrome/Safari) */
 input:-webkit-autofill,
@@ -54,7 +65,7 @@ input:-webkit-autofill {
 }
 
 .card {
-    border: none;
+    border: none !important;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
@@ -68,7 +79,7 @@ input:-webkit-autofill {
 }
 
 .sidebar {
-    width: 250px;
+    width: 300px;
     min-height: 100vh;
     background: #fff;
     border-right: 1px solid #eee;
@@ -79,41 +90,28 @@ input:-webkit-autofill {
     transform: translateX(-100%);
 }
 
-.toggle-btn {
-    z-index: 1050;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.toggle-sidebar-icon {
+    margin-top: 42px;
     cursor: pointer;
-    transition: left 0.3s ease-in-out;
+    width: 17px;
+}
+
+.page-title {
+    margin-left: 2rem;
 }
 
 .main-content {
-    padding: 2rem;
+    padding: 2rem 3rem;
     transition: margin-left 0.3s ease-in-out;
-    margin-left: 250px;
+    margin-left: 300px;
 }
 
 .main-content.collapsed {
     margin-left: 0;
 }
 
-@media (max-width: 768px) {
-    .sidebar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 100%;
-        z-index: 1045;
-    }
-    .main-content {
-        margin-left: 0 !important;
-    }
+.jquery-d-none {
+    display: none;
 }
 
 
@@ -177,10 +175,9 @@ input:-webkit-autofill {
 
 .form-group {
     margin-bottom: 30px;
-    font-size: 18px;
 
     .form-label {
-        font-weight: 500;
+        font-size: 18px;
     }
 }
 
@@ -198,6 +195,10 @@ input:-webkit-autofill {
     .st0 {
         fill: white;
     }
+}
+
+button {
+    font-weight: 500 !important;
 }
 
 .fill-primary {
@@ -227,26 +228,37 @@ a {
 }
 
 // Remove Bootstrap default caret
-.dropdown-toggle::after {
-    display: none;
-}
+#sidebar {
+    .dropdown-toggle::after {
+        display: none;
+    }
 
-// Insert your custom image
-.dropdown-toggle {
-    position: relative;
-    padding-right: 2rem; // Add space for the image
+    // Insert your custom image
+    .dropdown-toggle {
+        position: relative;
+        padding-right: 2rem; // Add space for the image
 
-    &::before {
-        content: '';
-        background: url('/assets/images/icons/user_interface/dropdown_caret.svg') no-repeat center;
-        background-size: contain;
-        position: absolute;
-        right: 1rem;
-        top: 50%;
-        width: 12px; // Customize size
-        height: 12px;
-        transform: translateY(-50%);
-        pointer-events: none;
+        &::before {
+            content: '';
+            background: url('/assets/images/icons/user_interface/dropdown_caret.svg') no-repeat center;
+            background-size: contain;
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            width: 12px; // Customize size
+            height: 12px;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+    }
+
+    .sidebar-user-dropdown {
+        .dropdown-menu.show {
+            position: absolute;
+            inset: auto auto 0px 0px;
+            margin: 0px;
+            transform: translate(0px, -52px);
+        }
     }
 }
 
@@ -255,7 +267,7 @@ a {
 }
 
 .card-edit-right-block {
-    min-width: 374px;
+    min-width: 450px;
 }
 
 .custom-box {
@@ -263,6 +275,7 @@ a {
     max-height: 900px;
     min-height: calc(100vh - 180px);
     width: 374px;
+    margin-right: 76px;
     border-radius: 42px;
     border: 8px solid #000; // black border
     background-color: #fff; // white background
@@ -288,23 +301,234 @@ a {
 
 .btn-icon {
     @extend .d-flex, .justify-content-between, .align-items-center, .gap-2;
+
     svg {
         width: 20px;
         height: auto;
         object-fit: contain;
     }
-    &.tab-btn{
+
+    &.tab-btn {
         @extend .justify-content-center;
     }
 }
-.tab-btn{
-    background: var(--bs-secondary);
-    &.active{
-        background: var(--bs-primary);
+
+.tab-btn {
+    background: var(--bs-secondary) !important;
+
+    &.active {
+        background: var(--bs-primary) !important;
         color: white;
+
         .st0 {
             fill: white;
         }
+    }
+}
+
+.jquery-d-none {
+    display: none;
+}
+
+.color-swatch,
+.color-picker-swatch {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    position: relative;
+    cursor: pointer;
+    background-color: transparent;
+    box-shadow: 0 0 0 1px #C1C4C7;
+}
+
+.color-picker-icon {
+    width: 32px;
+    height: 32px;
+    pointer-events: none;
+    display: block;
+    margin: auto;
+}
+
+/* Always apply 1px border even when selected */
+.color-swatch::before,
+.color-picker-swatch::before {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    width: 44px; /* 32 + 6*2 */
+    height: 44px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    transition: all 0.2s ease;
+    pointer-events: none;
+}
+
+/* Active ring effect */
+.color-swatch.selected::before,
+.color-picker-swatch.selected::before {
+    border-color: #000;
+}
+
+.form-switch {
+    padding: 0;
+    margin: 0;
+    height: 22px;
+
+    .form-check-input {
+        width: 60px !important;
+        height: 100%;
+        margin: 0 10px 0 0;
+    }
+}
+
+
+.item-management-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    margin-left: 0.5rem;
+    cursor: pointer;
+}
+
+.gallery-card {
+    height: 200px;
+
+    img.gallery-image {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+    }
+}
+
+.generated-qr-code {
+    width: 162px;
+    height: 162px;
+}
+
+#add_qr_code_logo_btn {
+    width: 100px;
+    height: 100px;
+}
+
+.text-14 {
+    font-size: 14px;
+}
+
+.colored-social-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.share-contact-form-fields {
+    input.form-check-input[type="checkbox"] {
+        margin: 0;
+    }
+
+    .form-switch {
+        height: 15px;
+        min-height: 15px;
+
+        .form-check-input {
+            width: 30px !important;
+        }
+    }
+}
+
+.sticky-bottom-bar {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    overflow: hidden;
+    height: auto;
+}
+
+.sticky-bar-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    backdrop-filter: blur(6px);
+    background: linear-gradient(to top, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0));
+    pointer-events: none;
+}
+
+.sticky-bar-content {
+    z-index: 1;
+}
+
+#contactBookPage {
+    svg {
+        width: 19px;
+    }
+
+    .table td,
+    .table th {
+        vertical-align: middle;
+    }
+
+    .table .dropdown-toggle::after {
+        display: none;
+    }
+
+    .filter-inputs {
+        > * {
+            max-width: 358px;
+            width: 100%;
+        }
+    }
+
+    .dataTable-top {
+        padding: 0;
+    }
+
+    .table {
+        td,
+        tbody tr {
+            border: none !important;
+        }
+
+        td,
+        th {
+            padding: 15px;
+            line-height: 1;
+        }
+
+        th {
+            font-weight: normal;
+        }
+
+        input[type="checkbox"] {
+            width: 17px;
+            height: 17px;
+        }
+
+        th:nth-child(1),
+        td:nth-child(1) {
+            width: 50px;
+        }
+    }
+}
+
+#analytics_page {
+    .card {
+        padding: 18px;
+
+        * {
+            font-size: 18px;
+        }
+    }
+
+    canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+}
+
+.card {
+    .card-title {
+        font-weight: 600;
+        font-size: 18px;
     }
 }
 
@@ -324,5 +548,30 @@ a {
 @media (max-width: 767.98px) {
     .logo-img {
         max-height: 40px;
+    }
+    .card-edit-right-block {
+        min-width: 300px;
+    }
+    button {
+        font-size: 14px !important;
+    }
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        z-index: 1045;
+    }
+    .toggle-sidebar-icon {
+        margin-top: 58px;
+
+        &#openSidebar {
+            margin-left: 18px !important;
+            margin-top: 58px;
+        }
+    }
+    .main-content {
+        margin-left: 0 !important;
+        padding: 3rem 1rem;
     }
 }

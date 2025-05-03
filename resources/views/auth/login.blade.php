@@ -41,7 +41,8 @@
     <!-- [ auth-signup ] start -->
     {{ Form::open(['route' => 'login', 'method' => 'post', 'id' => 'loginForm']) }}
     <h2 class="fw-bold mb-3 text-center text-md-start">Welcome!</h2>
-    <p class="mb-4 text-muted">Enter your Email or Phone Number to log in</p>
+    <div class="mb-4 text-center">Enter your Email or Phone Number to log in
+    </div>
 
     <div class="mb-3">
         <label for="email" class="form-label">Email</label>
@@ -67,7 +68,7 @@
             @enderror
         </div>
         <div class="text-end mt-1">
-            <a href="{{ route('password.request', $lang) }}" class="small text-decoration-none">Forgot Password?</a>
+            <a href="{{ route('password.request', $lang) }}" class="text-decoration-none">Forgot Password?</a>
         </div>
     </div>
 

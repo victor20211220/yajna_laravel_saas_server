@@ -1,157 +1,214 @@
 @php
-    $users = \Auth::user();
-    $businesses = App\Models\Business::allBusiness();
-    $currantBusiness = $users->currentBusiness();
-    $bussiness_id = $users->current_business;
+    $user = \Auth::user();
+    $business_id = $user->current_business;
 @endphp
-@extends('layouts.admin')
-@section('breadcrumb')
-    <li class="breadcrumb-item active" aria-current="page"><a href="{{ route('home') }}">{{ __('Dashboard') }}</a></li>
-    <li class="breadcrumb-item active" aria-current="page">{{ __('Contacts') }}</li>
-@endsection
+@extends('layouts.new-client')
 @section('page-title')
-    {{ __('Contacts') }}
+    {{ __('Contact Book') }}
 @endsection
 @section('title')
-    {{ __('Contacts') }}
+    <h3 class="mb-2 page-title">
+        {{ __('Contact Book') }}
+    </h3>
 @endsection
-<style>
-    .export-btn {
-        float: right;
-    }
-</style>
 @section('content')
-    <div class="row">
-        <div class="col-xl-12">
-            <div class="card mb-0">
-                <div class="card-header card-body table-border-style">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        {{-- //business Display Start --}}
-                        <ul class="list-unstyled business-header mb-0">
-                             <li class="dropdown dash-h-item drp-language">
-                                <a class="dash-head-link dropdown-toggle arrow-none me-0 ml-0 cust-btn"
-                                    data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false"
-                                    aria-expanded="false" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                                    data-bs-original-title="{{ __('Select your bussiness') }}">
-                                    <i class="ti ti-apps"></i>
-                                    <span class="drp-text hide-mob">{{ __(ucfirst($currantBusiness)) }}</span>
-                                    <i class="ti ti-chevron-down drp-arrow nocolor"></i>
-                                </a>
-                                <div class="dropdown-menu dash-h-dropdown page-inner-dropdowm dashborad-drap">
-                                    @foreach ($businesses as $key => $business)
-                                        @if ($business['admin_enable'] == 'on')
-                                            <a href="{{ route('business.change', $business['id']) }}" class="dropdown-item">
-                                                <i
-                                                    class="@if ($bussiness_id == $business['id']) ti ti-checks text-primary @elseif($currantBusiness == $business['title']) ti ti-checks text-primary @endif "></i>
-                                                <span>{{ ucfirst($business['title']) }}</span>
-                                            </a>
-                                        @else
-                                            <a href="#" class="dropdown-item">
-                                                <i class="ti ti-lock"></i>
-                                                <span class="row-disabled">{{ ucfirst($business['title']) }}</span>
-                                            </a>
-                                        @endif
-                                    @endforeach
-                                </div>
-                            </li>
-                        </ul>
+    <div id="contactBookPage">
+        <div class="pb-2"></div>
+        <div class="mb-4 d-none d-xl-block">
+            All the contacts you collect will appear here. You can follow up, export, or organize them with
+            tags.
+        </div>
+        <div class="d-flex justify-content-start align-items-center mb-4 gap-3">
+            <button class="btn btn-primary" id="openCreateContactModalBtn">
+                {!! svg('user_interface/contact_book.svg', ['class' => 'me-3']) !!} Create Contact
+            </button>
+            <button id="exportCSV" class="btn btn-white">
+                {!! svg('user_interface/export_contacts.svg', ['class' => 'me-3']) !!} Export Contacts
+            </button>
+        </div>
 
-                        {{-- //business Display End --}}
-                        <button class="csv btn btn-sm btn-primary export-btn mb-3" data-bs-placement="top" data-bs-toggle="tooltip"
-                        title="{{__('Export')}}" data-bs-original-title="{{ __('Export') }}">{{ __('Export') }}</button>
+        <div class="d-flex gap-3 align-items-start justify-content-start mb-3 filter-inputs flex-column flex-md-row">
+            <div class="position-relative">
+                <i class="bi bi-search position-absolute top-50 translate-middle-y ms-3"></i>
+                <input type="text" class="form-control ps-5" placeholder="Search"
+                       id="searchInput">
+            </div>
+            <div id="reportrange" class="form-control d-flex justify-content-between align-items-center">
+                <i class="bi bi-calendar4"></i>
+                <span></span> <img src="{{ asset('assets/images/icons/user_interface/arrows.svg') }}" alt="" width="7px"
+                                   height="11px">
+            </div>
+
+        </div>
+        <div class="card table-responsive">
+            <table id="contactsTable" class="table table-hover borderless">
+                <thead>
+                <tr>
+                    <th><input type="checkbox" id="checkAll"></th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Date Added</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach ($contacts_details as $val)
+                    <tr>
+                        <td><input type="checkbox" class="row-checkbox"></td>
+                        <td>{{ $val->name }}</td>
+                        <td>{{ $val->email }}</td>
+                        <td>{{ \Carbon\Carbon::parse($val->created_at)->format('d F, Y') }}</td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
+        <div class="modal fade" id="createContactModal" tabindex="-1" aria-labelledby="createContactModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content rounded-4">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title fw-bold mx-auto" id="createContactModalLabel">Create Contact</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table" id="pc-dt-export">
-                            <thead>
-                                <tr>
-                                    <th>{{ __('Business Name') }}</th>
-                                    <th>{{ __('Name') }}</th>
-                                    <th>{{ __('Email') }}</th>
-                                    <th>{{ __('Phone') }}</th>
-                                    <th>{{ __('Message') }}</th>
-                                    <th>{{ __('Status') }}</th>
-                                    <th id="ignore">{{ __('Action') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($contacts_deatails as $val)
-                                    <tr>
-                                        <td>{{ $val->business_name }}</td>
-                                        <td>{{ $val->name }}</td>
-                                        <td>{{ $val->email }}</td>
-                                        <td>{{ $val->phone }}</td>
-                                        <td style="white-space: normal; min-width: 500px;">{{ $val->message }}</td>
-                                        @if ($val->status == 'pending')
-                                            <td><span
-                                                    class="badge bg-warning p-2 px-3 tbl-btn-w" >{{ ucFirst($val->status) }}</span>
-                                            </td>
-                                        @else
-                                            <td><span
-                                                    class="badge bg-success p-2 px-3 tbl-btn-w" >{{ ucFirst($val->status) }}</span>
-                                            </td>
-                                        @endif
+                    <div class="modal-body">
+                        <form method="POST" action="{{ route('contacts.store') }}">
+                            @csrf
+                            <div class="d-grid gap-3 mb-4">
+                                <input type="text" name="name"
+                                       class="form-control bg-secondary border-0 rounded-3 py-3 text-center"
+                                       placeholder="Name" required>
 
-                                            <td class="tabel-btn-wrp">
-                                                @can('edit contact')
-                                                    <div class="action-btn  me-2">
-                                                        <a href="#"
-                                                            class="mx-3  bg-success btn btn-sm d-inline-flex align-items-center cp_link"
-                                                            data-toggle="modal" data-target="#commonModal"
-                                                            data-ajax-popup="true" data-size="lg"
-                                                            data-url="{{ route('contact.add-note', $val->id) }}"
-                                                            data-title="{{ __('Add Note & Change Status') }}"
-                                                            data-bs-toggle="tooltip"
-                                                            data-bs-original-title="{{ __('Add Note & Change Status') }}">
-                                                            <span class="text-white"><i class="ti ti-note"></i></span></a>
-                                                    </div>
-                                                @endcan
-                                                @can('delete contact')
-                                                    <div class="action-btn me-2">
-                                                        <a href="#"
-                                                            class="bs-pass-para mx-3 bg-danger btn btn-sm d-inline-flex align-items-center"
-                                                            data-confirm="{{ __('Are You Sure?') }}"
-                                                            data-text="{{ __('This action can not be undone. Do you want to continue?') }}"
-                                                            data-confirm-yes="delete-form-{{ $val->id }}"
-                                                            title="{{ __('Delete') }}" data-bs-toggle="tooltip"
-                                                            data-bs-placement="top"><span class="text-white"><i
-                                                                    class="ti ti-trash"></i></span></a>
-                                                    </div>
-                                                    {!! Form::open([
-                                                        'method' => 'DELETE',
-                                                        'route' => ['contacts.destroy', $val->id],
-                                                        'id' => 'delete-form-' . $val->id,
-                                                    ]) !!}
-                                                    {!! Form::close() !!}
-                                                @endcan
+                                <input type="text" name="phone"
+                                       class="form-control bg-secondary border-0 rounded-3 py-3 text-center"
+                                       placeholder="Phone number" required>
 
-                                            </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                <input type="email" name="email"
+                                       class="form-control bg-secondary border-0 rounded-3 py-3 text-center"
+                                       placeholder="Email">
+
+                                <input type="text" name="company"
+                                       class="form-control bg-secondary border-0 rounded-3 py-3 text-center"
+                                       placeholder="Company">
+
+                                <input type="text" name="job_title"
+                                   class="form-control bg-secondary border-0 rounded-3 py-3 text-center"
+                                       placeholder="Job Title">
+
+                                <textarea name="message"
+                                          class="form-control bg-light border-0 rounded-3 py-3 text-center"
+                                          rows="3" placeholder="Notes"></textarea>
+                                <input type="hidden" name="business_id" value="{{ $business_id }}">
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit"
+                                        class="btn btn-primary rounded-3 py-2 d-flex justify-content-center align-items-center gap-2">
+                                    <i class="bi bi-arrow-repeat"></i>
+                                    <span>Create Contact</span>
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 @endsection
-
 @push('custom-scripts')
-    <script src="https://rawgit.com/unconditional/jquery-table2excel/master/src/jquery.table2excel.js"></script>
     <script>
-        const table = new simpleDatatables.DataTable("#pc-dt-export", {
-            searchable: true,
-            fixedheight: true,
-            dom: 'Bfrtip',
-        });
-        $('.csv').on('click', function() {
-            $('#ignore').remove();
-            $("#pc-dt-export").table2excel({
-                filename: "contactDetail"
+        $(function () {
+            var start = moment().startOf('month');
+            var end = moment();
+            var selectedLabel = 'This Month';
+
+            function cb(start, end, label) {
+                if (label) {
+                    selectedLabel = label;
+                }
+
+                if (selectedLabel === 'Custom Range') {
+                    $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+                } else {
+                    $('#reportrange span').html(selectedLabel);
+                }
+
+                filterRowsByDateRange(start, end);
+            }
+
+            $('#reportrange').daterangepicker({
+                startDate: start,
+                endDate: end,
+                ranges: {
+                    'This Week': [moment().startOf('week'), moment().endOf('week')],
+                    'Last Week': [moment().subtract(1, 'week').startOf('week'), moment().subtract(1, 'week').endOf('week')],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                    'This Year': [moment().startOf('year'), moment().endOf('year')],
+                    'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')]
+                }
+            }, cb);
+            // initial call with label
+            cb(start, end, selectedLabel);
+
+
+            const table = document.querySelector('#contactsTable');
+            dataTable = new simpleDatatables.DataTable(table, {
+                searchable: false,
+                paging: false,
+                columns: [
+                    {select: 0, sortable: false}, // last column (index 4) = dropdown
+                ],
             });
-            setTimeout(function() {
-                location.reload();
-            }, 2000);
+
+            $('#searchInput').on('input', function () {
+                dataTable.search(this.value);
+            });
+
+            $('#entriesSelect').on('change', function () {
+                dataTable.options.perPage = parseInt(this.value);
+                dataTable.update();
+            });
+
+            $('#exportCSV').on('click', function () {
+                dataTable.export({
+                    type: "csv",
+                    filename: "contacts_export",
+                    download: true
+                });
+            });
+
+
+            $('#clearDateFilter').on('click', function () {
+                $('#fromDate, #toDate').val('');
+                $('#contactsTable tbody tr').show();
+            });
+
+            function filterRowsByDateRange(start, end) {
+                const from = new Date(start);
+                const to = new Date(end);
+
+                $('#contactsTable tbody tr').each(function () {
+                    const dateText = $(this).find('td').eq(3).text().trim();
+                    const rowDate = new Date(dateText);
+
+                    const inRange =
+                        (!isNaN(from) ? rowDate >= from : true) &&
+                        (!isNaN(to) ? rowDate <= to : true);
+
+                    $(this).toggle(inRange);
+                });
+            }
+
+            $('#checkAll').on('change', function () {
+                $('.row-checkbox').prop('checked', this.checked);
+            });
+
+            $('#openCreateContactModalBtn').click(function () {
+                $('#createContactModal').modal('show');
+            })
+
         });
+
     </script>
 @endpush

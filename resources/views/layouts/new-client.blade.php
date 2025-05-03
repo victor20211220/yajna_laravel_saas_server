@@ -11,7 +11,7 @@
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
 @include('partials.new-client.header')
-<body class="position-relative">
+<body class="position-relative jquery-d-none">
 <input type="hidden" id="path_admin" value="{{ url('/') }}">
 <div class="loader-bg">
     <div class="loader-track">
@@ -23,17 +23,8 @@
 @include('partials.new-client.sidemenu')
 
 <!-- Main Content -->
-<div id="mainContent" class="main-content">
-    <div class="position-absolute end-0 top-0 me-4 mt-4 d-flex justify-content-center">
-        @impersonating($guard = null)
-        <a class="btn btn-danger me-3" href="{{ route('exit.company') }}"><i class="bi bi-ban"></i>
-            {{ __('Exit Company Login') }}
-        </a>
-        @endImpersonating
-        <div id="toggleSidebar" class="toggle-btn d-none">
-            <i id="toggleIcon" class="bi bi-arrow-left"></i>
-        </div>
-    </div>
+<div id="mainContent" class="main-content position-relative">
+    {!! svg('/user_interface/open_sidebar.svg', ['class' => 'position-absolute z-3 top-0 ms-5 start-0 toggle-sidebar-icon', 'id' => 'openSidebar']) !!}
     @yield('title')
     @yield('content')
 </div>
@@ -80,7 +71,6 @@
     </div>
 </div>
 
-<!-- Crop Modal -->
 <div class="modal fade" id="cropperModal" tabindex="-1" aria-labelledby="cropperModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content rounded-4">
@@ -102,91 +92,5 @@
     </div>
 </div>
 @include('partials.new-client.footer')
-
-
-@if (Session::has('success'))
-    <script>
-        toastrs('{{ __('Success') }}', '{!! session('success') !!}', 'success');
-    </script>
-    {{ Session::forget('success') }}
-@endif
-@if (Session::has('error'))
-    <script>
-        toastrs('{{ __('Error') }}', '{!! session('error') !!}', 'error');
-    </script>
-    {{ Session::forget('error') }}
-@endif
-
-<script>
-    var exampleModal = document.getElementById('exampleModal')
-
-    exampleModal.addEventListener('show.bs.modal', function (event) {
-        // Button that triggered the modal
-        var button = event.relatedTarget
-        // Extract info from data-bs-* attributes
-        var recipient = button.getAttribute('data-bs-whatever')
-        var url = button.getAttribute('data-url')
-
-        var modalTitle = exampleModal.querySelector('.modal-title')
-        var modalBodyInput = exampleModal.querySelector('.modal-body input')
-        modalTitle.textContent = recipient
-        var size = button.getAttribute('data-size');
-        $("#exampleModal .modal-dialog").addClass('modal-' + size);
-        $.ajax({
-            url: url,
-            success: function (data) {
-                $('#exampleModal .modal-body').html(data);
-                $("#exampleModal").modal('show');
-            },
-            error: function (data) {
-                data = data.responseJSON;
-                toastrs('Error', data.error, 'error')
-            }
-        });
-    })
-
-    function arrayToJson(form) {
-        var data = $(form).serializeArray();
-        var indexed_array = {};
-
-        $.map(data, function (n, i) {
-            indexed_array[n['name']] = n['value'];
-        });
-
-        return indexed_array;
-    }
-
-    $(document).on('click',
-        'a[data-ajax-popup-over="true"], button[data-ajax-popup-over="true"], div[data-ajax-popup-over="true"]',
-        function () {
-
-            var validate = $(this).attr('data-validate');
-            var id = '';
-            if (validate) {
-                id = $(validate).val();
-            }
-
-            var title = $(this).data('title');
-            var size = ($(this).data('size') == '') ? 'md' : $(this).data('size');
-            var url = $(this).data('url');
-
-            $("#commonModalOver .modal-title").html(title);
-            $("#commonModalOver .modal-dialog").addClass('modal-' + size);
-
-            $.ajax({
-                url: url + '?id=' + id,
-                success: function (data) {
-                    $('#commonModalOver .modal-body').html(data);
-                    $("#commonModalOver").modal('show');
-                    taskCheckbox();
-                },
-                error: function (data) {
-                    data = data.responseJSON;
-                    show_toastr('Error', data.error, 'error')
-                }
-            });
-
-        });
-</script>
 </body>
 </html>

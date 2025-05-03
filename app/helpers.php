@@ -304,5 +304,19 @@ if (!function_exists('svg')) {
     }
 }
 
+if (!function_exists('detectDevice')) {
+    function detectDevice($userAgent)
+    {
+        $userAgent = strtolower($userAgent);
+        if (strpos($userAgent, 'iphone') !== false || strpos($userAgent, 'ios') !== false) {
+            return 'iphone';
+        } elseif (strpos($userAgent, 'android') !== false) {
+            return 'android';
+        } else {
+            return 'web';
+        }
+    }
+}
+
 
 ?>

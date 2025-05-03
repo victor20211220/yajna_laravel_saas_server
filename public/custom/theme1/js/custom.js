@@ -114,9 +114,9 @@ $(document).ready(function () {
 
 });
 
-function over_sticky_header(over = true){
+function over_sticky_header(over = true) {
     $edit_form_header = $(`.card-header.sticky-top`);
-    if(!$edit_form_header.length) return;
-    if(over) $edit_form_header.removeClass('z-1');
+    if (!$edit_form_header.length) return;
+    if (over) $edit_form_header.removeClass('z-1');
     else $edit_form_header.addClass('z-1');
 }

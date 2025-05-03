@@ -1,0 +1,279 @@
+.business-card {
+    background: var(--custom-card-bg);
+    border-radius: 20px;
+    padding-bottom: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 358px;
+
+    a {
+        text-decoration: none;
+    }
+
+    * {
+        color: var(--custom-color);
+        font-size: 15px;
+    }
+
+    .border-color-custom {
+        border-color: var(--custom-card-bg) !important;
+    }
+
+    .text-bg {
+        background: var(--custom-color) !important;
+    }
+
+    .button-color {
+        color: var(--custom-button-color) !important;
+    }
+
+    .button-color-bg {
+        background: var(--custom-button-color) !important;
+    }
+
+    .button-bg {
+        background: var(--custom-button-bg) !important;
+    }
+
+    .button-bg-color {
+        color: var(--custom-button-bg) !important;
+    }
+
+    #openShareCardModalBtn {
+        width: 29px;
+        cursor: pointer;
+    }
+
+    #save-share-contact-buttons {
+        svg {
+
+            &.fill-button-color {
+                .st0 {
+                    fill: var(--custom-button-color);
+                }
+            }
+
+            &.fill-base-color {
+                .st0 {
+                    fill: var(--custom-card-bg);
+                }
+            }
+        }
+    }
+
+    .btn {
+        color: var(--custom-button-color);
+        font-size: 13px;
+    }
+
+    .base-bg {
+        background: var(--custom-card-bg) !important;
+    }
+
+    .base-color {
+        color: var(--custom-card-bg) !important;
+    }
+
+
+    section {
+        padding: 32px;
+        border-bottom: solid 2px var(--custom-color);
+
+        .section-title {
+            font-size: 21.56px;
+            font-weight: 500;
+            text-align: center;
+        }
+    }
+
+    .share-info-trigger {
+        width: 32px;
+    }
+
+    .cover-photo {
+        height: 199px;
+
+        .overlay {
+            background: -webkit-linear-gradient(90deg, rgba(23, 23, 23, 0) 0%, rgba(23, 23, 23, 0.54902) 100%);
+            background: linear-gradient(90deg, rgba(23, 23, 23, 0) 0%, rgba(23, 23, 23, 0.54902) 100%);
+            pointer-events: none; /* So clicks pass through */
+        }
+    }
+
+    #card_logos {
+        margin-top: -78px;
+
+        img#business_logo_preview {
+            width: 156px;
+            height: 156px;
+        }
+
+        img#business_company_logo_preview {
+            width: 73px;
+            height: 73px;
+            top: 64px;
+            right: 64px;
+        }
+    }
+
+    .title {
+        font-size: 23px;
+    }
+
+    .socials-slider {
+        .card-social-link {
+            width: 47px;
+            height: 47px;
+
+            .st0 {
+                fill: var(--custom-button-bg);
+            }
+
+            .st1 {
+                fill: var(--custom-button-color);
+            }
+        }
+    }
+
+    #save-share-contact-buttons {
+        svg {
+            width: 18px;
+            height: auto;
+        }
+    }
+
+    #contact-section {
+        svg {
+            width: 25px;
+            height: 25px;
+
+            .st0 {
+                fill: var(--custom-color);
+            }
+
+            .st1 {
+                fill: var(--custom-card-bg);
+            }
+        }
+    }
+
+    .gallery-slide-wrapper {
+        width: 130px !important;
+        padding-right: 12px; /* creates the gap */
+        box-sizing: content-box; /* ensures padding doesn't shrink the image */
+
+        .gallery-slide-image {
+            width: 130px;
+            height: 135px;
+            object-fit: cover;
+            border-radius: 12px;
+            display: block;
+            cursor: pointer;
+        }
+    }
+
+    .video-slide-wrapper {
+        width: 130px !important;
+        padding-right: 12px;
+        box-sizing: content-box;
+
+        .video-slide-thumb {
+            width: 130px;
+            height: 135px;
+            object-fit: cover;
+            border-radius: 12px;
+            cursor: pointer;
+            background: #000;
+        }
+
+        .video-play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 32px;
+            height: 32px;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 2;
+        }
+    }
+
+
+    .slick-initialized {
+        visibility: visible !important;
+    }
+
+    .slick-slider {
+        visibility: hidden;
+    }
+
+    .invisible {
+        visibility: hidden;
+    }
+
+    #vcard-google-review-section {
+        svg {
+            &.fill-button-bg {
+                .st0 {
+                    fill: var(--custom-button-bg);
+                }
+            }
+        }
+
+        .mx-18 {
+            margin: 0 18px;
+        }
+
+        #google-icon-div {
+            width: 42px;
+            height: 42px;
+            padding: 4px;
+            margin-right: 12px;
+        }
+    }
+
+    svg#vcard-logo {
+        height: 48px;
+
+        &.fill-text-color {
+            .st0 {
+                fill: var(--custom-color);
+            }
+        }
+    }
+
+}
+
+.vcard-modal {
+    .modal-dialog {
+        max-width: 358px;
+        width: 100%;
+    }
+}
+
+.share-card-modal {
+    section {
+        padding: 20px;
+        border-bottom: solid 1px var(--bs-border-color);
+
+        .section-title {
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .icon-container {
+            min-width: 180px;
+
+            .colored-social-icon {
+                width: 24px;
+                height: 24px;
+            }
+        }
+    }
+}
+
+video {
+    display: block;
+    margin-bottom: 0;
+}
+

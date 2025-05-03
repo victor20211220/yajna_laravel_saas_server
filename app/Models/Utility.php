@@ -3426,4 +3426,12 @@ class Utility extends Model
     {
         return asset('assets/images/icons/user_interface/image_placeholder.svg');
     }
+
+    public static function isProClient($business_id)
+    {
+        $user_id = Business::where('id', $business_id)->value('created_by');
+        $user = User::find($user_id);
+        $plan = Plan::find($user->plan);
+        return stripos($plan->name, 'pro') !== false;
+    }
 }
