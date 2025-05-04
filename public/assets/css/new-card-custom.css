@@ -11933,7 +11933,7 @@ textarea.form-control-lg {
   width: 73px;
   height: 73px;
   top: 64px;
-  right: 64px;
+  left: calc(50% + 42px);
 }
 .business-card .title {
   font-size: 23px;
