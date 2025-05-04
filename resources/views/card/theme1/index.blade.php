@@ -198,7 +198,7 @@
     </div>
 
     <div class="modal fade vcard-modal" id="imageViewerModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 rounded-3">
 
                 <!-- Modal Header with Close Button -->
@@ -215,7 +215,7 @@
         </div>
     </div>
     <div class="modal fade vcard-modal" id="videoViewerModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 rounded">
                 <div class="modal-header border-0">
                     <h5 class="modal-title text-white"></h5>
@@ -232,7 +232,7 @@
     <!-- Modal -->
     <div class="modal fade vcard-modal" id="shareContactModal" tabindex="-1" aria-labelledby="shareContactModalLabel"
          aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content rounded-4">
                 <div class="modal-header border-0">
                     <h5 class="modal-title fw-bold mx-auto" id="shareContactModalLabel">Share Contact</h5>
