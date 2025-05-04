@@ -11852,11 +11852,10 @@ textarea.form-control-lg {
 }
 .business-card {
   background: var(--custom-card-bg);
-  border-radius: 20px;
   padding-bottom: 1.5rem;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  width: 358px;
+  max-width: 600px;
+  width: 100%;
 }
 .business-card a {
   text-decoration: none;

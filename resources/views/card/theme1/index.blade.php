@@ -181,8 +181,8 @@
                 </div>
                 <div class="mb-2 pb-1"></div>
                 <a href="{{ $business->google_review_link }}" id="{{ $stringid . '_google_review_link' }}_preview"
-                   target="_blank" class="btn button-bg rounded-pill d-flex justify-content-between mx-18">
-                <span class="button-color-bg d-block rounded-circle" id="google-icon-div">
+                   target="_blank" class="btn button-bg rounded-pill d-flex justify-content-center px-4 gap-3 align-items-center m-0">
+                <span class="button-color-bg d-block rounded-circle m-0" id="google-icon-div">
                     {!! svg('vcard/google_icon.svg') !!}
                 </span>
                     <span class="button-color text-start">Leave us a review on Google!</span>
