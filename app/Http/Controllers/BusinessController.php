@@ -165,7 +165,7 @@ class BusinessController extends Controller
             $business = Business::where('id', $id)->first();
             $count = Business::where('id', $id)->where('created_by', \Auth::user()->creatorId())->count();
             if ($count == 0) {
-                return redirect()->route('business.index')->with('error', __('This card number is not yours.'));
+                //return redirect()->route('business.index')->with('error', __('This card number is not yours.'));
             }
         }
         if ($business) {

@@ -877,31 +877,6 @@
     <script src="{{ asset('custom/js/jquery.qrcode.min.js') }}"></script>
     <script type="text/javascript">
         var asset_path = `{{ asset('assets/images/icons/user_interface/socials/') }}`
-
-        function download(url) {
-            var a = $("<a style='display:none' id='js-downloder'>")
-                .attr("href", url)
-                .attr("download", "{{ $business->slug }}")
-                .appendTo("body");
-            a[0].click();
-            a.remove();
-        }
-
-        function saveCapture(element) {
-            html2canvas(element).then(function (canvas) {
-                download(canvas.toDataURL("image/png"));
-            })
-        }
-
-        $('.cp_link').on('click', function () {
-            var value = $(this).attr('data-link');
-            var $temp = $("<input>");
-            $("body").append($temp);
-            $temp.val(value).select();
-            document.execCommand("copy");
-            $temp.remove();
-            toastrs('{{ __('Success') }}', '{{ __('Link Copy on Clipboard') }}', 'success');
-        });
         $('#pills-tab .nav-item').click(function () {
             const edit_tab_key = $(this).data('key');
             console.log(`edit_tab_key:`, edit_tab_key);

@@ -41,19 +41,19 @@ class UserController extends Controller
         $roles = Role::where('created_by', '=', $user->creatorId())->get()->pluck('name', 'id');
         return view('user.create', compact('roles'));
     }
+
     public function list()
     {
-        if(\Auth::user()->can('manage user')){
-            if(\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company' )
-            {
-                $users = User::where('created_by', '=',  \Auth::user()->creatorId())->get();
+        if (\Auth::user()->can('manage user')) {
+            if (\Auth::user()->type == 'super admin' || \Auth::user()->type == 'company') {
+                $users = User::where('created_by', '=', \Auth::user()->creatorId())->get();
                 return view('user.list', compact('users'));
             }
-        }
-        else{
+        } else {
             return redirect()->back()->with('error', 'Permission denied.');
         }
     }
+
     public function store(Request $request)
     {
         if (\Auth::user()->can('create user')) {
@@ -68,11 +68,11 @@ class UserController extends Controller
                     [
                         'name' => 'required|max:120',
                         'email' => 'required|email|unique:users',
+                        'business_title' => 'required',
                     ]
                 );
                 if ($validator->fails()) {
                     $messages = $validator->getMessageBag();
-
                     return redirect()->back()->with('error', $messages->first());
                 }
                 $setting = Utility::settings();
@@ -109,9 +109,6 @@ class UserController extends Controller
                     $user['type'] = 'company';
                     $user['lang'] = !empty($default_language) ? $default_language->value : 'en';
                     $user['email_verified_at'] = date("Y-m-d H:i:s");
-                    if (!isset($request->is_login)) {
-                        $user['is_enable_login'] = 0;
-                    }
                     $user['created_by'] = \Auth::user()->creatorId();
                     $user['plan'] = Plan::first()->id;
                     $user->save();
@@ -136,7 +133,7 @@ class UserController extends Controller
                 $max_users = \Auth::user()->getMaxUser();
                 $count = User::where('created_by', \Auth::user()->id)->count();
 
-                $UserData=User::where('id', \Auth::user()->id)->first();
+                $UserData = User::where('id', \Auth::user()->id)->first();
                 $role = Role::findById($request->role);
                 if ($count < $max_users || $max_users == -1) {
                     $user = new User();
@@ -171,8 +168,33 @@ class UserController extends Controller
                 'created_by' => $user->created_by,
             ];
 
+
+            //create business
+            $slug = Utility::createSlug('businesses', $request->business_title);
+
+            $card_theme = [];
+            $card_theme['theme'] = $request->theme;
+            $card_theme['order'] = Utility::getDefaultThemeOrder($request->theme);
+
+            $business = Business::create([
+                'title' => $request->business_title,
+                'slug' => $slug,
+                'card_theme' => json_encode($card_theme),
+                'theme_color' => !empty($request->theme_color) ? $request->theme_color : 'color1-' . $request->theme,
+                'created_by' => $user->id,
+            ]);
+            $business->enable_businesslink = 'on';
+            $business->is_branding_enabled = 'on';
+            $business->theme = $request->theme;
+            $business->save();
+
+            if (is_null($user->current_business)) {
+                $user->current_business = $business->id;
+                $user->save();
+            }
+
             try {
-                $resp =Utility::sendEmailTemplate('User Created', $userArr, $user->email);
+                $resp = Utility::sendEmailTemplate('User Created', $userArr, $user->email);
 
                 // \Mail::to($user->email)->send(new UserCreate($user));
             } catch (\Exception $e) {
@@ -201,6 +223,7 @@ class UserController extends Controller
             return redirect()->back()->with('error', __('Permission denied.'));
         }
     }
+
     public function show($id)
     {
         //
@@ -280,6 +303,7 @@ class UserController extends Controller
         }
 
     }
+
     public function upgradePlan($user_id)
     {
         $user = User::find($user_id);
@@ -302,7 +326,7 @@ class UserController extends Controller
                 $user->delete();
 
                 // return redirect()->route('users.index')->with('success', __('User successfully deleted .'));
-            return redirect()->back()->with('success', __('User successfully deleted .'));
+                return redirect()->back()->with('success', __('User successfully deleted .'));
 
             } else {
                 return redirect()->back()->with('error', __('Something is wrong.'));
@@ -395,8 +419,7 @@ class UserController extends Controller
             if (Hash::check($request_data['current_password'], $current_password)) {
                 $user_id = Auth::User()->id;
                 $obj_user = User::find($user_id);
-                $obj_user->password = Hash::make($request_data['new_password']);
-                ;
+                $obj_user->password = Hash::make($request_data['new_password']);;
                 $obj_user->save();
 
                 return redirect()->route('profile')->with('success', __('Password Updated Successfully!'));
@@ -453,6 +476,7 @@ class UserController extends Controller
 
 
     }
+
     public function activePlan($user_id, $plan_id)
     {
 
@@ -486,12 +510,14 @@ class UserController extends Controller
         }
 
     }
+
     public function userPassword($id)
     {
         $eId = \Crypt::decrypt($id);
         $user = User::where('id', $eId)->first();
         return view('user.reset', compact('user'));
     }
+
     public function userPasswordReset(Request $request, $id)
     {
         $validator = \Validator::make(
@@ -558,10 +584,10 @@ class UserController extends Controller
 
         if ($request->is_disable_user == 1) {
             $user->admin_enable = 'on';
-            $data['msg']='User is enable.';
+            $data['msg'] = 'User is enable.';
         } else {
             $user->admin_enable = 'off';
-            $data['msg']='User is disable.';
+            $data['msg'] = 'User is disable.';
         }
         $user->save();
         $totalUser = User::where('created_by', $user->created_by)->count();

@@ -20,9 +20,9 @@
             <span class="invalid-favicon text-xs text-danger" role="alert">{{ $message }}</span>
         @enderror
     </div>
-    <div class="form-group mb-0 col-sm-6">
+    <div class="form-group mb-0 col-sm-6 d-none">
         {{ Form::label('category', __('Category'), ['class' => 'form-label']) }}<x-required></x-required>
-        {!! Form::select('category', $category, null, ['class' => 'form-control select2 ', 'required' => 'required', 'placeholder' => __('Select Category')]) !!}
+        {!! Form::select('category', $category, null, ['class' => 'form-control select2 ', 'required' => '', 'placeholder' => __('Select Category')]) !!}
         @error('category')
             <small class="invalid-role" role="alert">
                 <strong class="text-danger">{{ $message }}</strong>
