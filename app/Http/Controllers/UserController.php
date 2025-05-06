@@ -85,9 +85,6 @@ class UserController extends Controller
                         $user['password'] = \Hash::make($psw);
                     }
                     $user['type'] = 'company';
-                    if (!isset($request->is_login)) {
-                        $user['is_enable_login'] = 0;
-                    }
                     $user['lang'] = !empty($default_language) ? $default_language->value : 'en';
 
                     //$user['email_verified_at'] = date("Y-m-d H:i:s");
@@ -147,9 +144,6 @@ class UserController extends Controller
                     $user['type'] = $role->name;
                     $user['lang'] = !empty($company_default_language) ? $company_default_language->value : 'en';
                     $user['email_verified_at'] = date("Y-m-d H:i:s");
-                    if (!isset($request->is_login)) {
-                        $user['is_enable_login'] = 0;
-                    }
                     $user['created_by'] = \Auth::user()->creatorId();
                     $user['plan'] = $UserData->plan;
                     $user->save();
