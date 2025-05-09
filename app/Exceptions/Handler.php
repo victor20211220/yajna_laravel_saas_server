@@ -6,10 +6,13 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 use App\Traits\ApiResponser;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+
 
 class Handler extends ExceptionHandler
 {
     use ApiResponser;
+
     /**
      * A list of exception types with their corresponding custom log levels.
      *
@@ -55,7 +58,15 @@ class Handler extends ExceptionHandler
                 return $this->error(['message' => 'Invalid token.'], 'fail', 401, 9);
             }
         });
-
-
     }
+
+    public function render($request, Throwable $e)
+    {
+        if ($e instanceof HttpException && $e->getStatusCode() === 419) {
+            return redirect()->route('login')->withErrors(['message' => 'Session expired. Please login again.']);
+        }
+
+        return parent::render($request, $e);
+    }
+
 }

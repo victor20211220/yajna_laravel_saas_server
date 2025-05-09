@@ -52,13 +52,7 @@ class HomeController extends Controller
                 } else {
                     if (\Auth::user()->type == 'company') {
                         $user = \Auth::user();
-                        if ($user->current_business){
-                            return redirect()->route('business.edit', $user->current_business);
-                        }
-                        else {
-                            Auth::logout();
-                            return redirect()->back()->with('error', __('No business created yet.'));
-                        }
+                        return redirect()->route('business.edit', $user->current_business);
                     }
 
                     $uri = url()->full();

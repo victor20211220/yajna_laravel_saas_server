@@ -138,7 +138,7 @@ class BusinessController extends Controller
                 }
                 return redirect()->route('business.edit', $business->id)->with('success', __('Business Created Successfully'));
             } else {
-                return redirect()->back()->with('error', __('Your user business is over, Please upgrade plan.'));
+                return redirect()->back()->with('error', __('This email is already linked to another business. Please use a different email or remove the existing one'));
             }
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
