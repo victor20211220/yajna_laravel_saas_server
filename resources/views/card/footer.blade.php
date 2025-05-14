@@ -72,53 +72,50 @@
             if (isOnEditFormPage()) return;
             $('#shareCardModal').modal('show');
         })
-        $('.share-card-modal').on('shown.bs.modal', function () {
-            $container = $(this).find('.qr-code-container');
-            const img = new Image();
-            img.crossOrigin = "anonymous";
-            img.src = $container.find('[data-name="qr_detail_image"]').attr('src');
-
-            img.onload = function () {
-                vCardQrCode = new QRCodeStyling({
-                    width: 162,
-                    height: 162,
-                    type: "svg",
-                    data: "{{ env('APP_URL').'/'.$business->slug }}",
+        $(document).off('shown.bs.modal', '.share-card-modal').on('shown.bs.modal', '.share-card-modal', function () {
+            const $container = $(this).find('.qr-code-container');
+            const $image = $container.find('[data-name="qr_detail_image"]');
+            const color = $container.find('[data-name="qrcode_foreground_color"]').val();
+            const url = "{{ env('APP_URL').'/'.$business->slug }}";
+            const qrCode = new QRCodeStyling({
+                width: 162,
+                height: 162,
+                type: "svg",
+                data: url,
+                margin: 0,
+                image: $image.attr('src'),
+                imageOptions: {
+                    imageSize: 0.4,
                     margin: 0,
-                    image: img.src,
-                    imageOptions: {
-                        imageSize: 0.4,
-                        margin: 0,
-                        hideBackgroundDots: true,
-                        saveAsBlob: true,
-                    },
-                    dotsOptions: {
-                        color: $container.find('[data-name="qrcode_foreground_color"]').val(),
-                        type: "dots",
-                        roundSize: true
-                    },
-                    backgroundOptions: {
-                        color: "#ffffff"
-                    },
-                    cornersSquareOptions: {
-                        type: "extra-rounded" // 👈 Apple-style finder corners
-                    },
-                    cornersDotOptions: {
-                        type: "dot" // 👈 round inner dot
-                    },
-                });
-                const $code = $container.find('[data-name="generated"]');
-                $code.empty();
-                vCardQrCode.append($code[0]);
-                $container.find('[data-name="download-button"]').click(function () {
-                    vCardQrCode.download({
-                        name: "{{ $business->title }}",
-                        extension: "svg"
-                    });
-                })
-            }
-        });
+                    hideBackgroundDots: true,
+                    saveAsBlob: true,
+                },
+                dotsOptions: {
+                    color: color,
+                    type: "dots",
+                    roundSize: true
+                },
+                backgroundOptions: {
+                    color: "#ffffff"
+                },
+                cornersSquareOptions: {
+                    type: "extra-rounded"
+                },
+                cornersDotOptions: {
+                    type: "dot"
+                },
+            });
 
+            const $code = $container.find('[data-name="generated"]');
+            $code.empty();
+            qrCode.append($code[0]);
+            $container.find('[data-name="download-button"]').off('click').on('click', function () {
+                qrCode.download({
+                    name: "{{ $business->title }}",
+                    extension: "svg"
+                });
+            });
+        });
     })
 </script>
 <script id="analyticsManagementScript">

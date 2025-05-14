@@ -12230,7 +12230,7 @@ a {
   object-fit: contain;
 }
 
-.generated-qr-code {
+.generated-qr-code, #tempQrCode {
   width: 162px;
   height: 162px;
 }

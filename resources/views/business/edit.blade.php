@@ -830,6 +830,7 @@
                         </div>
                     </div>
                 </div>
+                <div id="tempQrCode" class="opacity-0 position-absolute"></div>
             </div>
             <!-- your .card lives somewhere up the page -->
             <div class="sticky-bottom-bar">
@@ -1725,6 +1726,10 @@
             const $code = $('.code');
             $code.empty();
             qrCode.append($code[0]);
+
+            const $tempQrCode = $('#tempQrCode');
+            $tempQrCode.empty();
+            qrCode.append($tempQrCode[0]);
         }
 
         $(function () {
