@@ -32,3 +32,4 @@ auth.json
 *.vcf
 .idea/
 /public/card/
+public/card/card_logo.jpg
