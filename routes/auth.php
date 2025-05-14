@@ -17,12 +17,13 @@ Route::get('/register/{ref_id?}/{lang?}', [RegisteredUserController::class, 'sho
 Route::post('/register', [RegisteredUserController::class, 'store'])
                 ->middleware('guest');
 
-Route::get('/login/{lang?}', [AuthenticatedSessionController::class, 'showLoginForm'])
+Route::get('/login', [AuthenticatedSessionController::class, 'showLoginForm'])
                 ->middleware('guest')
                 ->name('login');
 
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
-                ->middleware('guest');
+                ->middleware('guest')
+                ->name('login.submit');
 
 Route::get('/forgot-password/{lang?}', [AuthenticatedSessionController::class, 'showLinkRequestForm'])
                 ->middleware('guest')
