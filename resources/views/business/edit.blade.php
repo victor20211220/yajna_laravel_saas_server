@@ -1001,7 +1001,6 @@
             reader.readAsDataURL(file);
         }
 
-
         const selectFile = (targetClass) => {
             const $input = $(`.${targetClass}`);
 
@@ -1071,7 +1070,7 @@
                     const dataTransfer = new DataTransfer();
                     dataTransfer.items.add(file);
                     fileInput.files = dataTransfer.files;
-                    if(currentTarget === 'banner') toggleBannerControls(true);
+                    if (currentTarget === 'banner') toggleBannerControls(true);
                     $('#cropperModal').modal('hide');
                 }, 'image/jpeg');
             });
@@ -1740,6 +1739,11 @@
             generate_qr();
         });
 
+        function selectNormalFile(targetId) {
+            $(`.${targetId}`).trigger('click');
+        }
+
+
         $(document).on('change', '#qrCodeImage', function () {
             const img_input = this;
             if (img_input.files && img_input.files[0]) {
@@ -1752,20 +1756,6 @@
             }
         });
 
-        function getBase64ImageFromURL(url, callback) {
-            var img = new Image();
-            img.setAttribute('crossOrigin', 'anonymous');
-            img.onload = function () {
-                var canvas = document.createElement("canvas");
-                canvas.width = img.width;
-                canvas.height = img.height;
-                var ctx = canvas.getContext("2d");
-                ctx.drawImage(img, 0, 0);
-                var dataURL = canvas.toDataURL("image/png");
-                callback(dataURL);
-            };
-            img.src = url;
-        }
 
         $(`#downloadMyQrCodeBtn`).on('click', function (e) {
             e.preventDefault();
