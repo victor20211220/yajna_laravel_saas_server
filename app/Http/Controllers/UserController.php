@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\social;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Plan;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Auth;
 use File;
 use App\Models\Utility;
+use Illuminate\Support\Facades\Mail;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Lab404\Impersonate\Impersonate;
@@ -182,13 +184,51 @@ class UserController extends Controller
             $business->theme = $request->theme;
             $business->save();
 
+            $platforms = ['WhatsApp', 'Facebook', 'Instagram', 'TikTok', 'YouTube', 'LinkedIn'];
+            $socials = [];
+
+            foreach ($platforms as $i => $platform) {
+                $p_id = $i + 1;
+                $socials[$p_id] = [$platform => null, 'id' => (string)$p_id];
+            };
+
+            social::create([
+                'business_id' => $business->id,
+                'content' => json_encode($socials),
+                'created_by' => \Auth::user()->creatorId()
+            ]);
+
             if (is_null($user->current_business)) {
                 $user->current_business = $business->id;
                 $user->save();
             }
 
             try {
-                $resp = Utility::sendEmailTemplate('User Created', $userArr, $user->email);
+                //$resp = Utility::sendEmailTemplate('User Created', $userArr, $user->email);
+                $superAdmin = User::where('type', 'super admin')->first();
+                $settings = Utility::getsettingsbyid($superAdmin->id);
+                config([
+                    'mail.driver' => $settings['mail_driver'],
+                    'mail.host' => $settings['mail_host'],
+                    'mail.port' => $settings['mail_port'],
+                    'mail.encryption' => $settings['mail_encryption'],
+                    'mail.username' => $settings['mail_username'],
+                    'mail.password' => $settings['mail_password'],
+                    'mail.from.address' => $settings['mail_from_address'],
+                    'mail.from.name' => $settings['mail_from_name'],
+                ]);
+
+                $html = view('email_templates/user-created', [
+                    'username' => $user->email,
+                    'password' => $request->password,
+                    'login_link' => route('login'),
+                ])->render();
+
+                Mail::mailer(config('mail.driver'))->html($html, function ($mail) use ($request, $user) {
+                    $mail->to($user->email)
+                        ->subject("Your Tapeetap Login Details");
+                });
+
 
                 // \Mail::to($user->email)->send(new UserCreate($user));
             } catch (\Exception $e) {

@@ -1,12 +1,18 @@
 @props([
     'id',              // the HTML id & name of the input field (e.g., 'card_bg_color')
     'label',           // label to display above
+    'tooltip_title' => '',           // label to display above
     'value' => '#ffffff', // initial value
     'colors' => [],    // array of hex colors like ['#000000', '#FF0000']
 ])
 <div class="form-group">
     <div class="color-group mb-4" data-input-id="{{ $id }}">
-        <label class="form-label d-block mb-3">{{ __($label) }}</label>
+        <div class="position-relative mb-3">
+            <label class="form-label mb-0">{{ __($label) }}</label>
+            @if($tooltip_title)
+                @include('components/more-info', ['label' => $tooltip_title])
+            @endif
+        </div>
         <div class="d-flex flex-wrap gap-3 align-items-center">
             @foreach ($colors as $color)
                 <div class="color-swatch"

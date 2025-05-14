@@ -14,7 +14,7 @@ class ContactsController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Contracts\View\View
      */
     public function index($id = "")
     {
@@ -91,22 +91,29 @@ class ContactsController extends Controller
         return redirect()->back()->with('success', __('Contact Created Successfully.'));
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param \App\Models\Appointment_deatail $appointment_deatail
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Appointment_deatail $appointment_deatail)
+    public function show($id)
     {
-        //
+        $user = \Auth::user();
+        $contact = Contacts::where('id', $id)
+            ->where('created_by', $user->creatorId())
+            ->firstOrFail();
+
+        return response()->json([
+            'name' => $contact->name,
+            'phone' => $contact->phone,
+            'email' => $contact->email,
+            'company' => $contact->company,
+            'job_title' => $contact->job_title,
+            'message' => $contact->message,
+        ]);
     }
+
 
     /**
      * Show the form for editing the specified resource.
      *
      * @param \App\Models\Appointment_deatail $appointment_deatail
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
      */
     public function edit(Contacts $Contacts, $id)
     {
@@ -119,7 +126,7 @@ class ContactsController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      * @param \App\Models\Appointment_deatail $appointment_deatail
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, Contacts $Contacts, $id)
     {
@@ -150,7 +157,7 @@ class ContactsController extends Controller
      * Remove the specified resource from storage.
      *
      * @param \App\Models\Appointment_deatail $appointment_deatail
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Contacts $Contacts, $id)
     {
@@ -169,38 +176,10 @@ class ContactsController extends Controller
     public function getCalenderAllData($id = null)
     {
 
-        $objUser = \Auth::user();
-        if ($id == null) {
-            $appointents = Appointment_deatail::get();
-        } else {
-            $appointents = Appointment_deatail::where('business_id', $id)->get();
-        }
-        $arrayJson = [];
-        foreach ($appointents as $appointent) {
-            $time = explode('-', $appointent->time);
-            $stime = isset($time[0]) ? trim($time[0]) . ':00' : '00:00:00';
-            $etime = isset($time[1]) ? trim($time[1]) . ':00' : '00:00:00';
-            $start_date = date("Y-m-d", strtotime($appointent->date)) . ' ' . $stime;
-            $end_date = date("Y-m-d", strtotime($appointent->date)) . ' ' . $etime;
-
-            $arrayJson[] = [
-                "title" => '(' . $stime . ' - ' . $etime . ') ' . $appointent->name . '-' . $appointent->getBussinessName(),
-                "start" => $start_date,
-                "end" => $end_date,
-                "app_id" => $appointent->id,
-                "url" => route('appointment.details', $appointent->id),
-                "className" => 'bg-info',
-                "allDay" => true,
-            ];
-        }
-        return view('appointments.calender', compact('arrayJson'));
-
     }
 
     public function getAppointmentDetails($id)
     {
-        $ad = Appointment_deatail::find($id);
-        return view('appointments.calender-modal', compact('ad'));
     }
 
     public function add_note($id)

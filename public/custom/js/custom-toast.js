@@ -4,7 +4,7 @@ function toastrs(title, message, type) {
     var cls = '';
     if (type === "success") {
         icon = 'fas fa-check-circle';
-        cls = 'success';
+        cls = 'primary';
     } else {
         icon = 'fas fa-times-circle';
         cls = 'danger';

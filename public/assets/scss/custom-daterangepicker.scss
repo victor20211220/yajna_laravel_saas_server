@@ -1,0 +1,93 @@
+.daterangepicker {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    font-family: 'Inter', sans-serif;
+
+    * {
+        font-size: 14px !important;
+    }
+
+    .drp-calendar {
+        &.right {
+            display: none !important;
+        }
+    }
+
+    .ranges {
+        li {
+            text-align: center;
+            margin: 0 10px;
+
+            &.active {
+                background-color: #f8f8f8;
+                color: #000;
+                font-weight: 600;
+                border-radius: 10px;
+            }
+
+            &:hover {
+                background-color: #f0f0f0;
+                color: #000;
+                border-radius: 10px;
+            }
+        }
+    }
+
+    .calendar-table {
+        border: none;
+        background: #fff;
+
+        th {
+            font-size: 14px;
+
+            &.month {
+                font-weight: 500;
+                color: #000;
+                background: transparent;
+            }
+
+            &:not(.month) {
+                color: #888;
+                font-weight: 400;
+            }
+        }
+
+        td {
+            font-size: 14px;
+            color: #686b70;
+            line-height: 2rem;
+
+            &.weekend {
+                color: #e63946;
+            }
+
+            &:hover {
+                background: #eee;
+            }
+        }
+    }
+
+    .in-range {
+        background-color: #f8f8f8 !important;
+    }
+
+    .start-date,
+    .end-date {
+        background-color: #686b70 !important;
+        color: #fff !important;
+    }
+
+    .prev,
+    .next {
+        color: #555;
+    }
+
+    .drp-buttons {
+        .btn {
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+    }
+}

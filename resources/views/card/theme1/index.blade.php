@@ -1,17 +1,21 @@
 @php
     use App\Models\Utility;
     $isProClient = Utility::isProClient($business->id);
+    $isSelfUser = auth()->check() && auth()->id() === $business->created_by;
 @endphp
 @extends('card.layouts')
 @section('contentCard')
-    <div class="business-card position-absolute top-0 start-50 translate-middle-x z-10 custom-rounded-34"
+    <div class="business-card position-absolute top-0 start-50 translate-middle-x z-10 custom-rounded-34 display-none"
          id="businessCard">
+        <a href="{{ route('home') }}" class="position-absolute top-0 start-0 m-4 z-1" id="backToPageOnCardArrow">
+            <i class="bi bi-arrow-left-circle text-white"></i>
+        </a>
         {!! svg('vcard/top_corner_share.svg', ['class' => 'position-absolute top-0 end-0 m-4 z-1', 'id' => 'openShareCardModalBtn']) !!}
         <div class="cover-photo w-100 position-relative">
-            <div class="overlay position-absolute top-0 bottom-0 start-0 end-0"></div>
             <img src="{{ $business->banner ? $banner . '/' . $business->banner : "/assets/images/white-blank.png" }}"
                  alt="cover-photo"
                  class="object-fit-cover w-100 h-100" id="banner_preview">
+            <div class="overlay position-absolute top-0 bottom-0 start-0 end-0"></div>
         </div>
 
 
@@ -27,38 +31,60 @@
         </div>
 
         <!-- Name, Title, Company -->
-        <section class="text-center">
-            <p class="title fw-medium mb-3" id="{{ $stringid . '_title' }}_preview">{{ $business->title }}</p>
-            <div class="d-flex justify-content-center align-items-center gap-2">
-                <div id="{{ $stringid . '_designation' }}_preview">
-                    {{ $business->designation}}
+        <section class="text-center pt-3">
+            @php $business_title = $business->title @endphp
+            <div class="title fw-medium mb-3"
+               id="{{ $stringid . '_title' }}_preview" {!! Utility::hideEmptyCardElement($business_title) !!}>{{ $business_title }}</div>
+
+            @php
+                $designation = $business->designation;
+                $sub_title = $business->sub_title;
+            @endphp
+            <div class="display-flex justify-content-center align-items-center gap-2 mb-4 pb-2"
+                 id="roleAndCompanyOnVcard" {!! Utility::hideEmptyCardElement([$designation, $sub_title], "and") !!}>
+                <div id="{{ $stringid . '_designation' }}_preview" {!! Utility::hideEmptyCardElement($designation) !!}>
+                    {{ $designation}}
                 </div>
-                <div id="title_sub_title_connector" class="{{ $business->sub_title ? "" : "d-none" }}">·</div>
-                <div id="{{ $stringid . '_subtitle' }}_preview" class="button-bg-color">{{ $business->sub_title }}</div>
+                <div id="title_sub_title_connector" {!! Utility::hideEmptyCardElement([$designation, $sub_title]) !!}>
+                    ·
+                </div>
+                <div id="{{ $stringid . '_subtitle' }}_preview"
+                     class="button-bg-color" {!! Utility::hideEmptyCardElement($sub_title) !!}>{{ $sub_title }}</div>
             </div>
-            <div class="mb-4 pb-2"></div>
-            <p id="{{ $stringid . '_desc' }}_preview">
-                {!! nl2br(e($business->description)) !!}
-            </p>
+
+            @php $description = $business->description @endphp
+            <div id="{{ $stringid . '_desc' }}_preview"
+               {!! Utility::hideEmptyCardElement($description) !!}  class="mb-4 pb-2">
+                {!! nl2br(e($description)) !!}
+            </div>
             <!-- Social Icons Slider -->
-            <div class="socials-slider invisible mt-4 pt-2">
+            <div
+                class="socials-slider mb-4 pb-2" {!! Utility::isInitialSocials($social_content) ? "style=\"display:none;\"": ""!!}>
                 @if (count($social_content))
                     @foreach ($social_content as $id => $social_item)
                         @foreach ($social_item as $key => $social_val)
-                            @php if($key === "id") continue; @endphp
                             @php
-                                $social_links =  url($social_val);
+                                if($key === "id") continue;
+                                $link = $social_val;
+                                $platform = strtolower($key);
+                                if($social_val){
+                                    if ($platform === 'whatsapp') {
+                                        // Remove non-digits from the number
+                                        $digitsOnly = preg_replace('/\D/', '', $social_val);
+                                        $link = 'https://wa.me/' . $digitsOnly;
+                                    } elseif (!preg_match('/^https?:\/\//i', $link)) {
+                                        $link = url($link);
+                                    }
+                                }
                             @endphp
-                            <a href="{{ $social_links }}" target="_blank" class="card-social-link"
-                               id="{{ 'socials_' . $id . '_preview' }}">
-                                {!! svg('vcard/socials/'.strtolower($key).'.svg', ['class' => 'w-100 h-100']) !!}
+                            <a href="{{ $link }}" target="_blank" class="card-social-link"
+                               id="{{ 'socials_' . $id . '_preview' }}" {!! Utility::hideEmptyCardElement($social_val) !!}>
+                                {!! svg('vcard/socials/'.$platform.'.svg', ['class' => 'w-100 h-100']) !!}
                             </a>
                         @endforeach
                     @endforeach
                 @endif
             </div>
-
-            <div class="mb-4 pb-2"></div>
 
             <div class="d-flex justify-content-center gap-3" id="save-share-contact-buttons">
                 <a href="{{ route('bussiness.save', $business->slug) }}"
@@ -76,42 +102,48 @@
         </section>
 
         <!-- Contact -->
-        <section id="contact-section">
+        @php
+            $phone = $business->phone;
+            $address = $business->address;
+            $email = $business->email;
+            $website = $business->website;
+        @endphp
+        <section
+            id="contact-section" {!! Utility::hideEmptyCardElement([$phone, $address, $email, $website], "and") !!}>
             <div class="section-title">Contact</div>
             <div class="mb-4 pb-2"></div>
-            <div class="d-flex justify-content-start gap-3 mb-3">
+            <div class="display-flex justify-content-start align-items-center gap-3 mb-3" {!! Utility::hideEmptyCardElement($phone) !!}>
                 {!! svg('vcard/phone.svg') !!}
-                <a id="{{ $stringid . '_phone' }}_preview" href="tel:{{ $business->phone }}">
-                    {{ $business->phone }}
+                <a id="{{ $stringid . '_phone' }}_preview" href="tel:{{ $phone }}">
+                    {{ $phone }}
                 </a>
             </div>
-            <div class="d-flex justify-content-start gap-3 mb-3">
+            <div class="display-flex justify-content-start align-items-center gap-3 mb-3" {!! Utility::hideEmptyCardElement($address) !!}>
                 {!! svg('vcard/address.svg') !!}
                 <a id="{{ $stringid . '_address' }}_preview"
-                   href="https://www.google.com/maps/search/?api=1&query={{ urlencode($business->address) }}"
+                   href="https://www.google.com/maps/search/?api=1&query={{ urlencode($address) }}"
                    target="_blank">
-                    {{ $business->address }}
+                    {{ $address }}
                 </a>
             </div>
-            <div class="d-flex justify-content-start gap-3 mb-3">
+            <div class="display-flex justify-content-start align-items-center gap-3 mb-3" {!! Utility::hideEmptyCardElement($email) !!}>
                 {!! svg('vcard/email.svg') !!}
-                <a id="{{ $stringid . '_email' }}_preview" href="mailto:{{ $business->email }}">
-                    {{ $business->email }}
+                <a id="{{ $stringid . '_email' }}_preview" href="mailto:{{ $email }}">
+                    {{ $email }}
                 </a>
             </div>
-            <div class="d-flex justify-content-start gap-3 mb-3">
+            <div class="display-flex justify-content-start align-items-center gap-3 mb-3" {!! Utility::hideEmptyCardElement($website) !!}>
                 {!! svg('vcard/website.svg') !!}
                 <a id="{{ $stringid . '_website' }}_preview"
-                   href="{{ $business->website }}"
+                   href="https://{{ $website }}"
                    target="_blank">
-                    {{ $business->website }}
+                    {{ $website }}
                 </a>
             </div>
         </section>
 
         @if($isProClient)
-            <section id="vcard-services-section"
-                     class="{{ isset($services['is_enabled']) && $services['is_enabled'] ? "" : "d-none" }}">
+            <section id="vcard-services-section" {!! Utility::hideSection($services['is_enabled']) !!}>
                 <div class="section-title">Services</div>
                 <div class="mb-4 pb-2"></div>
                 @php $service_key = 1; @endphp
@@ -129,8 +161,7 @@
                 </div>
             </section>
 
-            <section id="vcard-gallery-section"
-                     class="{{ isset($gallery['is_enabled']) && $gallery['is_enabled'] ? "" : "d-none" }}">
+            <section id="vcard-gallery-section" {!! Utility::hideSection($gallery['is_enabled']) !!}>
                 <div class="section-title">Gallery</div>
                 <div class="mb-4 pb-2"></div>
                 <div class="gallery-slider invisible">
@@ -145,8 +176,7 @@
                 </div>
             </section>
 
-            <section id="vcard-featured-videos-section"
-                     class="{{ isset($gallery['is_video_enabled']) && $gallery['is_video_enabled'] ? "" : "d-none" }}">
+            <section id="vcard-featured-videos-section" {!! Utility::hideSection($gallery['is_video_enabled']) !!}>
                 <div class="section-title">Featured Video</div>
                 <div class="mb-4 pb-2"></div>
                 <div class="video-slider invisible">
@@ -169,9 +199,8 @@
                     @endforeach
                 </div>
             </section>
-            <div class="py-3"></div>
             <section id="vcard-google-review-section"
-                     class="py-0 px-5 border-0 {{ isset($business['google_review_enabled']) && $business['google_review_enabled'] ? "" : "d-none" }}">
+                     class="pb-0 px-5 border-0" {!! Utility::hideSection($business['google_review_enabled']) !!}>
                 <div class="d-flex justify-content-center gap-2">
                     {!! svg('vcard/google_review_star.svg', ['class' => 'fill-button-bg']) !!}
                     {!! svg('vcard/google_review_star.svg', ['class' => 'fill-button-bg']) !!}
@@ -181,7 +210,8 @@
                 </div>
                 <div class="mb-2 pb-1"></div>
                 <a href="{{ $business->google_review_link }}" id="{{ $stringid . '_google_review_link' }}_preview"
-                   target="_blank" class="btn button-bg rounded-pill d-flex justify-content-center px-4 gap-3 align-items-center m-0">
+                   target="_blank"
+                   class="btn button-bg rounded-pill d-flex justify-content-center px-4 gap-3 align-items-center m-0">
                 <span class="button-color-bg d-block rounded-circle m-0" id="google-icon-div">
                     {!! svg('vcard/google_icon.svg') !!}
                 </span>
@@ -189,8 +219,7 @@
                 </a>
             </section>
         @endif
-        <div class="py-3"></div>
-        <section class="border-0 py-0">
+        <section class="border-0 pb-0">
             <a class="mt-4 mt-xl-2 mb-4" href="{{ url('/') }}">
                 {!! svg('logo.svg', ['class' => 'fill-text-color mx-auto d-block', 'id' => 'vcard-logo']) !!}
             </a>
@@ -304,5 +333,7 @@
             </div>
         </div>
     </div>
+    @if(Route::currentRouteName() !== 'business.edit')
     @include('components.share-card-modal', ['id' => 'shareCardModal', 'class' => 'vcard-modal'])
+    @endif
 @endsection

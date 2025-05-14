@@ -44,7 +44,7 @@ class BusinessController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|\Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
      */
     public function index(Request $request)
     {
@@ -75,7 +75,7 @@ class BusinessController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
      */
     public function create()
     {
@@ -148,7 +148,7 @@ class BusinessController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param \App\Business $businessphp
+     * @param \App\Models\Business $business
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
      */
     public function edit(Business $business, $id)
@@ -164,9 +164,6 @@ class BusinessController extends Controller
         } else {
             $business = Business::where('id', $id)->first();
             $count = Business::where('id', $id)->where('created_by', \Auth::user()->creatorId())->count();
-            if ($count == 0) {
-                //return redirect()->route('business.index')->with('error', __('This card number is not yours.'));
-            }
         }
         if ($business) {
             $businessfields = Utility::getFields();
@@ -221,8 +218,7 @@ class BusinessController extends Controller
             );
             $serverIp = gethostbyname($serverName);
 
-            if ($serverIp != $_SERVER['SERVER_ADDR']) {
-            } else {
+            if ($serverIp === $_SERVER['SERVER_ADDR']) {
                 $serverIp = request()->server('SERVER_ADDR');
             }
 
@@ -393,9 +389,6 @@ class BusinessController extends Controller
             if (!is_null($business) && !is_null($business)) {
                 $business->is_google_map_enabled == '1' ? ($is_google_map_enabled = true) : ($is_google_map_enabled = false);
             }
-            if (!is_null($cardPayment) && !is_null($cardPayment)) {
-                $cardPayment->is_enabled == '1' ? ($is_enabled = true) : ($is_enabled = false);
-            }
             $tab = 1;
             if (session('tab')) {
                 $tab = session('tab');
@@ -405,8 +398,7 @@ class BusinessController extends Controller
             $shareContactFields = ShareContactField::where('business_id', $id)->first();
             return view('business.edit', compact('category', 'businessfields', 'currencyData', 'services_content', 'services', 'social_content', 'sociallinks', 'business', 'custom_html', 'branding', 'branding', 'id', 'business_url', 'serverIp', 'subdomain_name', 'plan', 'pwa_data', 'gallery_contents', 'gallery', 'PixelFields', 'pixelScript', 'cookieDetail', 'filename', 'qr_code', 'qr_detail', 'subdomain_Ip', 'subdomainPointing', 'domainip', 'domainPointing', 'products', 'products_content', 'cardPayment', 'cardPayment_content', 'appInfo', 'social_nos', 'appointment_no', 'service_row_nos', 'product_row_nos', 'testimonials_row_nos', 'gallery_row_no', 'nos', 'stringid', 'custom_html', 'branding', 'is_branding_enabled', 'gdpr_text', 'card_theme', 'banner', 'logo', 'image', 's_image', 'pr_image', 'company_favicon', 'logo1', 'meta_image', 'gallery_path', 'qr_path', 'theme', 'color', 'url_link', 'is_custom_html_enable', 'is_gdpr_enabled', 'is_appinfo', 'is_svg_enabled', 'svg_text', 'is_enable_sociallinks', 'appointment_nos', 'meta_tag_image', 'is_enable', 'is_google_map_enabled', 'is_enabled', 'themeName', 'shareContactFields'))->with('tab', $tab);
         } else {
-
-            return abort('404', 'Not Found');
+            abort('404', 'Not Found');
         }
     }
 
@@ -414,7 +406,7 @@ class BusinessController extends Controller
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\Business $business
+     * @param \App\Models\Business $business
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, Business $business)
@@ -738,6 +730,7 @@ class BusinessController extends Controller
             ]
         );
 
+        $business->is_auto_contact_popup_enabled = $request->is_auto_contact_popup_enabled === "on";
         $business->is_lead_direct_download_enabled = $request->is_lead_direct_download_enabled === "on";
 
         //Qr Code
@@ -781,15 +774,15 @@ class BusinessController extends Controller
 
         $tab = (int)$request->edit_tab_key;
         session()->flash('tab', $tab);
-        return redirect()->back()->with('success', __('Business Information Updated Successfully') . ((isset($result) && $result != 1) ? '<br> <span class="text-danger">' . $result . '</span>' : ''));
+        return redirect()->back()->with('success', __('Saved') . ((isset($result) && $result != 1) ? '<br> <span class="text-danger">' . $result . '</span>' : ''));
 
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Business $business
-     * @return \Illuminate\Http\Response
+     * @param \App\Models\Business $business
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id)
     {
@@ -1051,10 +1044,10 @@ class BusinessController extends Controller
 
                 return view('card.' . $card_theme->theme . '.index', compact('appInfo', 'businessfields', 'contactinfo', 'contactinfo_content', 'appoinment_hours', 'appoinment', 'services_content', 'services', 'testimonials_content', 'testimonials', 'social_content', 'sociallinks', 'customhtml', 'businesshours', 'business_hours', 'business', 'days', 'is_slug', 'plan', 'gallery', 'gallery_contents', 'pixelScript', 'qr_detail', 'products', 'products_content', 'cardPayment', 'cardPayment_content', 'social_nos', 'service_row_nos', 'product_row_nos', 'testimonials_row_nos', 'gallery_row_no', 'nos', 'stringid', 'is_custom_html_enable', 'is_branding_enabled', 'branding', 'is_gdpr_enabled', 'gdpr_text', 'card_theme', 'banner', 'logo', 'company_logo', 'image', 's_image', 'pr_image', 'company_favicon', 'logo1', 'meta_image', 'gallery_path', 'qr_path', 'theme', 'color', 'SITE_RTL', 'url_link', 'is_appinfo', 'is_svg_enabled', 'svg_text', 'is_enable_sociallinks', 'appointment_nos', 'is_google_map_enabled', 'custom_html', 'is_enabled', 'meta_tag_image', 'themeName'));
             } else {
-                return abort('403', 'The Link You Followed Has Disactive');
+                abort('403', 'The Link You Followed Has Disactive');
             }
         } else {
-            return abort('404', 'Not Found');
+            abort('404', 'Not Found');
         }
 
     }
@@ -1206,91 +1199,6 @@ class BusinessController extends Controller
     public function analytics(Request $request, $id)
     {
 
-        if (\Auth::user()->can('view analytics business')) {
-
-            $count = Business::where('id', $id)->where('created_by', \Auth::user()->creatorId())->count();
-            if ($count == 0) {
-                return redirect()->route('business.index')->with('error', __('This card number is not yours.'));
-            }
-
-            $business = Business::find($id);
-            $duration = ['duration' => 'week'];
-
-
-            $startDate = $request->input('start_date');
-            $endDate = $request->input('end_date');
-
-            $isFiltered = !is_null($startDate) && !is_null($endDate);
-
-
-            $chartData = $this->getOrderChart($duration, $id, $startDate, $endDate);
-
-
-            $visitorQuery = \DB::table('visitor')->where('slug', $business->slug);
-
-            if ($startDate && $endDate) {
-                $visitorQuery->whereBetween('created_at', [$startDate, $endDate]);
-            }
-
-            $user_device = $visitorQuery->selectRaw("count('*') as total, device")
-                ->groupBy('device')->orderBy('device', 'DESC')->get();
-
-            $user_browser = $visitorQuery->selectRaw("count('*') as total, browser")
-                ->groupBy('browser')->orderBy('browser', 'DESC')->get();
-
-            $user_platform = $visitorQuery->selectRaw("count('*') as total, platform")
-                ->groupBy('platform')->orderBy('platform', 'DESC')->get();
-
-
-            $devicearray = ['label' => [], 'data' => []];
-            foreach ($user_device as $device) {
-                $devicearray['label'][] = $device->device ?: 'Other';
-                $devicearray['data'][] = $device->total;
-            }
-
-            $browserarray = ['label' => [], 'data' => []];
-            foreach ($user_browser as $browser) {
-                $browserarray['label'][] = $browser->browser;
-                $browserarray['data'][] = $browser->total;
-            }
-
-            $platformarray = ['label' => [], 'data' => []];
-            foreach ($user_platform as $platform) {
-                $platformarray['label'][] = $platform->platform;
-                $platformarray['data'][] = $platform->total;
-            }
-
-            $promoteData = Campaigns::where('business', $id)->get();
-
-            $annotations = [];
-            $totalBudget = 0;
-            $promotionData = ['label' => [], 'data' => []];
-            $promotionPeriodData = ['label' => [], 'data' => []];
-
-            foreach ($promoteData as $promote) {
-                $startDateString = Carbon::parse($promote->start_date)->format('d-M');
-                $endDateString = Carbon::parse($promote->end_date)->format('d-M');
-                $totalBudget += $promote->total_cost;
-
-                $annotation = [
-                    'startDateString' => $startDateString,
-                    'endDateString' => $endDateString,
-                    'days' => $promote->total_days,
-                    'budget' => $promote->total_cost,
-                    'budgetPercentage' => ($promote->total_cost / $totalBudget) * 100,
-
-                ];
-                $annotations[] = $annotation;
-                $promotionData['label'][] = $startDateString . ' to ' . $endDateString;
-                $promotionData['data'][] = $promote->total_cost;
-                $promotionPeriodData['label'][] = $startDateString . ' to ' . $endDateString;
-                $promotionPeriodData['data'][] = $promote->total_days;
-            }
-
-            return view('business.analytics', compact('platformarray', 'chartData', 'browserarray', 'devicearray', 'id', 'isFiltered', 'promoteData', 'annotations', 'promotionData', 'promotionPeriodData'));
-        } else {
-            return redirect()->back()->with('error', __('Permission denied.'));
-        }
     }
 
 
@@ -1357,7 +1265,7 @@ class BusinessController extends Controller
             $arrTask['data'] = $array_app;
             return $arrTask;
         } else {
-            return abort('404', 'Not Found');
+            abort('404', 'Not Found');
         }
     }
 
@@ -1659,7 +1567,7 @@ class BusinessController extends Controller
 
             return view('card.' . $card_theme->theme . '.index', compact('appInfo', 'businessfields', 'contactinfo', 'contactinfo_content', 'appoinment_hours', 'appoinment', 'services_content', 'services', 'testimonials_content', 'testimonials', 'social_content', 'sociallinks', 'customhtml', 'businesshours', 'business_hours', 'business', 'days', 'is_slug', 'is_pdf', 'plan', 'gallery', 'gallery_contents', 'pixelScript', 'products', 'products_content', 'cardPayment', 'cardPayment_content', 'social_nos', 'service_row_nos', 'product_row_nos', 'testimonials_row_nos', 'gallery_row_no', 'nos', 'stringid', 'is_custom_html_enable', 'custom_html', 'is_branding_enabled', 'branding', 'is_gdpr_enabled', 'gdpr_text', 'card_theme', 'banner', 'logo', 'image', 's_image', 'pr_image', 'company_favicon', 'logo1', 'meta_image', 'gallery_path', 'qr_path', 'theme', 'color', 'SITE_RTL', 'url_link', 'is_appinfo', 'is_svg_enabled', 'svg_text', 'is_enable_sociallinks', 'appointment_nos', 'meta_tag_image', 'is_google_map_enabled', 'is_enabled', 'themeName'));
         } else {
-            return abort('403', 'The Link You Followed Has Expired');
+            abort('403', 'The Link You Followed Has Expired');
         }
     }
 
@@ -1927,6 +1835,23 @@ class BusinessController extends Controller
 
     }
 
+    public function deleteBanner(Request $request)
+    {
+        $business = Business::find($request->business_id);
+        $banner = $business['banner'];
+        if($banner){
+            $file = 'card_banner/'. $banner;
+            if (File::exists($file)) {
+                File::delete($file);
+            }
+            $business->banner = null;
+            $business->save();
+        }
+        session()->flash('tab', 1);
+        return true;
+
+    }
+
     //Pixels
     public function pixel_create($business_id)
     {
@@ -1957,7 +1882,7 @@ class BusinessController extends Controller
     public function pixel_edit($business_id, $id)
     {
         $PixelField = PixelFields::where('id', $id)->first();
-        return view('pixelfield.edit', compact('pixals_platforms', 'business_id', 'PixelField'));
+        return view('pixelfield.edit', compact( 'business_id', 'PixelField'));
     }
 
     public function pixel_update(Request $request, $id)
@@ -2616,7 +2541,7 @@ class BusinessController extends Controller
 
 
             } else {
-                return abort('403', 'The Link You Followed Has Expired');
+                abort('403', 'The Link You Followed Has Expired');
             }
         } else {
             return redirect()->back()->with('error', __('Your user business is over, Please upgrade plan.'));

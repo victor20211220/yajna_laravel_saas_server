@@ -3434,4 +3434,40 @@ class Utility extends Model
         $plan = Plan::find($user->plan);
         return stripos($plan->name, 'pro') !== false;
     }
+
+    public static function hideEmptyCardElement($val = "", string $condition = 'or')
+    {
+        $displayNoneString = "style=\"display:none;\"";
+        if (is_array($val)) {
+            if ($condition === 'or') {
+                foreach ($val as $item) {
+                    if (in_array($item, [null, ''], true)) {
+                        return $displayNoneString;
+                    }
+                }
+                return '';
+            } elseif ($condition === 'and') {
+                foreach ($val as $item) {
+                    if (!in_array($item, [null, ''], true)) {
+                        return '';
+                    }
+                }
+                return $displayNoneString;
+            }
+        }
+
+        // Fallback for single value
+        return in_array($val, [null, ''], true) ? $displayNoneString : '';
+    }
+
+    public static function hideSection($toggle)
+    {
+        return (isset($toggle) && $toggle) ? "" : "style=\"display:none;\"";
+    }
+
+    public static function isInitialSocials($socials)
+    {
+        return (json_encode($socials) === '{"1":{"WhatsApp":null,"id":"1"},"2":{"Facebook":null,"id":"2"},"3":{"Instagram":null,"id":"3"},"4":{"TikTok":null,"id":"4"},"5":{"YouTube":null,"id":"5"},"6":{"LinkedIn":null,"id":"6"}}');
+    }
+
 }

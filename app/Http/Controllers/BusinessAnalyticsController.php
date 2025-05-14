@@ -32,8 +32,8 @@ class BusinessAnalyticsController extends Controller
 
     public function index(Request $request, Business $business)
     {
-        $from = now()->startOfMonth();
-        $to = now()->endOfDay();
+        $from = now()->startOfWeek();
+        $to = now()->endOfWeek();
 
         // Validate date format
         if ($request->filled('start_date') && strtotime($request->start_date)) {

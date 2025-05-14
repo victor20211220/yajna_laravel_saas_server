@@ -1,16 +1,6 @@
 $(document).ready(function () {
-    $('.socials-slider').on('init', function () {
-        $(this).removeClass('invisible');
-    }).slick({
-        slidesToShow: 5,
-        slidesToScroll: 1,
-        arrows: false,
-        dots: false,
-        infinite: false,
-    });
-
     $('.gallery-slider').on('init', function () {
-        $(this).removeClass('invisible');
+        $(this).show()
     }).slick({
         variableWidth: true,
         arrows: false,

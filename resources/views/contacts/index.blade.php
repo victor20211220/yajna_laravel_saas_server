@@ -18,7 +18,7 @@
             All the contacts you collect will appear here. You can follow up, export, or organize them with
             tags.
         </div>
-        <div class="d-flex justify-content-start align-items-center mb-4 gap-3">
+        <div class="d-flex justify-content-between justify-content-md-start align-items-center mb-4 gap-3">
             <button class="btn btn-primary" id="openCreateContactModalBtn">
                 {!! svg('user_interface/contact_book.svg', ['class' => 'me-3']) !!} Create Contact
             </button>
@@ -41,22 +41,27 @@
 
         </div>
         <div class="card table-responsive">
-            <table id="contactsTable" class="table table-hover borderless">
-                <thead>
+            <table id="contactsTable" class="table table-hover borderless contacts-table">
+                <thead class="d-none d-md-table-header-group">
                 <tr>
                     <th><input type="checkbox" id="checkAll"></th>
                     <th>Name</th>
-                    <th>Email</th>
-                    <th>Date Added</th>
+                    <th class="d-none d-md-table-cell">Email</th>
+                    <th class="d-none d-md-table-cell">Date Added</th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach ($contacts_details as $val)
                     <tr>
                         <td><input type="checkbox" class="row-checkbox"></td>
-                        <td>{{ $val->name }}</td>
-                        <td>{{ $val->email }}</td>
-                        <td>{{ \Carbon\Carbon::parse($val->created_at)->format('d F, Y') }}</td>
+                        <td>
+                            <a href="#" class="view-contact text-decoration-none" data-id="{{ $val->id }}">
+                                <span class="d-block">{{ $val->name }}</span>
+                                <span class="d-block d-md-none text-muted">{{ $val->email }}</span>
+                            </a>
+                        </td>
+                        <td class="d-none d-md-table-cell">{{ $val->email }}</td>
+                        <td class="d-none d-md-table-cell">{{ \Carbon\Carbon::parse($val->created_at)->format('d F, Y') }}</td>
                     </tr>
                 @endforeach
                 </tbody>
@@ -92,7 +97,7 @@
                                        placeholder="Company">
 
                                 <input type="text" name="job_title"
-                                   class="form-control bg-secondary border-0 rounded-3 py-3 text-center"
+                                       class="form-control bg-secondary border-0 rounded-3 py-3 text-center"
                                        placeholder="Job Title">
 
                                 <textarea name="message"
@@ -113,13 +118,27 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="viewContactModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content rounded-4">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title fw-bold mx-auto">Contact Details</h5>
+                        <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-start">
+                        <!-- Content injected via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 @push('custom-scripts')
     <script>
         $(function () {
             var start = moment().startOf('month');
-            var end = moment();
+            var end = moment().endOf('month');
             var selectedLabel = 'This Month';
 
             function cb(start, end, label) {
@@ -208,6 +227,31 @@
                 $('#createContactModal').modal('show');
             })
 
+        });
+
+        $(document).on('click', '.view-contact', function (e) {
+            e.preventDefault();
+            const contactId = $(this).data('id');
+
+            $.ajax({
+                url: `/contacts/${contactId}/show`,
+                method: 'GET',
+                success: function (data) {
+                    // fallback to empty string if null
+                    const safe = (val) => val ?? '';
+
+                    $('#viewContactModal .modal-body').html(`
+                        <p><strong>Name:</strong> ${safe(data.name)}</p>
+                        <p><strong>Phone:</strong> ${safe(data.phone)}</p>
+                        <p><strong>Email:</strong> ${safe(data.email)}</p>
+                        <p><strong>Company:</strong> ${safe(data.company)}</p>
+                        <p><strong>Job Title:</strong> ${safe(data.job_title)}</p>
+                        <p><strong>Notes:</strong> ${safe(data.message)}</p>
+                    `);
+
+                    $('#viewContactModal').modal('show');
+                }
+            });
         });
 
     </script>

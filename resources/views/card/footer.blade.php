@@ -10,19 +10,14 @@
 <!-- Bootstrap 5 JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-<script src="{{ asset('custom/js/jquery.qrcode.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
 <script src="{{ asset('custom/libs/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
 <script src="{{ asset('custom/js/socialSharing.js') }}"></script>
 <script src="{{ asset('custom/js/custom-toast.js') }}"></script>
+<script src="{{ asset('custom/js/vcard-section-border-color-util.js?v='.time()) }}"></script>
 <script src="{{ asset('custom/' . $theme . '/js/new-custom.js?v='.time()) }}" defer="defer"></script>
-{{--<script src="{{ asset('custom/' . $theme . '/js/custom.js?v='.time()) }}" defer="defer"></script>--}}
 <script>
-
     $(function () {
-
-        @if($business->is_lead_direct_download_enabled)
-        if (!isOnEditFormPage()) window.location.href = $('#save-contact-on-vcard').attr('href');
-        @endif
 
         var is_enable_service = "{{ Business::EnableOrNot($services, $services_content) }}";
         if (is_enable_service) {
@@ -51,52 +46,79 @@
         } else {
             $('#googleReviewPreview').hide();
         }
+
+
+        @if($business->is_auto_contact_popup_enabled)
+        if (!isOnEditFormPage()) {
+            const checkExist = setInterval(() => {
+                const btn = $('#openShareContactModalBtn');
+                if (btn.length && !isOnEditFormPage()) {
+                    btn.trigger('click');
+                    clearInterval(checkExist);
+                }
+            }, 50);
+        }
+        @endif
+
+            @if($business->is_lead_direct_download_enabled)
+        if (!isOnEditFormPage()) window.location.href = $('#businessCard #save-contact-on-vcard').attr('href');
+        @endif
     });
 </script>
 
 <script id="vCardQrCodeManagementScript">
-    function generate_share_card_qr_code() {
-        $container = $(".qr-code-container");
-        $container.find('[data-name="generated"]').empty().qrcode({
-            render: 'image',
-            size: 162,
-            ecLevel: "H",
-            minVersion: 3,
-            quiet: 1,
-            text: "{{ env('APP_URL').'/'.$business->slug }}",
-            fill: $container.find('[data-name="qrcode_foreground_color"]').val(),
-            background: "#FFFFFF",
-            radius: 26,
-            mode: $container.find('[data-name="qrcode_type"]').val() * 1,
-            image: $container.find('[data-name="qr_detail_image"]')[0],
-            mSize: 0.32
-        });
-    }
-
-    function download_share_qrcode(e) {
-        e.preventDefault();
-        var img = new Image();
-        img.src = $(e.target).closest('.qr-code-container').find('[data-name="generated"] img').attr('src');
-        img.onload = function () {
-            var canvas = document.createElement('canvas');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            var ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0);
-            var data = canvas.toDataURL('image/png');
-            var a = document.createElement("a");
-            a.download = "{{$business->title}}.png";
-            a.href = data;
-            a.click();
-        };
-    }
-
     $(function () {
         $('#openShareCardModalBtn').on('click', function () {
             if (isOnEditFormPage()) return;
             $('#shareCardModal').modal('show');
         })
-        generate_share_card_qr_code();
+        $('.share-card-modal').on('shown.bs.modal', function () {
+            $container = $(this).find('.qr-code-container');
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.src = $container.find('[data-name="qr_detail_image"]').attr('src');
+
+            img.onload = function () {
+                vCardQrCode = new QRCodeStyling({
+                    width: 162,
+                    height: 162,
+                    type: "svg",
+                    data: "{{ env('APP_URL').'/'.$business->slug }}",
+                    margin: 0,
+                    image: img.src,
+                    imageOptions: {
+                        imageSize: 0.4,
+                        margin: 0,
+                        hideBackgroundDots: true,
+                        saveAsBlob: true,
+                    },
+                    dotsOptions: {
+                        color: $container.find('[data-name="qrcode_foreground_color"]').val(),
+                        type: "dots",
+                        roundSize: true
+                    },
+                    backgroundOptions: {
+                        color: "#ffffff"
+                    },
+                    cornersSquareOptions: {
+                        type: "extra-rounded" // 👈 Apple-style finder corners
+                    },
+                    cornersDotOptions: {
+                        type: "dot" // 👈 round inner dot
+                    },
+                });
+                const $code = $container.find('[data-name="generated"]');
+                $code.empty();
+                vCardQrCode.append($code[0]);
+                $container.find('[data-name="download-button"]').click(function () {
+                    vCardQrCode.download({
+                        name: "{{ $business->title }}",
+                        extension: "svg"
+                    });
+                })
+            }
+        });
+
     })
 </script>
 <script id="analyticsManagementScript">
@@ -109,28 +131,30 @@
     }
 
     // Example usage:
-    $(document).on('click', '#businessCard .card-social-link', function(){
+    $(document).on('click', '#businessCard .card-social-link', function () {
         logClick('social')
     });
-    $(document).on('click', '#businessCard #save-contact-on-vcard', function(){
-        logClick('save_contact')
-    });
-    $(document).on('click', '#businessCard #openShareContactModalBtn', function(){
-        logClick('share_contact')
-    });
-    $(document).on('click', '#businessCard #contact-section a', function(){
+    $(function () {
+        $('#businessCard #save-contact-on-vcard').click(function () {
+            logClick('save_contact')
+        });
+        $('#businessCard #openShareContactModalBtn').click(function () {
+            logClick('share_contact')
+        });
+    })
+    $(document).on('click', '#businessCard #contact-section a', function () {
         logClick('contact_info')
     });
-    $(document).on('click', '#businessCard .vcard-service-row', function(){
+    $(document).on('click', '#businessCard .vcard-service-row', function () {
         logClick('services')
     });
-    $(document).on('click', '#businessCard .gallery-slide-image', function(){
+    $(document).on('click', '#businessCard .gallery-slide-image', function () {
         logClick('gallery')
     });
-    $(document).on('click', '#businessCard video', function(){
+    $(document).on('click', '#businessCard video', function () {
         logClick('video')
     });
-    $(document).on('click', '#businessCard #vcard-google-review-section a', function(){
+    $(document).on('click', '#businessCard #vcard-google-review-section a', function () {
         logClick('google_review')
     });
 

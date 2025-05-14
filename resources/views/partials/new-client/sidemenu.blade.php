@@ -45,7 +45,7 @@
 @endphp
     <!-- Sidebar -->
 <div id="sidebar" class="sidebar p-3 position-fixed d-flex flex-column flex-shrink-0">
-    {!! svg('/user_interface/close_sidebar.svg', ['class' => 'position-absolute z-3 top-0 me-3 end-0 toggle-sidebar-icon', 'id' => 'closeSidebar']) !!}
+    {!! svg('/user_interface/close_sidebar.svg', ['class' => 'position-absolute z-3 top-0 me-3 end-0 toggle-sidebar-icon d-block d-md-none', 'id' => 'closeSidebar']) !!}
     <a class="mt-4 mt-xl-2 mb-4" href="{{ url('/') }}">
         {!! svg('logo.svg', ['class' => 'logo-img']) !!}
     </a>
@@ -84,7 +84,7 @@
         </a>
         @endImpersonating
         <button class="btn btn-primary w-100 mb-3 rounded-pill">{{ $plan->name }}</button>
-        <div class="dropdown sidebar-user-dropdown">
+        <div class="d-none d-md-block dropdown sidebar-user-dropdown">
             <button class="btn w-100 d-flex align-items-center justify-content-between dropdown-toggle" id="myDropdown">
                 <span class="d-flex align-items-center gap-2 d-block">
                     <img class="rounded-circle user-avatar" style="width: 36px; height: 36px;"
@@ -120,7 +120,12 @@
                             class="bi bi-box-arrow-right"></i></a></li>
             </ul>
         </div>
+        <div class="d-block d-md-none">
+            <button class="btn btn-transparent w-100 mb-4 border-0" onclick="event.preventDefault(); document.getElementById('frm-logout').submit();">Sign Out</button>
+            <div class="text-12 text-center text-muted">&copy; {{ date('Y') }} Tapeetap. All Rights Reserved</div>
+        </div>
     </div>
+    <div class="py-5 my-4 d-block d-md-none"></div>
 </div>
 
 <form id="frm-logout" action="{{ route('logout') }}" method="POST" class="d-none">

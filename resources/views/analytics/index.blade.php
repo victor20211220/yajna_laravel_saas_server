@@ -1,3 +1,6 @@
+@php
+    $isProClient = \App\Models\Utility::isProClient($business->id);
+@endphp
 @extends('layouts.new-client')
 @section('page-title')
     {{ __('Analytics') }}
@@ -16,25 +19,30 @@
 @section('content')
     <div id="analytics_page">
         <div class="row">
-            <div class="col-md-3 mb-4">
+            <div class="col-6 col-md-3 mb-4">
                 <div class="card stats-card">
                     <div class="fw-semibold">Page Views</div>
                     <div>{{ $views->count() ?: 'No view' }}</div>
                 </div>
             </div>
-            <div class="col-md-3 mb-4">
+            <div class="col-6 col-md-3 mb-4">
                 <div class="card stats-card">
                     <div class="fw-semibold">Page Clicks</div>
                     <div>{{ $clicks->count() ?: 'No click' }}</div>
                 </div>
             </div>
-            <div class="col-md-3 mb-4">
+            <div class="col-6 col-md-3 mb-4">
                 <div class="card stats-card">
-                    <div class="fw-semibold">CTR</div>
-                    <div>{{ $ctr }}%</div>
+                    <div class="fw-semibold position-relative">
+                        <label class="form-label mb-0">CTR</label>
+                        @include('components/more-info', ['label' => 'CTR (Click through rate)'])
+                    </div>
+                    <div>
+                        {{ $ctr }}%
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-4">
+            <div class="col-6 col-md-3 mb-4">
                 <div class="card stats-card">
                     <div class="fw-semibold">Contacts Collected</div>
                     <div>{{ $contacts_collected ?: 'No new contact' }}</div>
@@ -77,20 +85,23 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
+        const isProClient = {{ $isProClient ? "true": "false"}};
+        let hasRedirected = false; // track if we’ve already handled the first load
+        // Date range picker setup
+        let start = moment('{{ request('start_date') ?? now()->startOfWeek()->format('YYYY-MM-DD') }}', 'YYYY-MM-DD', true);
+        let end = moment('{{ request('end_date') ?? now()->endOfWeek()->format('YYYY-MM-DD') }}', 'YYYY-MM-DD', true);
+
         const viewsData = @json($views);
         const clicksData = @json($clicks);
 
-        // Date range picker setup
-        let start = moment('{{ request('start_date') ?? now()->startOfMonth()->format('YYYY-MM-DD') }}', 'YYYY-MM-DD', true);
-        let end = moment('{{ request('end_date') ?? now()->endOfMonth()->format('YYYY-MM-DD') }}', 'YYYY-MM-DD', true);
 
         // fallback if parsing fails
-        const fallbackStart = moment().startOf('month');
-        const fallbackEnd = moment();
+        const fallbackStart = moment().startOf('week');
+        const fallbackEnd = moment().endOf('week');
 
         if (!start.isValid()) start = fallbackStart;
         if (!end.isValid()) end = fallbackEnd;
-        let selectedLabel = 'This Month';
+        let selectedLabel = 'This Week';
 
         const predefinedRanges = {
             'This Week': [moment().startOf('week'), moment().endOf('week')],
@@ -107,6 +118,31 @@
                 break;
             }
         }
+
+        function cb(start, end, label) {
+            if (label) selectedLabel = label;
+            if (selectedLabel === 'Custom Range') {
+                $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+            } else {
+                $('#reportrange span').html(selectedLabel);
+            }
+
+            // Only redirect if it's not the very first load
+            if (hasRedirected) {
+                const newStart = start.format('YYYY-MM-DD');
+                const newEnd = end.format('YYYY-MM-DD');
+                window.location.href = `?start_date=${newStart}&end_date=${newEnd}`;
+            }
+            hasRedirected = true;
+        }
+
+        $('#reportrange').daterangepicker({
+            startDate: start,
+            endDate: end,
+            ranges: predefinedRanges,
+        }, cb);
+
+        cb(start, end, selectedLabel);
 
         // Build full date range from start to end
         const viewCounts = {};
@@ -155,11 +191,18 @@
             'google_review': 0
         };
 
+        if (!isProClient) { // your actual condition here
+            delete categoryCounts.services;
+            delete categoryCounts.gallery;
+            delete categoryCounts.video;
+            delete categoryCounts.google_review;
+        }
+
         clicksData.forEach(click => {
             const category = click.category || 'unknown';
             categoryCounts[category] = (categoryCounts[category] || 0) + 1;
         });
-
+        Chart.defaults.font.size = 14;
         const ctxViews = document.getElementById('viewsChart').getContext('2d');
         new Chart(ctxViews, {
             type: 'line',
@@ -169,7 +212,7 @@
                     label: 'Page Views',
                     data: Object.values(viewCounts),
                     fill: true,
-                    borderColor: '#007bff',
+                    borderColor: '#171717',
                     tension: 0.3
                 }]
             }
@@ -182,29 +225,34 @@
                 labels: Object.keys(deviceCounts),
                 datasets: [{
                     data: Object.values(deviceCounts),
-                    backgroundColor: ['#007bff', '#28a745', '#ffc107']
+                    backgroundColor: ['#171717', '#28a745', '#ffc107']
                 }]
             }
         });
 
         const ctxCategory = document.getElementById('categoryChart').getContext('2d');
+        let labels = [
+            'Social',
+            'Save Contact',
+            'Share Contact',
+            'Contact Info',
+            'Services',
+            'Gallery',
+            'Video',
+            'Google Review'
+        ];
+        if (!isProClient) { // your condition here
+            const excludeLabels = ['Services', 'Gallery', 'Video', 'Google Review'];
+            labels = labels.filter(label => !excludeLabels.includes(label));
+        }
         new Chart(ctxCategory, {
             type: 'bar',
             data: {
-                labels: [
-                    'Social',
-                    'Save Contact',
-                    'Share Contact',
-                    'Contact Info',
-                    'Services',
-                    'Gallery',
-                    'Video',
-                    'Google Review'
-                ],
+                labels: labels,
                 datasets: [{
                     label: 'Clicks',
                     data: Object.values(categoryCounts),
-                    backgroundColor: '#007bff'
+                    backgroundColor: '#171717'
                 }]
             },
             options: {
@@ -212,40 +260,12 @@
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            precision: 0
+                            precision: 0,
                         }
                     }
                 }
             }
         });
-
-        function cb(start, end, label) {
-            if (label) selectedLabel = label;
-            if (selectedLabel === 'Custom Range') {
-                $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-            } else {
-                $('#reportrange span').html(selectedLabel);
-            }
-
-            const currentParams = new URLSearchParams(window.location.search);
-            const currStart = currentParams.get('start_date');
-            const currEnd = currentParams.get('end_date');
-            const newStart = start.format('YYYY-MM-DD');
-            const newEnd = end.format('YYYY-MM-DD');
-
-            if (currStart !== newStart || currEnd !== newEnd) {
-                window.location.href = `?start_date=${newStart}&end_date=${newEnd}`;
-            }
-        }
-
-        $('#reportrange').daterangepicker({
-            startDate: start,
-            endDate: end,
-            ranges: predefinedRanges
-        }, cb);
-
-        cb(start, end, selectedLabel);
-
 
         function exportCSV(filename, headers, rows) {
             const escapeCSV = val => {

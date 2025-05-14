@@ -24,7 +24,7 @@
     position: relative;
     z-index: 2;
     background: white;
-
+    height: 100dvh; /* newer units, dynamically accounts for visible viewport height */
     .form-control::placeholder {
         color: #bbb;
     }
@@ -73,5 +73,8 @@
 
     .logo-img {
         max-height: 40px;
+    }
+    .copyright {
+        color: #51545B;
     }
 }

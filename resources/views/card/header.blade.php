@@ -20,6 +20,7 @@
         --custom-color: {{ $business->card_text_color ?? '#171717' }};
         --custom-button-bg: {{ $business->button_bg_color ?? '#1570FD' }};
         --custom-button-color: {{ $business->button_text_color ?? '#FFFFFF' }};
+        --custom-section-border-color: '#C9CCD1';
     }
 </style>
 <link rel="stylesheet" href="{{ asset('assets/css/new-card-custom.css?v='.time()) }}">

@@ -31,3 +31,4 @@ auth.json
 *.log
 *.vcf
 .idea/
+/public/card/

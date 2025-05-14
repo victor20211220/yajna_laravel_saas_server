@@ -15,6 +15,8 @@ use Auth;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Lab404\Impersonate\Models\Impersonate;
+use Illuminate\Auth\Notifications\ResetPassword;
+
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -65,6 +67,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
     public function creatorId()
     {
         if ($this->type == 'company' || $this->type == 'super admin') {
@@ -73,14 +76,17 @@ class User extends Authenticatable implements MustVerifyEmail
             return $this->created_by;
         }
     }
+
     public function currentLanguage()
     {
         return $this->lang;
     }
+
     public function countCompany()
     {
         return User::where('type', '=', 'company')->where('created_by', '=', $this->creatorId())->count();
     }
+
     public function countPaidCompany()
     {
         return User::where('type', '=', 'company')->whereNotIn(
@@ -91,6 +97,7 @@ class User extends Authenticatable implements MustVerifyEmail
             ]
         )->where('created_by', '=', \Auth::user()->id)->count();
     }
+
     public function totalBusiness($id)
     {
         return Business::where('created_by', '=', $id)->count();
@@ -122,7 +129,6 @@ class User extends Authenticatable implements MustVerifyEmail
             }
 
 
-
             if ($plan->business == -1) {
                 foreach ($business as $b) {
                     $b->status = 'active';
@@ -133,8 +139,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 foreach ($business as $b) {
                     $businessCount++;
                     if ($businessCount <= $plan->business) {
-                        $b->status = 'active';
-                        ;
+                        $b->status = 'active';;
                         $b->save();
                     } else {
                         $b->status = 'lock';
@@ -144,7 +149,7 @@ class User extends Authenticatable implements MustVerifyEmail
             }
 
 
-            if (!empty($plan->module) || $plan->module=='') {
+            if (!empty($plan->module) || $plan->module == '') {
 
                 $modules_array = explode(',', $plan->module);
                 $currentActiveModules = userActiveModule::where('user_id', $user->id)->pluck('module')->toArray();
@@ -165,12 +170,9 @@ class User extends Authenticatable implements MustVerifyEmail
                     ]);
                 }
             }
-            if($this->plan==1)
-            {
+            if ($this->plan == 1) {
                 $this->active_module = null;
-            }
-            else
-            {
+            } else {
                 $this->active_module = implode(',', $modules_array);
             }
 
@@ -184,6 +186,7 @@ class User extends Authenticatable implements MustVerifyEmail
             ];
         }
     }
+
     public function planPrice()
     {
         $user = \Auth::user();
@@ -196,11 +199,13 @@ class User extends Authenticatable implements MustVerifyEmail
         return \DB::table('settings')->where('created_by', '=', $userId)->get()->pluck('value', 'name');
 
     }
+
     public function dateFormat($date)
     {
         ;
         return date('d-m-Y', strtotime($date));
     }
+
     public function getPlanThemes()
     {
 
@@ -216,14 +221,17 @@ class User extends Authenticatable implements MustVerifyEmail
             return [];
         }
     }
+
     public function getTotalAppoinments()
     {
         return Appointment_deatail::where('created_by', $this->id)->count();
     }
+
     public function getTotalBusiness()
     {
         return Business::where('created_by', '=', $this->id)->count();
     }
+
     public function getMaxBusiness()
     {
         $plan = Plan::find($this->plan);
@@ -375,5 +383,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return self::$businessCurrentDetail;
     }
 
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\CustomResetPassword($token));
+    }
 
 }

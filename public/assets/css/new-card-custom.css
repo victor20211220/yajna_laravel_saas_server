@@ -11852,7 +11852,7 @@ textarea.form-control-lg {
 }
 .business-card {
   background: var(--custom-card-bg);
-  padding-bottom: 1.5rem;
+  padding-bottom: 2rem;
   overflow: hidden;
   max-width: 600px;
   width: 100%;
@@ -11886,6 +11886,13 @@ textarea.form-control-lg {
   width: 29px;
   cursor: pointer;
 }
+.business-card #backToPageOnCardArrow {
+  width: 29px;
+}
+.business-card #backToPageOnCardArrow i {
+  font-size: 29px;
+  line-height: 29px;
+}
 .business-card #save-share-contact-buttons svg.fill-button-color .st0 {
   fill: var(--custom-button-color);
 }
@@ -11904,7 +11911,7 @@ textarea.form-control-lg {
 }
 .business-card section {
   padding: 32px;
-  border-bottom: solid 2px var(--custom-color);
+  border-bottom: solid 2px var(--custom-section-border-color);
 }
 .business-card section .section-title {
   font-size: 21.56px;
@@ -11915,11 +11922,22 @@ textarea.form-control-lg {
   width: 32px;
 }
 .business-card .cover-photo {
-  height: 199px;
+  position: relative;
+  width: 100%;
+  padding-top: 42.1875%; /* 42.1875% for 21:9 ratio */
+  overflow: hidden;
+}
+.business-card .cover-photo > * {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .business-card .cover-photo .overlay {
-  background: -webkit-linear-gradient(90deg, rgba(23, 23, 23, 0) 0%, rgba(23, 23, 23, 0.54902) 100%);
-  background: linear-gradient(90deg, rgba(23, 23, 23, 0) 0%, rgba(23, 23, 23, 0.54902) 100%);
+  background: -webkit-linear-gradient(0deg, rgba(23, 23, 23, 0) 0%, rgba(23, 23, 23, 0.54902) 100%);
+  background: linear-gradient(0deg, rgba(23, 23, 23, 0) 0%, rgba(23, 23, 23, 0.54902) 100%);
   pointer-events: none; /* So clicks pass through */
 }
 .business-card #card_logos {
@@ -11938,9 +11956,16 @@ textarea.form-control-lg {
 .business-card .title {
   font-size: 23px;
 }
+.business-card .socials-slider {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  justify-content: center;
+}
 .business-card .socials-slider .card-social-link {
   width: 47px;
   height: 47px;
+  display: block;
 }
 .business-card .socials-slider .card-social-link .st0 {
   fill: var(--custom-button-bg);
@@ -11953,8 +11978,8 @@ textarea.form-control-lg {
   height: auto;
 }
 .business-card #contact-section svg {
-  width: 25px;
-  height: 25px;
+  width: 30px;
+  height: 30px;
 }
 .business-card #contact-section svg .st0 {
   fill: var(--custom-color);
@@ -12028,7 +12053,6 @@ textarea.form-control-lg {
 
 .vcard-modal .modal-dialog {
   max-width: 600px;
-  width: 100%;
 }
 
 .share-card-modal section {
@@ -12045,6 +12069,18 @@ textarea.form-control-lg {
 .share-card-modal section .icon-container .colored-social-icon {
   width: 24px;
   height: 24px;
+}
+.share-card-modal [data-name=generated] {
+  width: 162px;
+  height: 162px;
+}
+
+.display-flex {
+  display: flex;
+}
+
+.display-none {
+  display: none;
 }
 
 video {

@@ -8,6 +8,8 @@
     $whatsapp_link = "https://wa.me/?text=" . $body;
     $email_link = "mailto:?body=".$body;
     $facebook_link = "https://www.facebook.com/sharer.php?u=".$body;
+    $isProClient = \App\Models\Utility::isProClient($business->id);
+    $siteLogo = asset('assets/images/logo.png');
 @endphp
 <div class="modal fade share-card-modal {{ $class }}" id="{{ $id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -56,16 +58,13 @@
                 <section class="border-0">
                     <div class="section-title">Your QR code</div>
                     <div class="qr-code-container d-flex flex-column gap-4 justify-content-center align-items-center">
-                        <input type="hidden" data-name="qrcode_type"
-                               value="{{$qr_detail && $qr_detail->qr_type ? $qr_detail->qr_type : 0}}"/>
                         <input type="hidden" data-name="qrcode_foreground_color"
                                value="{{ $qr_detail && $qr_detail->foreground_color ? $qr_detail->foreground_color: '#000000' }}"/>
                         <img alt="" data-name="qr_detail_image"
-                             src="{{ $qr_detail && $qr_detail->image ? $qr_path.'/'.  $qr_detail->image: "" }}"
+                             src="{{ $isProClient ? ($qr_detail && $qr_detail->image ? $qr_path.'/'.  $qr_detail->image: $siteLogo) : $siteLogo }}"
                              class="d-none" crossorigin="anonymous"/>
                         <div data-name="generated" class="mb-4"></div>
-                        <button type="button" class="btn btn-secondary" data-name="download-button"
-                                onclick="download_share_qrcode(event)">Download QR Code
+                        <button type="button" class="btn btn-secondary" data-name="download-button">Download QR Code
                         </button>
                     </div>
                 </section>

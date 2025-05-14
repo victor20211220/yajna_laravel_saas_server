@@ -13,29 +13,6 @@
 
 @endphp
 
-@push('custom-scripts')
-    <script>
-        $(document).ready(function () {
-            $("#loginForm").submit(function (e) {
-                $("#saveBtn").attr("disabled", true);
-                return true;
-            });
-        });
-        $('#togglePassword').on('click', function () {
-            var passwordInput = $('#password');
-            var icon = $(this);
-
-            if (passwordInput.attr('type') === 'password') {
-                passwordInput.attr('type', 'text');
-                icon.removeClass('bi-eye').addClass('bi-eye-slash');
-            } else {
-                passwordInput.attr('type', 'password');
-                icon.removeClass('bi-eye-slash').addClass('bi-eye');
-            }
-        });
-    </script>
-@endpush
-
 
 @section('content')
     <!-- [ auth-signup ] start -->
@@ -76,3 +53,27 @@
     {{ Form::close() }}
     <!-- [ auth-signup ] end -->
 @endsection
+
+
+@push('custom-scripts')
+    <script>
+        $(document).ready(function () {
+            $("#loginForm").submit(function (e) {
+                $("#saveBtn").attr("disabled", true);
+                return true;
+            });
+        });
+        $('#togglePassword').on('click', function () {
+            var passwordInput = $('#password');
+            var icon = $(this);
+
+            if (passwordInput.attr('type') === 'password') {
+                passwordInput.attr('type', 'text');
+                icon.removeClass('bi-eye').addClass('bi-eye-slash');
+            } else {
+                passwordInput.attr('type', 'password');
+                icon.removeClass('bi-eye-slash').addClass('bi-eye');
+            }
+        });
+    </script>
+@endpush

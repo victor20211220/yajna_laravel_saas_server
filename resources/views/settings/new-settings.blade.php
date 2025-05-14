@@ -58,7 +58,7 @@
 
     {{-- Delete Account --}}
     <div class="card p-4 d-flex flex-column flex-md-row justify-content-between">
-        <div>
+        <div class="mb-3">
             <div class="card-title">Delete Account</div>
             <div>Note that deleting your account will also delete all information and links
                 connected to this profile.

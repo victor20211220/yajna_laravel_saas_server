@@ -47,45 +47,15 @@
     <!-- Favicon -->
 
     <link rel="icon" href="{{ $logo . '/favicon.png' }}" type="image/x-icon"/>
-    <!-- font css -->
-    <link rel="stylesheet" href="{{ asset('assets/fonts/tabler-icons.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/fonts/feather.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/fonts/fontawesome.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/fonts/material.css') }}">
-
-    @if ($setting['cust_darklayout'] == 'on')
-        <link rel="stylesheet" href="{{ asset('assets/css/style-dark.css') }}">
-    @else
-        @if ($setting['SITE_RTL'] == 'on')
-            <link rel="stylesheet" href="{{ asset('assets/css/style-rtl.css') }}" id="main-style-link">
-        @else
-            <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}" id="main-style-link">
-        @endif
-    @endif
-
-    <link rel="stylesheet" href="{{ asset('assets/css/customizer.css') }}">
-    <link rel="stylesheet" href="{{ asset('custom/css/custom.css') }}">
-
-
-    @if ($setting['SITE_RTL'] == 'on')
-        <link rel="stylesheet" href="{{ asset('assets/css/custom-auth-rtl.css') }}" id="main-style-link">
-    @else
-        <link rel="stylesheet" href="{{ asset('assets/css/custom-auth.css') }}" id="main-style-link">
-    @endif
-
-    @if ($setting['cust_darklayout'] == 'on')
-        <link rel="stylesheet" href="{{ asset('assets/css/custom-dark.css') }}" id="main-style-link">
-    @endif
-
-    @stack('css-page')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    @stack('css-page')
     <link rel="stylesheet" href="{{ asset('assets/css/new-custom.css?v='.time()) }}"/>
 
 </head>
 
 
 <body>
-<div class="container-fluid login-container d-flex flex-row min-vh-100 py-4 px-3 p-md-0">
+<div class="container-fluid login-container d-flex flex-row py-4 px-3 p-md-0">
 
     <!-- Left Side: Logo + Form -->
     <div class="col-12 col-md-6 d-flex flex-column py-5 p-md-5">
@@ -106,10 +76,10 @@
         <div class="text-center small mt-4">
             <div class="footer-links">
                 <a href="#" class="text-decoration-none me-2 text-white text-md-primary">Terms of Use</a>
-                <span class="mx-1">|</span>
+                <span class="mx-1 text-white text-md-primary">|</span>
                 <a href="#" class="text-decoration-none ms-2 text-white text-md-primary">Privacy Policy</a>
             </div>
-            <div class="mt-2 copyright text-white text-md-primary">
+            <div class="mt-2 copyright text-md-primary">
                 Copyright &copy; {{ date('Y') }} Tapeetap All Rights Reserved
             </div>
         </div>
@@ -133,15 +103,10 @@
 <script src="{{ asset('custom/js/custom-toast.js') }}"></script>
 @include('components.custom-toast')
 
-<script src="{{ asset('custom/js/custom.js') }}"></script>
 <script>
     feather.replace();
 </script>
 @stack('custom-scripts')
 
 </body>
-@if ($set_cookie['enable_cookie'] == 'on')
-    @include('layouts.cookie_consent')
-@endif
-
 </html>

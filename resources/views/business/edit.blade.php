@@ -11,9 +11,13 @@
     $gallery_path= Utility::get_file('gallery');
     $qr_path = Utility::get_file('qrcode');
     $isProClient = Utility::isProClient($business_id);
+    $siteLogo = asset('assets/images/logo.png');
 
 @endphp
 @extends('layouts.new-client')
+@push('custom-styles')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/css/intlTelInput.min.css"/>
+@endpush
 @section('page-title')
     {{ __('Profile') }}
 @endsection
@@ -24,14 +28,15 @@
                 <h3 class="mb-0 page-title">
                     {{ __('Profile') }}
                 </h3>
-                <div
-                    class="d-flex align-items-center justify-content-between ms-auto gap-3 mb-0">
-                    <button type="reset" id="resetUpdateBusinessForm" class="btn d-none d-xl-block">
-                        {{__('Unsaved Changes')}}
-                    </button>
-                    <button type="button" class="btn btn-dark d-none d-xl-block" id="submitUpdateBusinessForm">
-                        {{__('Save Changes')}}
-                    </button>
+                <div class="d-flex align-items-center justify-content-between ms-auto gap-3 mb-0">
+                    <div class="d-none d-xl-block">
+                        <button type="reset" class="btn reset-form me-3">
+                            {{__('Unsaved Changes')}}
+                        </button>
+                        <button type="button" class="btn btn-dark" id="submitUpdateBusinessForm">
+                            {{__('Save Changes')}}
+                        </button>
+                    </div>
                     <button type="button" class="btn btn-primary btn-icon d-block d-xl-none">
                         {!! svg('/user_interface/eye.svg', ['class' => 'fill-white']) !!}
                         <a href="{{ route('get.vcard',[$business->slug]) }}"
@@ -69,9 +74,9 @@
             <input type="hidden" name="business_id" value="{{ $business->id }}">
             <input type="hidden" name="edit_tab_key" id="edit_tab_key" value="{{ $tab }}">
             <div class="card">
-                <div class="card-header bg-white sticky-top z-0 z-1 border-bottom">
+                <div class="card-header bg-white sticky-top z-0 z-1 border-bottom overflow-auto">
                     <!-- Tab Container: fixed on scroll -->
-                    <ul class="nav nav-pills nav-fill gap-2" id="pills-tab" role="tablist">
+                    <ul class="nav nav-pills nav-fill gap-2 flex-nowrap" id="pills-tab" role="tablist">
                         <li class="nav-item" role="presentation" data-key="1">
                             <button
                                 class="nav-link tab-btn btn-icon fw-semibold @if($tab === 1) active @endif"
@@ -116,8 +121,10 @@
                             <section
                                 class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-center justify-content-md-{{ $isProClient ? 'between' : 'around'  }} text-md-start">
                                 <div class="form-group">
-                                    {{ Form::label('logo', __('Profile Picture'), ['class' => 'form-label']) }}
-                                    <x-required></x-required>
+                                    <div class="position-relative mb-2">
+                                        {{ Form::label('logo', __('Profile Picture'), ['class' => 'form-label mb-0']) }}
+                                        @include('components/more-info', ['label' => 'Upload an image with a maximum size of 10 MB'])
+                                    </div>
                                     <div class="position-relative add-image-block dropzone" data-target="business_logo">
                                         <img
                                             src="{{ $business->logo ? $logo.'/'.$business->logo: Utility::imagePlaceholderUrl() }}"
@@ -140,32 +147,47 @@
                                     </div>
                                 </div>
                                 <div id="coverPhotoUpload" class="form-group">
-                                    {{ Form::label('banner', __('Cover Photo'), ['class' => 'form-label']) }}
-                                    <x-required></x-required>
+                                    <div class="position-relative mb-2">
+                                        {{ Form::label('banner', __('Cover Photo'), ['class' => 'form-label mb-0']) }}
+                                        @include('components/more-info', ['label' => 'Recommended aspect ratio is 2560x1080px with a maximum size of 10 MB'])
+                                    </div>
                                     <div class="position-relative rounded-4 add-image-block dropzone"
                                          data-target="banner">
+                                        @php
+                                            $hasBanner = isset($business->banner) && !empty($business->banner);
+                                        @endphp
                                         <img
-                                            src="{{ isset($business->banner) && !empty($business->banner) ? $banner . '/' . $business->banner : asset('assets/images/icons/user_interface/cover_photo_placeholder.png') }}"
+                                            src="{{ $hasBanner ? $banner . '/' . $business->banner : asset('assets/images/icons/user_interface/cover_photo_placeholder.png') }}"
                                             alt="" class="w-100 h-100 object-fit-cover img-fluid" id="banner">
                                         <div
-                                            class="position-absolute top-50 start-50 text-center translate-middle text-center w-100">
+                                            class="position-absolute text-center justify-content-center d-flex align-items-center w-100">
                                             <input
                                                 class="custom-input-file custom-input-file-link banner d-none file-validate"
                                                 type="file" name="banner" id="file-1"
                                                 accept="image/*"
                                             >
-                                            <label for="file-1">
-                                                <span class="mb-2" style="color: #9D9DA1;">Drag file for upload or</span><br/>
+                                            <label for="file-1" class="{{ $hasBanner ? 'd-none': '' }}">
+                                                <span class="mb-2 d-none d-md-inline-block" style="color: #9D9DA1;">Drag file for upload or</span>
+                                                <span class="mb-2 d-inline-block d-md-none" style="color: #9D9DA1;">Upload cover photo</span>
+                                                <br/>
                                                 <button type="button"
                                                         onclick="selectFile('banner')"
                                                         class="btn btn-primary btn-sm">{{ __('Select Files') }}</button>
                                             </label>
                                         </div>
+                                        <button type="button"
+                                                class="btn btn-white position-absolute bottom-0 end-0 rounded-circle me-2 mb-2 d-flex justify-content-center align-items-center p-0 {{ !$hasBanner ? 'd-none': '' }}"
+                                                id="deleteBannerBtn">
+                                            @include('components.delete-icon')
+                                        </button>
                                     </div>
                                 </div>
                                 @if($isProClient)
                                     <div class="form-group">
-                                        {{ Form::label('company_logo', __('Company Logo'), ['class' => 'form-label']) }}
+                                        <div class="position-relative mb-2">
+                                            {{ Form::label('company_logo', __('Company Logo'), ['class' => 'form-label mb-0']) }}
+                                            @include('components/more-info', ['label' => 'Recommended size: 440 x 440 px (1:1)'])
+                                        </div>
                                         <div class="position-relative add-image-block dropzone"
                                              data-target="business_company_logo">
                                             <img
@@ -312,13 +334,16 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             {{ Form::label('phone', __('Phone'), ['class' => 'form-label']) }}
-                                            {!! Form::text('phone', $business->phone, ['class' => 'form-control', 'id' => $business_id . '_phone']) !!}
+                                            <x-required></x-required>
+                                            <br/>
+                                            {!! Form::tel('phone', $business->phone, ['class' => 'form-control phone-input', 'id' => $business_id . '_phone', 'required' => true]) !!}
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             {{ Form::label('address', __('Address'), ['class' => 'form-label']) }}
-                                            {!! Form::text('address', $business->address, ['class' => 'form-control', 'id' => $business_id . '_address']) !!}
+                                            <x-required></x-required>
+                                            {!! Form::text('address', $business->address, ['class' => 'form-control', 'id' => $business_id . '_address', 'required' => true]) !!}
                                         </div>
                                     </div>
                                 </div>
@@ -326,13 +351,14 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             {{ Form::label('email', __('Email'), ['class' => 'form-label']) }}
-                                            {!! Form::email('email', $business->email, ['class' => 'form-control', 'id' => $business_id . '_email']) !!}
+                                            <x-required></x-required>
+                                            {!! Form::email('email', $business->email, ['class' => 'form-control', 'id' => $business_id . '_email', 'required' => true]) !!}
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             {{ Form::label('website', __('Website'), ['class' => 'form-label']) }}
-                                            {!! Form::url('website', $business->website, ['class' => 'form-control', 'id' => $business_id . '_website']) !!}
+                                            {!! Form::text('website', $business->website, ['class' => 'form-control', 'id' => $business_id . '_website', 'placeholder' => 'example.com']) !!}
                                         </div>
                                     </div>
                                 </div>
@@ -346,24 +372,28 @@
                                 @include('components.color-selector', [
                                     'id' => 'card_bg_color',
                                     'label' => 'Card Background',
+                                    'tooltip_title' => 'Set a new background colour for your card',
                                     'value' => old('card_bg_color', $business->card_bg_color ?? '#FFFFFF'),
                                     'colors' => ['#222222', '#FFB3B2', '#FAB5C9', '#FDD4B3', '#FEEBB3', '#B6F9DF', '#B8EBF7', '#B7CFF9', '#CCB6FA'],
                                 ])
                                 @include('components.color-selector', [
                                     'id' => 'button_bg_color',
                                     'label' => 'Button Colour',
+                                    'tooltip_title' => 'Change the colour of all buttons',
                                     'value' => old('button_bg_color', $business->button_bg_color ?? '#1570FD'),
                                     'colors' => ['#000000', '#FF3C39', '#F55381', '#FC8E3A', '#F4B813', '#06C27C', '#18BCE8', '#296DEE', '#9163F6'],
                                 ])
                                 @include('components.color-selector', [
                                     'id' => 'card_text_color',
                                     'label' => 'Card Text',
+                                    'tooltip_title' => 'Select the text colour for your content',
                                     'value' => old('card_text_color', $business->card_text_color ?? '#171717'),
                                     'colors' => ['#FFFFFF', '#000000', '#FF0C02', '#F60946', '#FC8E3A', '#F4B813', '#18BCE8', '#18BCE8', '#175BFD'],
                                 ])
                                 @include('components.color-selector', [
                                     'id' => 'button_text_color',
                                     'label' => 'Button Text',
+                                    'tooltip_title' => 'Change the text and icon colour of the button',
                                     'value' => old('button_text_color', $business->button_text_color ?? '#FFFFFF'),
                                     'colors' => ['#FFFFFF', '#000000', '#FF0C02', '#F60946', '#FC8E3A', '#F4B813', '#18BCE8', '#18BCE8', '#175BFD'],
                                 ])
@@ -511,7 +541,7 @@
                                                     <div class="preview-img mt-3 text-center d-none">
                                                         <img src="#" id="gallery_img_preview"
                                                              class="img-fluid rounded border"
-                                                             style="max-height: 200px;">
+                                                             style="max-height: 200px;" alt="">
                                                     </div>
                                                 </div>
 
@@ -664,11 +694,26 @@
 
                         <div class="tab-pane fade @if($tab === 4) show active @endif"
                              id="captureAndShareTab" role="tabpanel">
-                            <section>
-                                <div class="section-title">Lead Capture</div>
+                            <section id="leadCaptureSection">
+                                <div class="section-title d-flex align-items-center justify-content-between">
+                                    <div>{{__('Lead Capture')}}</div>
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        <div
+                                            class="form-check form-switch">
+                                            <input type="checkbox"
+                                                   name="is_auto_contact_popup_enabled"
+                                                   id="is_auto_contact_popup_enabled"
+                                                   class="form-check-input input-primary"
+                                                {{ $business->is_auto_contact_popup_enabled ? "checked=\"checked\"" : "" }}>
+                                            <label class="form-check-label"
+                                                   for="is_auto_contact_popup_enabled"></label>
+                                        </div>
+                                        <div>{{__('On')}}</div>
+                                    </div>
+                                </div>
                                 <div>Collect and exchange contact info</div>
                                 <div class="mb-4 pb-2"></div>
-                                <div class="bg-secondary rounded p-4 mb-4">
+                                <div class="bg-secondary rounded p-3 p-md-4 mb-4">
                                     <h6 class="fw-bold mb-3">Form Fields</h6>
                                     <div class="row g-3 share-contact-form-fields">
                                         @php
@@ -690,7 +735,7 @@
                                             @endphp
                                             <div class="col-md-6">
                                                 <div
-                                                    class="d-flex flex-column flex-md-row gap-3 justify-content-between align-items-center border rounded px-3 py-2 bg-white">
+                                                    class="d-flex flex-row gap-3 justify-content-between align-items-center border rounded px-3 py-2 bg-white">
                                                     <div class="d-flex align-items-center gap-3">
                                                         <i class="bi bi-grip-vertical text-muted"></i>
                                                         <label class="mb-0">{{ $label }}</label>
@@ -713,9 +758,8 @@
                                         @endforeach
                                     </div>
                                 </div>
-                                <div class="fw-semibold">Contact Info</div>
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <div>{{__('Allow leads to download your contact info directly on their phones')}}</div>
+                                <div class="section-title d-flex align-items-center justify-content-between">
+                                    <div class="">Contact Info</div>
                                     <div class="d-flex align-items-center justify-content-center">
                                         <div
                                             class="form-check form-switch">
@@ -730,6 +774,7 @@
                                         <div>{{__('On')}}</div>
                                     </div>
                                 </div>
+                                <div>{{__('Allow leads to download your contact info directly on their phones')}}</div>
                             </section>
                             <section>
                                 <div class="section-title d-flex align-items-center justify-content-between">
@@ -748,9 +793,7 @@
                                             'value' => old('qrcode_foreground_color', $qr_detail && $qr_detail->foreground_color ? $qr_detail->foreground_color: '#000000'),
                                             'colors' => ['#000000', '#FF3C39', '#F55381', '#FC8E3A', '#F4B813', '#06C27C'],
                                         ])
-                                        <input type="hidden" class="qr-data" name="qrcode_type" id="qrCodeType"
-                                               value="{{$qr_detail && $qr_detail->qr_type ? $qr_detail->qr_type : 0}}"/>
-                                        <div id="qr_type_option">
+                                        <div id="qr_type_option" class="{{ $isProClient ? "" : "display-none" }}">
                                             <div class="form-group">
                                                 {{ Form::label('qrcode_image', __('Custom Logo'), ['class' => 'form-label fw-semibold']) }}
                                                 <div class="mb-3">Add custom logo in the middle of the QR Code.</div>
@@ -765,7 +808,7 @@
                                                     <span class="mb-0 fw-semibold">Add Logo</span>
                                                 </button>
                                                 <img id="qrCodeImageBuffer" alt=""
-                                                     src="{{ $qr_detail && $qr_detail->image ? $qr_path.'/'.  $qr_detail->image: "" }}"
+                                                     src="{{ $isProClient ? ($qr_detail && $qr_detail->image ? $qr_path.'/'.  $qr_detail->image: $siteLogo) : $siteLogo }}"
                                                      class="d-none" crossorigin="anonymous">
                                             </div>
                                         </div>
@@ -777,7 +820,9 @@
                                             </div>
                                             <button type="button" class="btn btn-primary mb-4"
                                                     id="downloadMyQrCodeBtn">{{__('Download QR Code')}}</button>
-                                            <div class="text-14 fst-italic">Lead capture mode is ON</div>
+                                            <div class="text-14 fst-italic">Lead capture mode is <span
+                                                    id="isAutoContactPopupText">{{ $business->is_auto_contact_popup_enabled ? 'ON': 'OFF' }}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -790,12 +835,10 @@
             <div class="sticky-bottom-bar">
                 <div class="sticky-bar-bg"></div>
                 <div class="sticky-bar-content d-flex justify-content-center gap-3 p-3 position-relative">
-                    <button type="reset" class="btn btn-secondary">Cancel</button>
+                    <button type="reset" class="btn btn-secondary reset-form">Cancel</button>
                     <button type="submit" class="btn btn-primary">Save Changes</button>
                 </div>
             </div>
-
-
             {{ Form::close() }}
         </div>
 
@@ -805,6 +848,29 @@
             </div>
         </div>
     </div>
+
+    <!-- Image Crop Modal -->
+    <div class="modal fade" id="cropperModal" tabindex="-1" aria-labelledby="cropperModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content rounded-4">
+                <div class="modal-header">
+                    <h5 class="modal-title">Drag to reposition</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div id="cropperContainer">
+                        <img id="cropperTarget" class="img-fluid" alt="" src="#"/>
+                    </div>
+                    <input type="range" min="0.1" max="3" step="0.1" value="1" id="zoomSlider" class="form-range mt-3">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-white border" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" id="saveCropped" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="socialsModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -853,9 +919,8 @@
 
                     <!-- Input Field -->
                     <div class="mb-4">
-                        <input type="url" class="form-control" id="socialItemModalInput"
-                               placeholder="Enter your link"
-                               required>
+                        <input type="text" class="form-control" id="socialItemModalInput"
+                               placeholder="Enter profile link">
                     </div>
 
                     <!-- Add Button -->
@@ -874,19 +939,171 @@
     <script type="text/javascript"
             src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="{{ asset('custom/js/jquery.qrcode.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/intlTelInput.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+    <script src="{{ asset('custom/js/vcard-section-border-color-util.js') }}"></script>
+
     <script type="text/javascript">
         var asset_path = `{{ asset('assets/images/icons/user_interface/socials/') }}`
         $('#pills-tab .nav-item').click(function () {
             const edit_tab_key = $(this).data('key');
-            console.log(`edit_tab_key:`, edit_tab_key);
             $('#edit_tab_key').val(edit_tab_key);
+        })
+        const iti_config = {
+            initialCountry: "auto",
+            nationalMode: false,
+            formatOnDisplay: false,
+            autoFormat: false,
+            geoIpLookup: callback => {
+                fetch("https://ipapi.co/json")
+                    .then(res => res.json())
+                    .then(data => callback(data.country_code))
+                    .catch(() => callback("us"));
+            },
+            utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/utils.js"
+        };
+        $(function () {
+            $('.phone-input').each(function () {
+                const input = this;
+                window.intlTelInput(input, iti_config);
+            });
+
         })
 
         $('[data-id="openShareCardModalOnFormBtn"]').click(function () {
             $('#shareCardModalOnForm').modal('show');
         })
+    </script>
 
+    <script id="imageUploadManagementScript">
+        const toggleBannerControls = (hasImage) => {
+            if (hasImage) {
+                $('#deleteBannerBtn').removeClass('d-none');
+                $('label[for="file-1"]').addClass('d-none');
+            } else {
+                $('#deleteBannerBtn').addClass('d-none');
+                $('label[for="file-1"]').removeClass('d-none');
+            }
+        };
+        const handleImageUpload = (inputClass, targetId) => {
+            fileInput = $(`.${inputClass}`)[0];
+            currentTarget = targetId;
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                $('#cropperTarget').attr('src', e.target.result);
+                $('#zoomSlider').val(1);
+                $('#cropperModal').modal('show');
+            };
+            reader.readAsDataURL(file);
+        }
+
+
+        const selectFile = (targetClass) => {
+            const $input = $(`.${targetClass}`);
+
+            // Clear previous value to ensure change event fires for same file
+            $input.val('');
+
+            $input.off('change').on('change', function () {
+                if (this.files && this.files[0]) {
+                    handleImageUpload(targetClass, targetClass);
+                }
+            });
+
+            $input.trigger('click');
+        };
+
+        // crop the image
+        let cropper;
+        let currentTarget = '';
+        let fileInput = null;
+
+        $(function () {
+            toggleBannerControls({{ $hasBanner ? "1": "0" }});
+            $(`#deleteBannerBtn`).click(function () {
+                var business_id = '{{$business->id}}';
+                $.ajax({
+                    url: '{{ route('business.delete-banner') }}',
+                    type: 'POST',
+                    data: {
+                        "business_id": business_id,
+                    },
+                    success: function () {
+                        location.reload();
+                    }
+                });
+            })
+            const $cropperModal = $('#cropperModal');
+            $cropperModal.on('shown.bs.modal', function () {
+                const image = document.getElementById('cropperTarget');
+                cropper = new Cropper(image, {
+                    viewMode: 1,
+                    scalable: true,
+                    zoomable: true,
+                    dragMode: 'move',
+                    aspectRatio: currentTarget === 'banner' ? 2560 / 1080 : 1,
+                });
+
+                $('#zoomSlider').on('input', function () {
+                    cropper.zoomTo(parseFloat(this.value));
+                });
+            });
+
+            $cropperModal.on('hidden.bs.modal', function () {
+                cropper.destroy();
+                cropper = null;
+            });
+
+            $('#saveCropped').on('click', function () {
+                const canvas = cropper.getCroppedCanvas(); // ⬅️ no dimensions → keeps native cropped resolution
+                canvas.toBlob(function (blob) {
+                    // Preview
+                    const url = URL.createObjectURL(blob);
+                    $(`#${currentTarget}`).attr('src', url);
+                    $(`#${currentTarget}_preview`).attr('src', url).removeClass('d-none');
+
+                    // Convert blob to File and assign to input
+                    const file = new File([blob], 'cropped-image.jpg', {type: 'image/jpeg'});
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    fileInput.files = dataTransfer.files;
+                    toggleBannerControls(true);
+                    $('#cropperModal').modal('hide');
+                }, 'image/jpeg');
+            });
+
+        })
+
+        // drag and drop files
+        $(function () {
+            $('.dropzone').on('dragover', function (e) {
+                e.preventDefault();
+                $(this).addClass('drag-over');
+            }).on('dragleave', function () {
+                $(this).removeClass('drag-over');
+            }).on('drop', function (e) {
+                e.preventDefault();
+                $(this).removeClass('drag-over');
+
+                const files = e.originalEvent.dataTransfer.files;
+                if (files.length && files[0].type.startsWith('image/')) {
+                    const targetId = $(this).data('target');
+                    const fileInput = $(`.${targetId}`)[0];
+
+                    // Put dropped file into input manually
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(files[0]);
+                    fileInput.files = dataTransfer.files;
+
+                    // Trigger the crop modal
+                    handleImageUpload(targetId, targetId);
+                }
+            });
+        })
     </script>
 
     <script id="livePreviewScript">
@@ -895,56 +1112,95 @@
         }
         //input change
         $(document).on('keyup', 'input', function () {
-            const _this = $(this);
-            if (_this.attr('id') === "{{ $business_id }}_google_review_link") {
-                getPreviewElement(_this).attr('href', `${_this.val()}`);
-            } else {
-                getPreviewElement(_this).text(_this.val());
-            }
-        });
+            const $input = $(this);
+            let val = $input.val();
+            const previewElement = getPreviewElement($input);
+            const id = $input.attr('id');
+            switch (id) {
+                //role and company
+                case "{{ $business_id }}_designation":
+                case "{{ $business_id }}_subtitle": {
+                    const $container = $('#roleAndCompanyOnVcard');
+                    const $connector = $('#title_sub_title_connector');
+                    const values = [
+                        $("#{{ $business_id }}_designation").val(),
+                        $("#{{ $business_id }}_subtitle").val(),
+                    ]
+                    if (values.some(val => val === null || val === '')) {
+                        $connector.hide();
+                    } else {
+                        $connector.show();
+                    }
+                    if (values.every(val => val === null || val === '')) {
+                        $container.hide();
+                    } else {
+                        $container.show();
+                    }
 
-        // company
-        $(document).on('keyup', '#{{ $business_id }}_subtitle', function () {
-            const _this = $(this);
-            const connector = $('#title_sub_title_connector');
-            if (_this.val() === "") {
-                connector.addClass('d-none');
-            } else {
-                if (connector.hasClass('d-none')) {
-                    connector.removeClass('d-none');
+                    break;
                 }
+
+                case "{{ $business_id }}_phone":
+                case "{{ $business_id }}_address":
+                case "{{ $business_id }}_email":
+                case "{{ $business_id }}_website": {
+                    let href = val;
+                    if (id === "{{ $business_id }}_phone")
+                        href = `tel:${val}`;
+                    if (id === "{{ $business_id }}_address")
+                        href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(val)}`;
+                    if (id === "{{ $business_id }}_email")
+                        href = `mailto:${val}`;
+                    else
+                        href = `https://${val}`;
+                    previewElement.attr('href', href);
+
+                    $container = previewElement.closest('div');
+                    if (val) $container.show();
+                    else $container.hide();
+
+                    const $groupContainer = $('#contact-section');
+                    const values = [
+                        $("#{{ $business_id }}_phone").val(),
+                        $("#{{ $business_id }}_address").val(),
+                        $("#{{ $business_id }}_email").val(),
+                        $("#{{ $business_id }}_website").val(),
+                    ]
+                    if (values.every(val => val === null || val === '')) {
+                        $groupContainer.hide();
+                    } else {
+                        $groupContainer.show();
+                    }
+                    break;
+                }
+
+                //Google Review Link
+                case "{{ $business_id }}_google_review_link":
+                    previewElement.attr('href', val);
+                    break;
+
+
             }
+            //if not Google Review Link
+            if (id !== "{{ $business_id }}_google_review_link") {
+                previewElement.text(val);
+            }
+
+            if (val) previewElement.show();
+            else previewElement.hide();
         });
 
-        // description
         $(document).on('keyup', '#{{ $business_id }}_desc', function () {
-            const _this = $(this);
-            getPreviewElement(_this).text(_this.val());
+            const input = $(this);
+            let val = input.val();
+            const formatted = val.replace(/\n/g, '<br>');
+            const previewElement = getPreviewElement(input);
+            previewElement.html(formatted);
+
+            if (val) previewElement.show();
+            else previewElement.hide();
         });
 
-        // phone
-        $(document).on('keyup', '#{{ $business_id }}_phone', function () {
-            const _this = $(this);
-            getPreviewElement(_this).attr('href', `tel:${_this.val()}`);
-        });
-
-        // address
-        $(document).on('keyup', '#{{ $business_id }}_address', function () {
-            const _this = $(this);
-            getPreviewElement(_this).attr('href', `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(_this.val())}`);
-        });
-
-        // email
-        $(document).on('keyup', '#{{ $business_id }}_email', function () {
-            const _this = $(this);
-            getPreviewElement(_this).attr('href', `mailto:${_this.val()}`);
-        });
-
-        // website
-        $(document).on('keyup', '#{{ $business_id }}_website', function () {
-            const _this = $(this);
-            getPreviewElement(_this).attr('href', `${_this.val()}`);
-        });
     </script>
 
     <script id="socialManagementScript">
@@ -953,6 +1209,19 @@
             "{{ strtolower($key) }}": `{!! svg('vcard/socials/' . strtolower($key) . '.svg', ['class' => 'w-100 h-100']) !!}`,
             @endforeach
         };
+
+        const socialValidators = {
+            facebook: /^https?:\/\/(www\.)?facebook\.com\/.+$/i,
+            instagram: /^https?:\/\/(www\.)?instagram\.com\/.+$/i,
+            linkedin: /^https?:\/\/(www\.)?linkedin\.com\/.+$/i,
+            youtube: /^https?:\/\/(www\.)?youtube\.com\/.+$/i,
+            twitter: /^https?:\/\/(www\.)?twitter\.com\/.+$/i,
+            pinterest: /^https?:\/\/(www\.)?pinterest\.com\/.+$/i,
+            tiktok: /^https?:\/\/(www\.)?tiktok\.com\/.+$/i,
+            behance: /^https?:\/\/(www\.)?behance\.net\/.+$/i,
+            whatsapp: phone => /^\+[0-9\s\-]{7,15}$/.test(phone),
+        };
+
 
         var socials_row_no = {{ count($social_content) + 1 }};
         var selectedSocialName = '';
@@ -967,22 +1236,42 @@
             $('#socialItemModal').modal('hide');
         })
 
-        // Handle Save/Add/Update
-        $('#saveSocialItemBtn').on('click', function () {
-            const form = $('#socialItemForm')[0];
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
-            const inputVal = $('#socialItemModalInput').val();
-            if (editSocialId) {
-                const editSocialRowSelector = `#${editSocialId}`;
-                $(editSocialRowSelector).find('.social-link-href').val(inputVal);
-                $(`${editSocialRowSelector}_preview`).attr('href', inputVal);
-            } else {
-                // Create new card + hidden inputs
-                const newSocialDataId = `socials_${socials_row_no}`;
-                var html = `
+        $(function () {
+            $saveSocialItemBtn = $('#saveSocialItemBtn');
+            // Handle Save/Add/Update
+            $saveSocialItemBtn.on('click', function () {
+                const inputVal = $('#socialItemModalInput').val().trim();
+                const platform = selectedSocialName.toLowerCase();
+                const validator = socialValidators[platform];
+                let previewLink = inputVal;
+                if (platform === 'whatsapp') {
+                    const cleaned = inputVal.replace(/\D/g, ''); // remove +, dashes, spaces
+                    previewLink = `https://wa.me/${cleaned}`;
+                }
+
+                let isValid = false;
+
+                if (validator instanceof RegExp) {
+                    isValid = validator.test(inputVal);
+                } else if (typeof validator === 'function') {
+                    isValid = validator(inputVal);
+                }
+
+                if (!isValid) {
+                    const msg = platform === 'whatsapp'
+                        ? 'Please enter a valid WhatsApp phone number (e.g., +1234567890)'
+                        : `Please enter a valid ${selectedSocialName} link (e.g., https://${platform}.com/yourprofile)`;
+                    toastrs("", msg, "error");
+                    return;
+                }
+                if (editSocialId) {
+                    const editSocialRowSelector = `#${editSocialId}`;
+                    $(editSocialRowSelector).find('.social-link-href').val(inputVal);
+                    $(`${editSocialRowSelector}_preview`).attr('href', previewLink).show();
+                } else {
+                    // Create new card + hidden inputs
+                    const newSocialDataId = `socials_${socials_row_no}`;
+                    var html = `
                 <div class="col-lg-4 social-row" id="${newSocialDataId}">
                     <div class="d-flex align-items-center justify-content-between p-2 bg-light rounded">
                         <div class="d-flex align-items-center gap-2">
@@ -997,44 +1286,87 @@
                             </button>
                             <button type="button" class="btn btn-white btn-remove-social">
                                 {!! view('components.delete-icon') !!}
-                </button>
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
 `;
-                $('#inputrow_socials').append(html);
-
-                let svgHtml = socialSvgs[selectedSocialName.toLowerCase()];
-                let newSocialSlide = `
-                    <a href="${inputVal}" target="_blank" class="card-social-link"
+                    $('#inputrow_socials').append(html);
+                    let svgHtml = socialSvgs[platform];
+                    let newSocialSlide = `
+                    <a href="${previewLink}" target="_blank" class="card-social-link"
                         id="${newSocialDataId}_preview">
                        ${svgHtml}
                     </a>`;
-                $('.socials-slider').slick('slickAdd', newSocialSlide);
+                    $('.socials-slider').append(newSocialSlide);
+                    socials_row_no++;
+                }
+                $(`.social-row input[type="hidden"]`).trigger('change');
+                $('.socials-slider').show();
+                $('#socialItemModal').modal('hide');
+            });
 
-                socials_row_no++;
-            }
+            const $socialItemModal = $('#socialItemModal');
+            $socialItemModal.off('shown.bs.modal').on('shown.bs.modal', function () {
+                const platform = selectedSocialName.toLowerCase();
+                const $input = $('#socialItemModalInput');
+                if (platform === 'whatsapp') {
+                    $input.attr('placeholder', '');
+                    try {
+                        const itiInstance = window.intlTelInputGlobals.getInstance($input[0]);
+                        if (itiInstance) itiInstance.destroy();
+                    } catch (e) {
 
-            $('#socialItemModal').modal('hide');
-        });
+                    }
+                    // initialize intlTelInput
+                    window.intlTelInput($input[0], iti_config);
+                }
+            });
+
+            $socialItemModal.off('hidden.bs.modal').on('hidden.bs.modal', function () {
+                const $input = $('#socialItemModalInput');
+                $input.attr('placeholder', '');
+                try {
+                    const itiInstance = window.intlTelInputGlobals.getInstance($input[0]);
+                    if (itiInstance) itiInstance.destroy();
+                } catch (e) {
+
+                }
+            });
+        })
 
 
         // When select a social in socialsModal
         function socialRepeater(el) {
+            if ($('#inputrow_socials .social-row').length >= 10) {
+                toastrs("", "You can only add up to 10 social links.", "error");
+                return;
+            }
             selectedSocialIcon = asset_path + '/' + el.toLowerCase() + '.svg';
             $('#socialItemModalIcon').attr('src', selectedSocialIcon);
 
             selectedSocialName = el;
+            const selected = el.toLowerCase();
+            const count = $(`#inputrow_socials .social-link-text`).filter(function () {
+                return $(this).text().trim().toLowerCase() === selected;
+            }).length;
+
+            if (count >= 2) {
+                toastrs("", `Only 2 ${el} links allowed.`, "error");
+                return;
+            }
             $('#socialItemModalName').text(selectedSocialName);
 
             $('#socialItemModalInput').val('');
-            $('#saveSocialItemBtn').text('Add');
+            $saveSocialItemBtn.text('Add');
             editSocialId = null;
 
             // FIRST: Hide the socials modal
-            $('#socialsModal').modal('hide');
+
+            const $socialsModal = $('#socialsModal');
+            $socialsModal.modal('hide');
             // THEN: After it's fully hidden, open the socialItemModal
-            $('#socialsModal').on('hidden.bs.modal', function () {
+            $socialsModal.on('hidden.bs.modal', function () {
                 $('#socialItemModal').modal('show');
                 // Very important: unbind this event after running once!
                 $(this).off('hidden.bs.modal');
@@ -1047,80 +1379,88 @@
             const $socialRow = $(this).closest('.social-row');
             editSocialId = $socialRow.attr('id');
 
-            const selectedSocialName = $socialRow.find('.social-link-text').text();
+            selectedSocialName = $socialRow.find('.social-link-text').text();
             $('#socialItemModalIcon').attr('src', asset_path + '/' + selectedSocialName.toLowerCase() + '.svg');
             $('#socialItemModalName').text(selectedSocialName);
 
             const link = $socialRow.find('.social-link-href').val();
             $('#socialItemModalInput').val(link);
 
-            $('#saveSocialItemBtn').text('Update');
+            $saveSocialItemBtn.text('Update');
             $('#socialItemModal').modal('show');
         });
+
 
         // Handle Delete Button
         $(document).on('click', '.btn-remove-social', function () {
             const $socialRow = $(this).closest('.social-row');
-            $('.socials-slider').slick('slickRemove', $socialRow.index());
+            $('.socials-slider .card-social-link').eq($socialRow.index()).remove();
             $socialRow.remove();
+            $(`.social-row input[type="hidden"]`).trigger('change');
         });
 
     </script>
 
     <script id="colorManagementScript">
-        const businessCard = document.querySelector('#businessCard');
-        const colorOptions = {
-            card_bg_color: "--custom-card-bg",
-            button_bg_color: "--custom-button-bg",
-            card_text_color: "--custom-color",
-            button_text_color: "--custom-button-color"
-        };
-        $('.color-group').each(function () {
-            const group = $(this);
-            const inputId = group.data('input-id');
-            const $input = $('#' + inputId);
-            const currentColor = $input.val().toLowerCase();
-            let matched = false;
-
-            group.find('.color-swatch').each(function () {
-                const swatchColor = $(this).data('color').toLowerCase();
-                if (swatchColor === currentColor) {
-                    $(this).addClass('selected');
-                    matched = true;
-                }
-            });
-
-            if (!matched) {
-                group.find('.color-picker-swatch').addClass('selected');
-            }
-
-            group.on('click', '.color-swatch', function () {
-                const selectedColor = $(this).data('color');
-                group.find('.color-swatch, .color-picker-swatch').removeClass('selected');
-                $(this).addClass('selected');
-                $input.val(selectedColor).trigger('input');
-            });
-
-            group.on('input', 'input[type="color"]', function () {
-                const val = $(this).val().toLowerCase();
-                let found = false;
+        $(function () {
+            const businessCard = document.querySelector('#businessCard');
+            const colorOptions = {
+                card_bg_color: "--custom-card-bg",
+                button_bg_color: "--custom-button-bg",
+                card_text_color: "--custom-color",
+                button_text_color: "--custom-button-color"
+            };
+            $('.color-group').each(function () {
+                const group = $(this);
+                const inputId = group.data('input-id');
+                const $input = $('#' + inputId);
+                const currentColor = $input.val().toLowerCase();
+                let matched = false;
 
                 group.find('.color-swatch').each(function () {
-                    if ($(this).data('color').toLowerCase() === val) {
-                        group.find('.color-swatch, .color-picker-swatch').removeClass('selected');
+                    const swatchColor = $(this).data('color').toLowerCase();
+                    if (swatchColor === currentColor) {
                         $(this).addClass('selected');
-                        found = true;
+                        matched = true;
                     }
                 });
 
-                if (!found) {
-                    group.find('.color-swatch, .color-picker-swatch').removeClass('selected');
+                if (!matched) {
                     group.find('.color-picker-swatch').addClass('selected');
                 }
-                const id = $(this).attr('id');
-                businessCard.style.setProperty(colorOptions[id], val);
+
+                group.on('click', '.color-swatch', function () {
+                    const selectedColor = $(this).data('color');
+                    group.find('.color-swatch, .color-picker-swatch').removeClass('selected');
+                    $(this).addClass('selected');
+                    $input.val(selectedColor).trigger('input');
+                });
+
+                group.on('input', 'input[type="color"]', function () {
+                    const val = $(this).val().toLowerCase();
+                    let found = false;
+
+                    group.find('.color-swatch').each(function () {
+                        if ($(this).data('color').toLowerCase() === val) {
+                            group.find('.color-swatch, .color-picker-swatch').removeClass('selected');
+                            $(this).addClass('selected');
+                            found = true;
+                        }
+                    });
+
+                    if (!found) {
+                        group.find('.color-swatch, .color-picker-swatch').removeClass('selected');
+                        group.find('.color-picker-swatch').addClass('selected');
+                    }
+                    const id = $(this).attr('id');
+                    businessCard.style.setProperty(colorOptions[id], val);
+                    if (id === "card_bg_color") {
+                        businessCard.style.setProperty('--custom-section-border-color', getRelativeBorderColor());
+                    }
+                });
             });
-        });
+        })
+
     </script>
 
     <script id="serviceManagementScript">
@@ -1169,91 +1509,90 @@
         });
 
         $("#is_services_enabled").change(function () {
-            var $input = $(this);
-            var enable = $input.is(":checked");
-            $("#vcard-services-section").toggleClass('d-none');
+            const enable = $(this).is(":checked");
+            const $section = $("#vcard-services-section");
+            if (enable) $section.show();
+            else $section.hide();
         })
     </script>
 
     <script id="galleryManagementScript">
+        $(function () {
+            $("#is_gallery_enabled").change(function () {
+                const enable = $(this).is(":checked");
+                const $section = $("#vcard-gallery-section");
+                if (enable) $section.show();
+                else $section.hide();
+            })
 
-        $("#is_gallery_enabled").change(function () {
-            var $input = $(this);
-            var enable = $input.is(":checked");
-            $('#vcard-gallery-section').toggleClass('d-none');
-        })
+            $('#openGalleryModal').click(function () {
+                $('#addGalleryModal').modal('show');
+                $(`input[name="galleryoption"][value="image"]`).prop('checked', true).trigger('change');
+            })
 
-        $('#openGalleryModal').click(function () {
-            $('#addGalleryModal').modal('show');
-            $(`input[name="galleryoption"][value="image"]`).prop('checked', true).trigger('change');
-        })
-
-        // Switch between Image and Custom Image
-        $('#addGalleryModal input.gallery_mode').on('change', function () {
-            const selected = $(this).val();
-            $('.upload-image-div, .custom-image-div').addClass('d-none');
-            if (selected === 'image') {
-                $('.upload-image-div').removeClass('d-none');
-            } else {
-                $('.custom-image-div').removeClass('d-none');
-            }
-            $('#addGalleryModal .gallery-option').removeClass('btn-primary').addClass('btn-secondary');
-            $(this).closest('.gallery-option').removeClass('btn-secondary').addClass('btn-primary');
-            $('#addGalleryModal input:not([name="galleryoption"])').val('');
-            $('#upload_image_modal').val('');
-            resetPreview();
-        });
-
-        // Preview uploaded image
-        $('#upload_image_modal').on('change', function (e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    $('#gallery_img_preview').attr('src', e.target.result).parent().removeClass('d-none');
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Preview custom link
-        $('#custom_image_link_modal').on('input', function () {
-            const url = $(this).val().trim();
-            if (url) {
-                $('#gallery_img_preview').attr('src', url).parent().removeClass('d-none');
-            } else {
+            // Switch between Image and Custom Image
+            $('#addGalleryModal input.gallery_mode').on('change', function () {
+                const selected = $(this).val();
+                $('.upload-image-div, .custom-image-div').addClass('d-none');
+                if (selected === 'image') {
+                    $('.upload-image-div').removeClass('d-none');
+                } else {
+                    $('.custom-image-div').removeClass('d-none');
+                }
+                $('#addGalleryModal .gallery-option').removeClass('btn-primary').addClass('btn-secondary');
+                $(this).closest('.gallery-option').removeClass('btn-secondary').addClass('btn-primary');
+                $('#addGalleryModal input:not([name="galleryoption"])').val('');
+                $('#upload_image_modal').val('');
                 resetPreview();
+            });
+
+            // Preview uploaded image
+            $('#upload_image_modal').on('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#gallery_img_preview').attr('src', e.target.result).parent().removeClass('d-none');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Preview custom link
+            $('#custom_image_link_modal').on('input', function () {
+                const url = $(this).val().trim();
+                if (url) {
+                    $('#gallery_img_preview').attr('src', url).parent().removeClass('d-none');
+                } else {
+                    resetPreview();
+                }
+            });
+
+            // Cancel
+            $('#cancelGalleryModal').on('click', function () {
+                $('#addGalleryModal input:not([name="galleryoption"])').val('');
+                $('#upload_image_modal').val('');
+                resetPreview();
+                $('#addGalleryModal').modal('hide');
+            });
+
+            function resetPreview() {
+                $('#gallery_img_preview').attr('src', '#').parent().addClass('d-none');
             }
-        });
 
-        // Cancel
-        $('#cancelGalleryModal').on('click', function () {
-            $('#addGalleryModal input:not([name="galleryoption"])').val('');
-            $('#upload_image_modal').val('');
-            resetPreview();
-            $('#addGalleryModal').modal('hide');
-        });
+            // Save button submits the main form
+            $('#saveGalleryModal').on('click', function () {
+                $('#submitUpdateBusinessForm').trigger('click');
+            });
 
-        function resetPreview() {
-            $('#gallery_img_preview').attr('src', '#').parent().addClass('d-none');
-        }
 
-        // Save button submits the main form
-        $('#saveGalleryModal').on('click', function () {
-            $('#submitUpdateBusinessForm').trigger('click');
-        });
-
-        function selectNormalFile(targetId) {
-            $(`.${targetId}`).trigger('click');
-        }
-
-        // Gallery Ajax
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
+            // Gallery Ajax
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+        })
         $('.remove-gallery').on('click', function () {
             var this_id = $(this).data('id');
             var business_id = '{{$business->id}}';
@@ -1269,97 +1608,124 @@
                 }
             });
         });
-
-
     </script>
 
-    <script id="featuredVideosManagementScript">
-        $("#is_video_enabled").change(function () {
-            var $input = $(this);
-            var enable = $input.is(":checked");
-            $('#vcard-featured-videos-section').toggleClass('d-none');
-        });
+    <script id="featuredVideoManagementScript">
+        $(function () {
+            $("#is_video_enabled").change(function () {
+                const enable = $(this).is(":checked");
+                const $section = $("#vcard-featured-videos-section");
+                if (enable) $section.show();
+                else $section.hide();
+            });
 
-        $('#openAddVideosModal').click(function () {
-            $('#addVideoModal').modal('show');
-            $(`input[name="galleryoption"][value="video"]`).prop('checked', true).trigger('change');
+            $('#openAddVideosModal').click(function () {
+                $('#addVideoModal').modal('show');
+                $(`input[name="galleryoption"][value="video"]`).prop('checked', true).trigger('change');
+            })
+
+            // Switch between Image and Custom Image
+            $('#addVideoModal input.gallery_mode').on('change', function () {
+                const selected = $(this).val();
+                $('.upload-video-div, .custom-video-div, .preview-video').addClass('d-none');
+                if (selected === 'video') {
+                    $('.upload-video-div').removeClass('d-none');
+                } else {
+                    $('.custom-video-div').removeClass('d-none');
+                }
+                $('#upload_video_modal').val('');
+                $('#custom_video_link_modal').val('');
+                $('#addVideoModal .gallery-option').removeClass('btn-primary').addClass('btn-secondary');
+                $(this).closest('.gallery-option').removeClass('btn-secondary').addClass('btn-primary');
+            });
+
+            // Preview uploaded video
+            $('#upload_video_modal').on('change', function () {
+                const file = this.files[0];
+                if (file) {
+                    const url = URL.createObjectURL(file);
+                    $('#videoPreview').attr('src', url);
+                    $('.preview-video').removeClass('d-none');
+                }
+            });
+
+            // Preview custom video link
+            $('#custom_video_link_modal').on('input', function () {
+                const link = $(this).val();
+                if (link) {
+                    $('#videoPreview').attr('src', link);
+                    $('.preview-video').removeClass('d-none');
+                }
+            });
+
+            // Cancel: reset fields & preview
+            $('#cancelVideoModal').on('click', function () {
+                $('#upload_video_modal').val('');
+                $('#custom_video_link_modal').val('');
+                $('#videoPreview').attr('src', '');
+                $('.upload-video-div, .custom-video-div, .preview-video').addClass('d-none');
+                $('#addVideoModal').modal('hide');
+            });
+
+            // Save: just triggers main form save
+            $('#saveVideoModal').on('click', function () {
+                $('#submitUpdateBusinessForm').trigger('click');
+            });
         })
-
-        // Switch between Image and Custom Image
-        $('#addVideoModal input.gallery_mode').on('change', function () {
-            const selected = $(this).val();
-            $('.upload-video-div, .custom-video-div, .preview-video').addClass('d-none');
-            if (selected === 'video') {
-                $('.upload-video-div').removeClass('d-none');
-            } else {
-                $('.custom-video-div').removeClass('d-none');
-            }
-            $('#upload_video_modal').val('');
-            $('#custom_video_link_modal').val('');
-            $('#addVideoModal .gallery-option').removeClass('btn-primary').addClass('btn-secondary');
-            $(this).closest('.gallery-option').removeClass('btn-secondary').addClass('btn-primary');
-        });
-
-        // Preview uploaded video
-        $('#upload_video_modal').on('change', function () {
-            const file = this.files[0];
-            if (file) {
-                const url = URL.createObjectURL(file);
-                $('#videoPreview').attr('src', url);
-                $('.preview-video').removeClass('d-none');
-            }
-        });
-
-        // Preview custom video link
-        $('#custom_video_link_modal').on('input', function () {
-            const link = $(this).val();
-            if (link) {
-                $('#videoPreview').attr('src', link);
-                $('.preview-video').removeClass('d-none');
-            }
-        });
-
-        // Cancel: reset fields & preview
-        $('#cancelVideoModal').on('click', function () {
-            $('#upload_video_modal').val('');
-            $('#custom_video_link_modal').val('');
-            $('#videoPreview').attr('src', '');
-            $('.upload-video-div, .custom-video-div, .preview-video').addClass('d-none');
-            $('#addVideoModal').modal('hide');
-        });
-
-        // Save: just triggers main form save
-        $('#saveVideoModal').on('click', function () {
-            $('#submitUpdateBusinessForm').trigger('click');
-        });
     </script>
 
     <script id="googleReviewManagementScript">
         $("#google_review_enabled").change(function () {
-            var $input = $(this);
-            var enable = $input.is(":checked");
-            $('#vcard-google-review-section').toggleClass('d-none');
+            const enable = $(this).is(":checked");
+            const $section = $("#vcard-google-review-section");
+            if (enable) $section.show();
+            else $section.hide();
         });
-
-
     </script>
 
-    <script id="qrCodeScript">
+    <script id="autoContactPopupManagementScript">
+        $("#is_auto_contact_popup_enabled").change(function () {
+            const enable = $(this).is(":checked");
+            const $text = $('#isAutoContactPopupText');
+            $text.text(enable ? "ON" : "OFF");
+        });
+    </script>
+
+    <script id="qrCodeManagementScript">
+        let qrCode;
+
         function generate_qr() {
-            $('.code').empty().qrcode({
-                render: 'image',
-                size: 162,
-                ecLevel: "H",
-                minVersion: 3,
-                quiet: 1,
-                text: "{{ env('APP_URL').'/'.$business->slug }}",
-                fill: $(`#qrcode_foreground_color`).val(),
-                background: "#FFFFFF",
-                radius: 26,
-                mode: $(`#qrCodeType`).val() * 1,
-                image: $("#qrCodeImageBuffer")[0],
-                mSize: 0.32
+            qrCode = new QRCodeStyling({
+                width: 162,
+                height: 162,
+                type: "svg",
+                data: "{{ env('APP_URL').'/'.$business->slug }}",
+                margin: 0,
+                image: $(`#qrCodeImageBuffer`).attr('src'),
+                imageOptions: {
+                    imageSize: 0.4,
+                    margin: 0,
+                    hideBackgroundDots: true,
+                    saveAsBlob: true,
+                },
+                dotsOptions: {
+                    color: $("#qrcode_foreground_color").val(),
+                    type: "dots",
+                    roundSize: true
+                },
+                backgroundOptions: {
+                    color: "#ffffff"
+                },
+                cornersSquareOptions: {
+                    type: "extra-rounded" // 👈 Apple-style finder corners
+                },
+                cornersDotOptions: {
+                    type: "dot" // 👈 round inner dot
+                },
             });
+            const $code = $('.code');
+            $code.empty();
+            qrCode.append($code[0]);
         }
 
         $(function () {
@@ -1380,41 +1746,70 @@
                 const img_reader = new FileReader();
                 img_reader.onload = function (event) {
                     $("#qrCodeImageBuffer").attr("src", event.target.result);
-                    $(`#qrCodeType`).val(4);
                     setTimeout(generate_qr, 250); // delay if needed
                 };
                 img_reader.readAsDataURL(img_input.files[0]);
             }
         });
 
-        $(`#downloadMyQrCodeBtn`).on('click', function (e) {
-            e.preventDefault();
+        function getBase64ImageFromURL(url, callback) {
             var img = new Image();
-            img.src = $('.code').find('img').attr('src');
+            img.setAttribute('crossOrigin', 'anonymous');
             img.onload = function () {
-                var canvas = document.createElement('canvas');
+                var canvas = document.createElement("canvas");
                 canvas.width = img.width;
                 canvas.height = img.height;
-                var ctx = canvas.getContext('2d');
+                var ctx = canvas.getContext("2d");
                 ctx.drawImage(img, 0, 0);
-                var data = canvas.toDataURL('image/png');
-                var a = document.createElement("a");
-                a.download = "{{$business->title}}.png";
-                a.href = data;
-                a.click();
+                var dataURL = canvas.toDataURL("image/png");
+                callback(dataURL);
             };
+            img.src = url;
+        }
+
+        $(`#downloadMyQrCodeBtn`).on('click', function (e) {
+            e.preventDefault();
+            qrCode.download({
+                name: "{{ $business->title }}",
+                extension: "svg"
+            });
+        });
+
+    </script>
+
+    <script id="formChangeDetectScript">
+        $(function () {
+            const $form = $('#updateBusinessForm');
+            const original = $form.serialize(); // Save initial form state
+            const cancelSaveButtonSelectors = ".reset-form, #submitUpdateBusinessForm, .sticky-bottom-bar"
+            $(cancelSaveButtonSelectors).hide();
+
+            $form.on('input change', 'input, textarea, select', function () {
+                const current = $form.serialize();
+
+                const fileChanged = $form.find('input[type="file"]').toArray().some(input => input.files.length > 0);
+
+                if (current !== original || fileChanged) {
+                    $(cancelSaveButtonSelectors).show();
+                } else {
+                    $(cancelSaveButtonSelectors).hide();
+                }
+            });
+
+
+            $('.reset-form').on('click', function () {
+                $form[0].reset(); // Reset form
+                $(cancelSaveButtonSelectors).hide();
+            });
         });
     </script>
 
     <script id="submitFormScript">
-        $('#resetUpdateBusinessForm').click(function () {
-            $(`#updateBusinessForm`)[0].reset();
-        })
-
         $('#submitUpdateBusinessForm').click(function () {
             $(`#updateBusinessForm`).submit();
         })
-        $(`#updateBusinessForm`).submit(function () {
+        $(`#updateBusinessForm`).submit(function (e) {
+            e.preventDefault();
             const form = $(this)[0];
 
             var banner_val = '{{$business->banner}}';
@@ -1424,21 +1819,73 @@
                 var logo = $('input[name=logo]')[0].files[0];
                 if (!logo) {
                     toastrs("", "Profile Picture is required", "error");
-                    return false;
+                    return;
                 }
 
                 var banner = $('input[name=banner]')[0].files[0];
                 if (!banner) {
                     toastrs("", "Cover Photo is required", "error");
-                    return false;
+                    return;
                 }
             }
+
+            let socialValid = true;
+
+            $('#inputrow_socials .social-row').each(function () {
+                const $row = $(this);
+                const platform = $row.find('.social-link-text').text().trim().toLowerCase();
+                const link = $row.find('.social-link-href').val().trim();
+
+                const validator = socialValidators[platform];
+
+                let isValid;
+                if (validator instanceof RegExp) {
+                    isValid = validator.test(link);
+                } else if (typeof validator === 'function') {
+                    isValid = validator(link);
+                }
+
+                if (!isValid) {
+                    const msg = platform === 'whatsapp'
+                        ? 'Please enter a valid WhatsApp phone number (e.g., +1234567890)'
+                        : `Please enter a valid ${platform} link (e.g., https://${platform}.com/yourprofile)`;
+                    toastrs("", msg, "error");
+                    socialValid = false;
+                    return false;
+                }
+            });
+
+            if (!socialValid) return;
+
+
+            const phoneInput = $('#{{ $business_id }}_phone');
+            const phoneVal = phoneInput.val().trim();
+            const phonePattern = /^\+[0-9\s\-]{7,15}$/;
+
+            if (!phonePattern.test(phoneVal)) {
+                toastrs("", "Please enter a valid phone number (e.g. +1234567890)", "error");
+                return;
+            }
+
+            const websiteInput = $('#{{ $business_id }}_website');
+            let val = websiteInput.val().trim();
+
+            if (val && !/^https?:\/\//i.test(val)) {
+                val = 'https://' + val; // temporarily fix for validation
+            }
+            // Validate hostname properly
+            const domainPattern = /^(https?:\/\/)?([\w\-]+\.)+[a-z]{2,}(\:\d+)?(\/.*)?$/i;
+            if (val && !domainPattern.test(val)) {
+                toastrs("", "Please enter a valid website URL (e.g. example.com)", "error");
+                return;
+            }
+
             if (form.checkValidity()) {
                 form.submit();
             } else {
                 form.reportValidity(); // shows built-in validation UI
-                return false;
             }
         });
+
     </script>
 @endpush

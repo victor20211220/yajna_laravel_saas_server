@@ -385,6 +385,7 @@ Route::group(['middleware' => ['verified']], function () {
 
     /*====================================Contacts====================================================*/
     Route::get('/contacts/show', [ContactsController::class, 'index'])->middleware('XSS', 'auth')->name('contacts.index');
+    Route::get('/contacts/{id}/show', [ContactsController::class, 'show'])->name('contacts.show');
     Route::delete('/contacts/delete/{id}', [ContactsController::class, 'destroy'])->middleware('XSS', 'auth')->name('contacts.destroy');
     Route::get('/contacts/business/show{id}', [ContactsController::class, 'index'])->middleware('XSS', 'auth')->name('business.contacts.show');
     Route::get('/contacts/edit/{id}', [ContactsController::class, 'edit'])->middleware('XSS', 'auth')->name('contacts.edit');
@@ -401,6 +402,7 @@ Route::group(['middleware' => ['verified']], function () {
     Route::get('businessqr/download/', [BusinessController::class, 'downloadqr'])->name('download.qr');
 
     Route::post('business/destroy/', [BusinessController::class, 'destroyGallery'])->name('destory.gallery');
+    Route::post('business/delete-banner/', [BusinessController::class, 'deleteBanner'])->name('business.delete-banner');
 
     Route::post('business/pwa/{id}', [BusinessController::class, 'savePWA'])->name('business.pwa-setting');
     Route::post('business/cookie/{id}', [BusinessController::class, 'saveCookiesetting'])->name('business.cookie-setting');

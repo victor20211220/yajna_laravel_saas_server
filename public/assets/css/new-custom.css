@@ -11879,7 +11879,7 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
   -webkit-box-shadow: 0 0 0 1000px #f5f6f7 inset !important;
-  -webkit-text-fill-color: #333 !important;
+  -webkit-text-fill-color: #171717 !important;
   transition: background-color 9999s ease-in-out 0s;
 }
 
@@ -11898,7 +11898,7 @@ input:-webkit-autofill:active {
 /* Autofill fix */
 input:-webkit-autofill {
   -webkit-box-shadow: 0 0 0 1000px #f5f6f7 inset !important;
-  -webkit-text-fill-color: #333 !important;
+  -webkit-text-fill-color: #171717 !important;
 }
 
 .sidebar-bottom {
@@ -11908,6 +11908,9 @@ input:-webkit-autofill {
 .main-content {
   padding: 2rem;
   background-color: #f8f8f8;
+}
+.main-content #pills-tab {
+  min-width: max-content;
 }
 
 .card {
@@ -11942,10 +11945,6 @@ input:-webkit-autofill {
   width: 17px;
 }
 
-.page-title {
-  margin-left: 2rem;
-}
-
 .main-content {
   padding: 2rem 3rem;
   transition: margin-left 0.3s ease-in-out;
@@ -11965,20 +11964,40 @@ input:-webkit-autofill {
   background-color: #fff;
 }
 
-.add-image-block {
-  width: 152px;
-  height: 152px;
+.add-image-block:not([data-target=banner]) {
+  width: 140px;
+  height: 140px;
 }
-.add-image-block label img {
+.add-image-block:not([data-target=banner]) label img {
   width: 47px;
 }
 
+#coverPhotoUpload {
+  width: 331.85px;
+}
 #coverPhotoUpload .add-image-block {
-  width: 300px;
+  width: 100%;
+  padding-top: 42.1875%; /* 42.1875% for 21:9 ratio */
+  overflow: hidden;
   border-radius: 25px;
+}
+#coverPhotoUpload .add-image-block > *:not(button) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 #coverPhotoUpload .add-image-block img {
   border-radius: 25px;
+}
+
+#cropperContainer {
+  max-width: 100%;
+  max-height: 400px;
+  display: block;
+  margin: 0 auto;
 }
 
 .cursor-pointer {
@@ -12005,7 +12024,7 @@ input:-webkit-autofill {
 #updateBusinessForm .card-body section .section-title {
   font-size: 18px;
   font-weight: 500;
-  margin-bottom: 26px;
+  margin-bottom: 16px;
 }
 
 .form-group {
@@ -12131,8 +12150,16 @@ a {
   fill: white;
 }
 
-.jquery-d-none {
+.display-flex {
+  display: flex;
+}
+
+.display-none {
   display: none;
+}
+
+.iti {
+  display: block;
 }
 
 .color-swatch,
@@ -12213,6 +12240,10 @@ a {
   height: 100px;
 }
 
+.text-12 {
+  font-size: 12px;
+}
+
 .text-14 {
   font-size: 14px;
 }
@@ -12245,8 +12276,11 @@ a {
   position: absolute;
   inset: 0;
   z-index: 0;
-  backdrop-filter: blur(6px);
-  background: linear-gradient(to top, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0));
+  background: -webkit-linear-gradient(180deg, rgba(35, 31, 32, 0) 0%, rgba(35, 31, 32, 0.55) 100%);
+  background: -moz-linear-gradient(180deg, rgba(35, 31, 32, 0) 0%, rgba(35, 31, 32, 0.55) 100%);
+  background: -o-linear-gradient(180deg, rgba(35, 31, 32, 0) 0%, rgba(35, 31, 32, 0.55) 100%);
+  background: linear-gradient(180deg, rgba(35, 31, 32, 0) 0%, rgba(35, 31, 32, 0.55) 100%);
+  opacity: 0.5;
   pointer-events: none;
 }
 
@@ -12265,8 +12299,7 @@ a {
   display: none;
 }
 #contactBookPage .filter-inputs > * {
-  max-width: 358px;
-  width: 100%;
+  width: 358px;
 }
 #contactBookPage .dataTable-top {
   padding: 0;
@@ -12298,14 +12331,30 @@ a {
 #analytics_page .card * {
   font-size: 18px;
 }
-#analytics_page canvas {
-  width: 100% !important;
-  height: 100% !important;
-}
-
 .card .card-title {
   font-weight: 600;
   font-size: 18px;
+}
+
+.more-info-icon svg {
+  width: 15px;
+  height: 15px;
+}
+
+#deleteBannerBtn {
+  width: 32px;
+  height: 32px;
+  line-height: 0;
+}
+
+#mainContentOverlay {
+  background-color: rgba(0, 0, 0, 0.5); /* #aaa with transparency */
+  z-index: 1000; /* same as Bootstrap modal backdrop */
+}
+
+.page-title {
+  margin-bottom: 0 !important;
+  line-height: 37px;
 }
 
 @media (min-width: 768px) {
@@ -12315,16 +12364,22 @@ a {
   .text-md-primary {
     color: var(--bs-primary-rgb) !important;
   }
+  .d-md-table-header-group {
+    display: table-header-group !important;
+  }
 }
 @media (max-width: 767.98px) {
+  * {
+    font-size: 14px;
+  }
   .logo-img {
     max-height: 40px;
   }
+  .page-title {
+    margin-left: 2rem;
+  }
   .card-edit-right-block {
     min-width: 300px;
-  }
-  button {
-    font-size: 14px !important;
   }
   .sidebar {
     position: fixed;
@@ -12334,17 +12389,118 @@ a {
     z-index: 1045;
   }
   .toggle-sidebar-icon {
-    margin-top: 58px;
+    margin-top: 50px;
   }
   .toggle-sidebar-icon#openSidebar {
     margin-left: 18px !important;
-    margin-top: 58px;
+    margin-top: 31px;
   }
   .main-content {
     margin-left: 0 !important;
-    padding: 3rem 1rem;
+    padding: 21px 1rem;
+  }
+  .add-image-block:not([data-target=banner]) {
+    width: 90px;
+    height: 90px;
+  }
+  .add-image-block:not([data-target=banner]) label img {
+    width: 28px;
+  }
+  #coverPhotoUpload {
+    width: 100%;
+  }
+  #coverPhotoUpload .add-image-block {
+    border-radius: 10px;
+  }
+  #coverPhotoUpload .add-image-block img {
+    border-radius: 10px;
+  }
+  #updateBusinessForm .card-body section {
+    padding: 16px;
+  }
+  #contactBookPage .filter-inputs > * {
+    width: 100%;
+  }
+  #analytics_page .card {
+    padding: 14px;
+    border-radius: 8px;
+  }
+  #analytics_page .card * {
+    font-size: 14px;
   }
 }
+.daterangepicker {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  font-family: "Inter", sans-serif;
+}
+.daterangepicker * {
+  font-size: 14px !important;
+}
+.daterangepicker .drp-calendar.right {
+  display: none !important;
+}
+.daterangepicker .ranges li {
+  text-align: center;
+  margin: 0 10px;
+}
+.daterangepicker .ranges li.active {
+  background-color: #f8f8f8;
+  color: #000;
+  font-weight: 600;
+  border-radius: 10px;
+}
+.daterangepicker .ranges li:hover {
+  background-color: #f0f0f0;
+  color: #000;
+  border-radius: 10px;
+}
+.daterangepicker .calendar-table {
+  border: none;
+  background: #fff;
+}
+.daterangepicker .calendar-table th {
+  font-size: 14px;
+}
+.daterangepicker .calendar-table th.month {
+  font-weight: 500;
+  color: #000;
+  background: transparent;
+}
+.daterangepicker .calendar-table th:not(.month) {
+  color: #888;
+  font-weight: 400;
+}
+.daterangepicker .calendar-table td {
+  font-size: 14px;
+  color: #686b70;
+  line-height: 2rem;
+}
+.daterangepicker .calendar-table td.weekend {
+  color: #e63946;
+}
+.daterangepicker .calendar-table td:hover {
+  background: #eee;
+}
+.daterangepicker .in-range {
+  background-color: #f8f8f8 !important;
+}
+.daterangepicker .start-date,
+.daterangepicker .end-date {
+  background-color: #686b70 !important;
+  color: #fff !important;
+}
+.daterangepicker .prev,
+.daterangepicker .next {
+  color: #555;
+}
+.daterangepicker .drp-buttons .btn {
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
 .login-desktop-bg {
   background-image: url("/assets/images/login_desktop.jpg");
   background-size: cover;
@@ -12370,6 +12526,7 @@ a {
   position: relative;
   z-index: 2;
   background: white;
+  height: 100dvh; /* newer units, dynamically accounts for visible viewport height */
   /* Smooth input background + placeholder */
   /* Placeholder style */
 }
@@ -12409,6 +12566,9 @@ a {
   }
   .logo-img {
     max-height: 40px;
+  }
+  .copyright {
+    color: #51545B;
   }
 }
 

@@ -1,7 +1,7 @@
 .business-card {
     background: var(--custom-card-bg);
     //border-radius: 20px;
-    padding-bottom: 1.5rem;
+    padding-bottom: 2rem;
     overflow: hidden;
     //box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     //width: 358px;
@@ -45,7 +45,13 @@
         width: 29px;
         cursor: pointer;
     }
-
+    #backToPageOnCardArrow{
+        width: 29px;
+        i{
+            font-size: 29px;
+            line-height: 29px;
+        }
+    }
     #save-share-contact-buttons {
         svg {
 
@@ -79,7 +85,7 @@
 
     section {
         padding: 32px;
-        border-bottom: solid 2px var(--custom-color);
+        border-bottom: solid 2px var(--custom-section-border-color);
 
         .section-title {
             font-size: 21.56px;
@@ -93,11 +99,23 @@
     }
 
     .cover-photo {
-        height: 199px;
+        position: relative;
+        width: 100%;
+        padding-top: calc(100% * 1080 / 2560); /* 42.1875% for 21:9 ratio */
+        overflow: hidden;
+
+        > * {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
         .overlay {
-            background: -webkit-linear-gradient(90deg, rgba(23, 23, 23, 0) 0%, rgba(23, 23, 23, 0.54902) 100%);
-            background: linear-gradient(90deg, rgba(23, 23, 23, 0) 0%, rgba(23, 23, 23, 0.54902) 100%);
+            background: -webkit-linear-gradient(0deg, rgba(23, 23, 23, 0) 0%, rgba(23, 23, 23, 0.54902) 100%);
+            background: linear-gradient(0deg, rgba(23, 23, 23, 0) 0%, rgba(23, 23, 23, 0.54902) 100%);
             pointer-events: none; /* So clicks pass through */
         }
     }
@@ -123,9 +141,15 @@
     }
 
     .socials-slider {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 1rem;
+        justify-content: center;
+
         .card-social-link {
             width: 47px;
             height: 47px;
+            display: block;
 
             .st0 {
                 fill: var(--custom-button-bg);
@@ -146,8 +170,8 @@
 
     #contact-section {
         svg {
-            width: 25px;
-            height: 25px;
+            width: 30px;
+            height: 30px;
 
             .st0 {
                 fill: var(--custom-color);
@@ -249,7 +273,6 @@
 .vcard-modal {
     .modal-dialog {
         max-width: 600px;
-        width: 100%;
     }
 }
 
@@ -272,10 +295,21 @@
             }
         }
     }
+
+    [data-name="generated"] {
+        width: 162px;
+        height: 162px;
+    }
+}
+
+.display-flex {
+    display: flex;
+}
+.display-none {
+    display: none;
 }
 
 video {
     display: block;
     margin-bottom: 0;
 }
-
