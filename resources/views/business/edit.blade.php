@@ -1071,7 +1071,7 @@
                     const dataTransfer = new DataTransfer();
                     dataTransfer.items.add(file);
                     fileInput.files = dataTransfer.files;
-                    toggleBannerControls(true);
+                    if(currentTarget === 'banner') toggleBannerControls(true);
                     $('#cropperModal').modal('hide');
                 }, 'image/jpeg');
             });
