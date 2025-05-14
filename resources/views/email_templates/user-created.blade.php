@@ -20,7 +20,7 @@
                                                               style="color: #1677F1; text-decoration: none;">{{ $username }}</a>
         </p>
         <p style="margin: 0 0 8px;"><span>Password:</span> {{ $password }}</p>
-        <p style="margin: 0;"><a href="{{ $login_link }}" style="color: #1677F1; text-decoration: none;">http://127.0.0.19/login</a>
+        <p style="margin: 0;"><a href="{{ $login_link }}" style="color: #1677F1; text-decoration: none;">{{ $login_link }}</a>
         </p>
     </div>
 
