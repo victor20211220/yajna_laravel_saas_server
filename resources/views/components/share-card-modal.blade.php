@@ -55,14 +55,10 @@
                     <div class="section-title">Copy card link</div>
                     @include('components.copy-card-link-container')
                 </section>
+
                 <section class="border-0">
                     <div class="section-title">Your QR code</div>
                     <div class="qr-code-container d-flex flex-column gap-4 justify-content-center align-items-center">
-                        <input type="hidden" data-name="qrcode_foreground_color"
-                               value="{{ $qr_detail && $qr_detail->foreground_color ? $qr_detail->foreground_color: '#000000' }}"/>
-                        <img alt="" data-name="qr_detail_image"
-                             src="{{ $isProClient ? ($qr_detail && $qr_detail->image ? $qr_path.'/'.  $qr_detail->image: $siteLogo) : $siteLogo }}"
-                             class="d-none" crossorigin="anonymous"/>
                         <div data-name="generated" class="mb-4"></div>
                         <button type="button" class="btn btn-secondary" data-name="download-button">Download QR Code
                         </button>

@@ -435,6 +435,27 @@ a {
     height: 162px;
 }
 
+.tab-content > .tab-pane {
+    display: block !important; /* Force all panes to stay in the DOM */
+    height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none; /* Prevent interaction */
+}
+
+.tab-content > .tab-pane.active {
+    height: auto;
+    opacity: 1;
+    pointer-events: auto;
+    overflow: visible;
+}
+.tab-content > .tab-pane {
+  transition: opacity 0.2s ease-in-out;
+}
+
+
+
 #add_qr_code_logo_btn {
     width: 100px;
     height: 100px;

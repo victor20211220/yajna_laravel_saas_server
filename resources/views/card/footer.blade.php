@@ -72,10 +72,9 @@
             if (isOnEditFormPage()) return;
             $('#shareCardModal').modal('show');
         })
+
         $(document).off('shown.bs.modal', '.share-card-modal').on('shown.bs.modal', '.share-card-modal', function () {
             const $container = $(this).find('.qr-code-container');
-            const $image = $container.find('[data-name="qr_detail_image"]');
-            const color = $container.find('[data-name="qrcode_foreground_color"]').val();
             const url = "{{ env('APP_URL').'/'.$business->slug }}";
             const qrCode = new QRCodeStyling({
                 width: 162,
@@ -83,7 +82,7 @@
                 type: "svg",
                 data: url,
                 margin: 0,
-                image: $image.attr('src'),
+                image: "{{ $isProClient ? ($qr_detail && $qr_detail->image ? $qr_path.'/'.  $qr_detail->image: $siteLogo) : $siteLogo }}",
                 imageOptions: {
                     imageSize: 0.4,
                     margin: 0,
@@ -91,7 +90,7 @@
                     saveAsBlob: true,
                 },
                 dotsOptions: {
-                    color: color,
+                    color: "{{ $qr_detail && $qr_detail->foreground_color ? $qr_detail->foreground_color: '#000000' }}",
                     type: "dots",
                     roundSize: true
                 },
@@ -105,7 +104,6 @@
                     type: "dot"
                 },
             });
-
             const $code = $container.find('[data-name="generated"]');
             $code.empty();
             qrCode.append($code[0]);

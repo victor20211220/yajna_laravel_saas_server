@@ -830,7 +830,6 @@
                         </div>
                     </div>
                 </div>
-                <div id="tempQrCode" class="opacity-0 position-absolute"></div>
             </div>
             <!-- your .card lives somewhere up the page -->
             <div class="sticky-bottom-bar">
@@ -1695,45 +1694,46 @@
         let qrCode;
 
         function generate_qr() {
-            qrCode = new QRCodeStyling({
-                width: 162,
-                height: 162,
-                type: "svg",
-                data: "{{ env('APP_URL').'/'.$business->slug }}",
-                margin: 0,
-                image: $(`#qrCodeImageBuffer`).attr('src'),
-                imageOptions: {
-                    imageSize: 0.4,
+            qrCode = new QRCodeStyling(
+                {
+                    width: 162,
+                    height: 162,
+                    type: "svg",
+                    data: "{{ env('APP_URL').'/'.$business->slug }}",
                     margin: 0,
-                    hideBackgroundDots: true,
-                    saveAsBlob: true,
-                },
-                dotsOptions: {
-                    color: $("#qrcode_foreground_color").val(),
-                    type: "dots",
-                    roundSize: true
-                },
-                backgroundOptions: {
-                    color: "#ffffff"
-                },
-                cornersSquareOptions: {
-                    type: "extra-rounded" // 👈 Apple-style finder corners
-                },
-                cornersDotOptions: {
-                    type: "dot" // 👈 round inner dot
-                },
-            });
+                    image: $(`#qrCodeImageBuffer`)[0].src,
+                    imageOptions: {
+                        imageSize: 0.4,
+                        margin: 0,
+                        hideBackgroundDots: true,
+                        saveAsBlob: true,
+                    },
+                    dotsOptions: {
+                        color: $('#qrcode_foreground_color').val(),
+                        type: "dots",
+                        roundSize: true
+                    },
+                    backgroundOptions: {
+                        color: "#ffffff"
+                    },
+                    cornersSquareOptions: {
+                        type: "extra-rounded"
+                    },
+                    cornersDotOptions: {
+                        type: "dot"
+                    },
+                }
+            );
             const $code = $('.code');
             $code.empty();
             qrCode.append($code[0]);
 
-            const $tempQrCode = $('#tempQrCode');
-            $tempQrCode.empty();
-            qrCode.append($tempQrCode[0]);
         }
 
         $(function () {
-            generate_qr();
+            setTimeout(function () {
+                generate_qr();
+            }, 1000);
         })
 
         $('.qr-data').on('change', function () {
@@ -1747,7 +1747,6 @@
         function selectNormalFile(targetId) {
             $(`.${targetId}`).trigger('click');
         }
-
 
         $(document).on('change', '#qrCodeImage', function () {
             const img_input = this;
