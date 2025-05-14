@@ -1,5 +1,6 @@
 @php
     use App\Models\Business;
+    $siteLogo = asset('assets/images/logo.png');
 @endphp
 
     <!-- jQuery -->
