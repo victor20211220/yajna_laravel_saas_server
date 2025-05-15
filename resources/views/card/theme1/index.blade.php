@@ -208,7 +208,7 @@
                 </div>
             </section>
             <section id="vcard-google-review-section"
-                     class="pb-0 px-5 border-0" {!! Utility::hideSection(isset($business['google_review_enabled']) && $business['google_review_enabled']) !!}>
+                     class="pb-0 px-5 border-0" {!! Utility::hideSection($business['google_review_enabled']) !!}>
                 <div class="d-flex justify-content-center gap-2">
                     {!! svg('vcard/google_review_star.svg', ['class' => 'fill-button-bg']) !!}
                     {!! svg('vcard/google_review_star.svg', ['class' => 'fill-button-bg']) !!}

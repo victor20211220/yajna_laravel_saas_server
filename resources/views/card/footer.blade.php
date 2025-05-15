@@ -19,36 +19,6 @@
 <script src="{{ asset('custom/' . $theme . '/js/new-custom.js?v='.time()) }}" defer="defer"></script>
 <script>
     $(function () {
-
-        var is_enable_service = "{{ Business::EnableOrNot($services, $services_content) }}";
-        if (is_enable_service) {
-            $('#servicesOnCard').show();
-        } else {
-            $('#servicesOnCard').hide();
-        }
-
-        var is_enable_gallery = "{{ Business::EnableOrNot($gallery, $gallery_contents) }}";
-        if (is_enable_gallery) {
-            $('#galleryOnCard').show();
-        } else {
-            $('#galleryOnCard').hide();
-        }
-
-        var is_video_enabled = {{ $gallery && $gallery->is_video_enabled ? $gallery->is_video_enabled: 0 }};
-        if (is_video_enabled) {
-            $('#featuredVideosOnCard').show();
-        } else {
-            $('#featuredVideosOnCard').hide();
-        }
-
-        var google_review_enabled = "{{ $business->google_review_enabled }}";
-        if (google_review_enabled) {
-            $('#googleReviewPreview').show();
-        } else {
-            $('#googleReviewPreview').hide();
-        }
-
-
         @if($business->is_auto_contact_popup_enabled)
         if (!isOnEditFormPage()) {
             const checkExist = setInterval(() => {
