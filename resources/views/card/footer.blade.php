@@ -14,7 +14,7 @@
 <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
 <script src="{{ asset('custom/libs/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
 <script src="{{ asset('custom/js/socialSharing.js') }}"></script>
-<script src="{{ asset('custom/js/custom-toast.js') }}"></script>
+<script src="{{ asset('custom/js/custom-toast.js?v='.time()) }}"></script>
 <script src="{{ asset('custom/js/vcard-section-border-color-util.js?v='.time()) }}"></script>
 <script src="{{ asset('custom/' . $theme . '/js/new-custom.js?v='.time()) }}" defer="defer"></script>
 <script>

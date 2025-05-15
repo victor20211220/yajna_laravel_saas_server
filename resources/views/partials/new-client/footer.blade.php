@@ -10,7 +10,7 @@
 <script src="{{ asset('assets/js/plugins/simple-datatables.js')}}"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<script src="{{ asset('custom/js/custom-toast.js') }}"></script>
+<script src="{{ asset('custom/js/custom-toast.js?v='.time()) }}"></script>
 @include('components.custom-toast')
 <script>
     var base_url = "{{ url('/') }}";
