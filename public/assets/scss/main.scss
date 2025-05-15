@@ -450,10 +450,10 @@ a {
     pointer-events: auto;
     overflow: visible;
 }
-.tab-content > .tab-pane {
-  transition: opacity 0.2s ease-in-out;
-}
 
+.tab-content > .tab-pane {
+    transition: opacity 0.2s ease-in-out;
+}
 
 
 #add_qr_code_logo_btn {
@@ -611,6 +611,100 @@ a {
     line-height: 37px;
 }
 
+@media(max-width: 1600px) {
+    :root {
+        --bs-body-font-size: 14px;
+    }
+    * {
+        font-size: 14px;
+    }
+    #mainContent {
+        .btn {
+            --bs-btn-padding-x: 8px;
+            --bs-btn-padding-y: 4px;
+        }
+
+        #updateBusinessForm {
+            .card-body {
+                section {
+                    padding: 16px;
+
+                    .section-title {
+                        font-size: 14px;
+                    }
+                }
+
+                .add-image-block:not([data-target="banner"]) {
+                    width: 120px;
+                    height: 120px;
+
+                    label {
+                        img {
+                            width: 40px;
+                        }
+                    }
+                }
+
+                .social-row {
+                    width: 50%;
+                    flex: 0 0 auto;
+                }
+            }
+
+            .color-swatch,
+            .color-picker-swatch,
+            .color-picker-icon {
+                width: 24px;
+                height: 24px;
+            }
+
+            .color-swatch::before,
+            .color-picker-swatch::before {
+                content: "";
+                position: absolute;
+                top: -4px;
+                left: -4px;
+                width: 32px; /* 32 + 6*2 */
+                height: 32px;
+                border: 2px solid transparent;
+            }
+        }
+
+
+        #analytics_page {
+            .card {
+                padding: 14px;
+                border-radius: 8px;
+
+                * {
+                    font-size: 14px;
+                }
+            }
+        }
+
+    }
+    .form-group {
+        margin-bottom: 20px;
+
+        .form-label {
+            font-size: 14px;
+        }
+    }
+
+
+    #coverPhotoUpload {
+        width: 284.4px;
+
+        .add-image-block {
+            border-radius: 10px;
+
+            img {
+                border-radius: 10px;
+            }
+        }
+    }
+}
+
 @media(min-width: 768px) {
     .fill-md-primary {
         .st0 {
@@ -656,57 +750,41 @@ a {
             margin-top: 31px;
         }
     }
-    .main-content {
+    #mainContent {
         margin-left: 0 !important;
         padding: 21px 1rem;
-    }
 
-    .add-image-block:not([data-target="banner"]) {
-        width: 90px;
-        height: 90px;
+        #updateBusinessForm {
+            .card-body {
+                .add-image-block:not([data-target="banner"]) {
+                    width: 90px;
+                    height: 90px;
 
-        label {
-            img {
-                width: 28px;
+                    label {
+                        img {
+                            width: 28px;
+                        }
+                    }
+                }
+
+                #coverPhotoUpload {
+                    width: 100%;
+                }
+
+                .social-row {
+                    width: 100%;
+                }
+            }
+
+        }
+
+        #contactBookPage {
+            .filter-inputs {
+                > * {
+                    width: 100%;
+                }
             }
         }
     }
 
-    #coverPhotoUpload {
-        width: 100%;
-
-        .add-image-block {
-            border-radius: 10px;
-
-            img {
-                border-radius: 10px;
-            }
-        }
-    }
-    #updateBusinessForm {
-        .card-body {
-            section {
-                padding: 16px;
-            }
-        }
-    }
-    #contactBookPage {
-        .filter-inputs {
-            > * {
-                width: 100%;
-            }
-        }
-    }
-
-    #analytics_page {
-        .card {
-            padding: 14px;
-            border-radius: 8px;
-
-            * {
-                font-size: 14px;
-            }
-        }
-
-    }
 }

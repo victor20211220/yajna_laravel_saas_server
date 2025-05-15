@@ -12377,6 +12377,73 @@ a {
   line-height: 37px;
 }
 
+@media (max-width: 1600px) {
+  :root {
+    --bs-body-font-size: 14px;
+  }
+  * {
+    font-size: 14px;
+  }
+  #mainContent .btn {
+    --bs-btn-padding-x: 8px;
+    --bs-btn-padding-y: 4px;
+  }
+  #mainContent #updateBusinessForm .card-body section {
+    padding: 16px;
+  }
+  #mainContent #updateBusinessForm .card-body section .section-title {
+    font-size: 14px;
+  }
+  #mainContent #updateBusinessForm .card-body .add-image-block:not([data-target=banner]) {
+    width: 120px;
+    height: 120px;
+  }
+  #mainContent #updateBusinessForm .card-body .add-image-block:not([data-target=banner]) label img {
+    width: 40px;
+  }
+  #mainContent #updateBusinessForm .card-body .social-row {
+    width: 50%;
+    flex: 0 0 auto;
+  }
+  #mainContent #updateBusinessForm .color-swatch,
+  #mainContent #updateBusinessForm .color-picker-swatch,
+  #mainContent #updateBusinessForm .color-picker-icon {
+    width: 24px;
+    height: 24px;
+  }
+  #mainContent #updateBusinessForm .color-swatch::before,
+  #mainContent #updateBusinessForm .color-picker-swatch::before {
+    content: "";
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    width: 32px; /* 32 + 6*2 */
+    height: 32px;
+    border: 2px solid transparent;
+  }
+  #mainContent #analytics_page .card {
+    padding: 14px;
+    border-radius: 8px;
+  }
+  #mainContent #analytics_page .card * {
+    font-size: 14px;
+  }
+  .form-group {
+    margin-bottom: 20px;
+  }
+  .form-group .form-label {
+    font-size: 14px;
+  }
+  #coverPhotoUpload {
+    width: 284.4px;
+  }
+  #coverPhotoUpload .add-image-block {
+    border-radius: 10px;
+  }
+  #coverPhotoUpload .add-image-block img {
+    border-radius: 10px;
+  }
+}
 @media (min-width: 768px) {
   .fill-md-primary .st0 {
     fill: var(--bs-primary-rgb);
@@ -12415,38 +12482,25 @@ a {
     margin-left: 18px !important;
     margin-top: 31px;
   }
-  .main-content {
+  #mainContent {
     margin-left: 0 !important;
     padding: 21px 1rem;
   }
-  .add-image-block:not([data-target=banner]) {
+  #mainContent #updateBusinessForm .card-body .add-image-block:not([data-target=banner]) {
     width: 90px;
     height: 90px;
   }
-  .add-image-block:not([data-target=banner]) label img {
+  #mainContent #updateBusinessForm .card-body .add-image-block:not([data-target=banner]) label img {
     width: 28px;
   }
-  #coverPhotoUpload {
+  #mainContent #updateBusinessForm .card-body #coverPhotoUpload {
     width: 100%;
   }
-  #coverPhotoUpload .add-image-block {
-    border-radius: 10px;
-  }
-  #coverPhotoUpload .add-image-block img {
-    border-radius: 10px;
-  }
-  #updateBusinessForm .card-body section {
-    padding: 16px;
-  }
-  #contactBookPage .filter-inputs > * {
+  #mainContent #updateBusinessForm .card-body .social-row {
     width: 100%;
   }
-  #analytics_page .card {
-    padding: 14px;
-    border-radius: 8px;
-  }
-  #analytics_page .card * {
-    font-size: 14px;
+  #mainContent #contactBookPage .filter-inputs > * {
+    width: 100%;
   }
 }
 .daterangepicker {

@@ -119,7 +119,7 @@
                              id="details-setting" role="tabpanel">
                             <!-- Profile Picture, Cover Photo, Company Logo upload start -->
                             <section
-                                class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-center justify-content-md-{{ $isProClient ? 'between' : 'around'  }} text-md-start">
+                                class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-center justify-content-md-{{ $isProClient ? 'between' : 'around'  }} text-md-start gap-3">
                                 <div class="form-group">
                                     <div class="position-relative mb-2">
                                         {{ Form::label('logo', __('Profile Picture'), ['class' => 'form-label mb-0']) }}
@@ -329,7 +329,7 @@
 
                             <!--Phone, Address, Email, Website start -->
                             <section>
-                                <h5 class="mb-3">{{__('Add Contact To Your Card')}}</h5>
+                                <p class="section-title">{{__('Add Contact To Your Card')}}</p>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">

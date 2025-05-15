@@ -8,6 +8,7 @@
     </h3>
 @endsection
 @section('content')
+    <div class="pb-2"></div>
     <div class="card p-4">
         <div class="card-title">Contact us</div>
         <p class="mb-4">Our team of experts is available to provide support through email</p>
