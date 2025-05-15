@@ -151,7 +151,7 @@
         </section>
 
         @if($isProClient)
-            <section id="vcard-services-section" {!! Utility::hideSection($services['is_enabled']) !!}>
+            <section id="vcard-services-section" {!! Utility::hideSection(isset($services['is_enabled']) && $services['is_enabled']) !!}>
                 <div class="section-title">Services</div>
                 <div class="mb-4 pb-2"></div>
                 @php $service_key = 1; @endphp
@@ -169,7 +169,7 @@
                 </div>
             </section>
 
-            <section id="vcard-gallery-section" {!! Utility::hideSection($gallery['is_enabled']) !!}>
+            <section id="vcard-gallery-section" {!! Utility::hideSection(isset($gallery['is_enabled']) && $gallery['is_enabled']) !!}>
                 <div class="section-title">Gallery</div>
                 <div class="mb-4 pb-2"></div>
                 <div class="gallery-slider invisible">
@@ -184,7 +184,7 @@
                 </div>
             </section>
 
-            <section id="vcard-featured-videos-section" {!! Utility::hideSection($gallery['is_video_enabled']) !!}>
+            <section id="vcard-featured-videos-section" {!! Utility::hideSection(isset($gallery['is_video_enabled']) && $gallery['is_video_enabled']) !!}>
                 <div class="section-title">Featured Video</div>
                 <div class="mb-4 pb-2"></div>
                 <div class="video-slider invisible">
@@ -208,7 +208,7 @@
                 </div>
             </section>
             <section id="vcard-google-review-section"
-                     class="pb-0 px-5 border-0" {!! Utility::hideSection($business['google_review_enabled']) !!}>
+                     class="pb-0 px-5 border-0" {!! Utility::hideSection(isset($business['google_review_enabled']) && $business['google_review_enabled']) !!}>
                 <div class="d-flex justify-content-center gap-2">
                     {!! svg('vcard/google_review_star.svg', ['class' => 'fill-button-bg']) !!}
                     {!! svg('vcard/google_review_star.svg', ['class' => 'fill-button-bg']) !!}
