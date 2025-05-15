@@ -154,8 +154,6 @@ class BusinessController extends Controller
     public function edit(Business $business, $id)
     {
         $user = \Auth::user();
-        $user->current_business = $id;
-        $user->save();
 
         $id = $user->current_business;
 
