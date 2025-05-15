@@ -2,14 +2,18 @@
     use App\Models\Utility;
     $isProClient = Utility::isProClient($business->id);
     $isSelfUser = auth()->check() && auth()->id() === $business->created_by;
+    $isOnEditFormPage = Route::currentRouteName() === 'business.edit';
 @endphp
 @extends('card.layouts')
 @section('contentCard')
     <div class="business-card position-absolute top-0 start-50 translate-middle-x z-10 custom-rounded-34 display-none"
          id="businessCard">
-        <a href="{{ route('home') }}" class="position-absolute top-0 start-0 m-4 z-1" id="backToPageOnCardArrow">
-            <i class="bi bi-arrow-left-circle text-white"></i>
-        </a>
+        @if($isSelfUser && !$isOnEditFormPage)
+            <a href="{{ route('home') }}" class="position-absolute top-0 start-0 m-4 z-1" id="backToPageOnCardArrow">
+                <i class="bi bi-arrow-left-circle text-white"></i>
+            </a>
+        @endif
+
         {!! svg('vcard/top_corner_share.svg', ['class' => 'position-absolute top-0 end-0 m-4 z-1', 'id' => 'openShareCardModalBtn']) !!}
         <div class="cover-photo w-100 position-relative">
             <img src="{{ $business->banner ? $banner . '/' . $business->banner : "/assets/images/white-blank.png" }}"
@@ -34,7 +38,7 @@
         <section class="text-center pt-3">
             @php $business_title = $business->title @endphp
             <div class="title fw-medium mb-3"
-               id="{{ $stringid . '_title' }}_preview" {!! Utility::hideEmptyCardElement($business_title) !!}>{{ $business_title }}</div>
+                 id="{{ $stringid . '_title' }}_preview" {!! Utility::hideEmptyCardElement($business_title) !!}>{{ $business_title }}</div>
 
             @php
                 $designation = $business->designation;
@@ -54,7 +58,7 @@
 
             @php $description = $business->description @endphp
             <div id="{{ $stringid . '_desc' }}_preview"
-               {!! Utility::hideEmptyCardElement($description) !!}  class="mb-4 pb-2">
+                 {!! Utility::hideEmptyCardElement($description) !!}  class="mb-4 pb-2">
                 {!! nl2br(e($description)) !!}
             </div>
             <!-- Social Icons Slider -->
@@ -112,13 +116,15 @@
             id="contact-section" {!! Utility::hideEmptyCardElement([$phone, $address, $email, $website], "and") !!}>
             <div class="section-title">Contact</div>
             <div class="mb-4 pb-2"></div>
-            <div class="display-flex justify-content-start align-items-center gap-3 mb-3" {!! Utility::hideEmptyCardElement($phone) !!}>
+            <div
+                class="display-flex justify-content-start align-items-center gap-3 mb-3" {!! Utility::hideEmptyCardElement($phone) !!}>
                 {!! svg('vcard/phone.svg') !!}
                 <a id="{{ $stringid . '_phone' }}_preview" href="tel:{{ $phone }}">
                     {{ $phone }}
                 </a>
             </div>
-            <div class="display-flex justify-content-start align-items-center gap-3 mb-3" {!! Utility::hideEmptyCardElement($address) !!}>
+            <div
+                class="display-flex justify-content-start align-items-center gap-3 mb-3" {!! Utility::hideEmptyCardElement($address) !!}>
                 {!! svg('vcard/address.svg') !!}
                 <a id="{{ $stringid . '_address' }}_preview"
                    href="https://www.google.com/maps/search/?api=1&query={{ urlencode($address) }}"
@@ -126,13 +132,15 @@
                     {{ $address }}
                 </a>
             </div>
-            <div class="display-flex justify-content-start align-items-center gap-3 mb-3" {!! Utility::hideEmptyCardElement($email) !!}>
+            <div
+                class="display-flex justify-content-start align-items-center gap-3 mb-3" {!! Utility::hideEmptyCardElement($email) !!}>
                 {!! svg('vcard/email.svg') !!}
                 <a id="{{ $stringid . '_email' }}_preview" href="mailto:{{ $email }}">
                     {{ $email }}
                 </a>
             </div>
-            <div class="display-flex justify-content-start align-items-center gap-3 mb-3" {!! Utility::hideEmptyCardElement($website) !!}>
+            <div
+                class="display-flex justify-content-start align-items-center gap-3 mb-3" {!! Utility::hideEmptyCardElement($website) !!}>
                 {!! svg('vcard/website.svg') !!}
                 <a id="{{ $stringid . '_website' }}_preview"
                    href="https://{{ $website }}"
@@ -333,7 +341,7 @@
             </div>
         </div>
     </div>
-    @if(Route::currentRouteName() !== 'business.edit')
-    @include('components.share-card-modal', ['id' => 'shareCardModal', 'class' => 'vcard-modal'])
+    @if(!$isOnEditFormPage)
+        @include('components.share-card-modal', ['id' => 'shareCardModal', 'class' => 'vcard-modal'])
     @endif
 @endsection
