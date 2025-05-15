@@ -1145,7 +1145,10 @@ class BusinessController extends Controller
                 }
             }
         }
-        if ($business->description) $vcard->addNote(nl2br(e($business->description)));
+        if ($business->description) {
+            $note = str_replace(["\\", "\n", "\r"], ["\\\\", "\\n", ""], $business->description);
+            $vcard->addNote($note);
+        }
 
         $path = public_path('/card');
         \File::delete($path);

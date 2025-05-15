@@ -164,7 +164,11 @@ input:-webkit-autofill {
 }
 
 .cursor-pointer {
-    cursor: pointer;
+    cursor: pointer !important;
+}
+
+.cursor-auto {
+    cursor: auto;
 }
 
 .dropzone.drag-over {

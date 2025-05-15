@@ -83,7 +83,7 @@
             {{ __('Exit Company Login') }}
         </a>
         @endImpersonating
-        <button class="btn btn-primary w-100 mb-3 rounded-pill">{{ $plan->name }}</button>
+        <div class="btn btn-primary w-100 mb-3 rounded-pill cursor-auto">{{ $plan->name }}</div>
         <div class="d-none d-md-block dropdown sidebar-user-dropdown">
             <button class="btn w-100 d-flex align-items-center justify-content-between dropdown-toggle" id="myDropdown">
                 <span class="d-flex align-items-center gap-2 d-block">
