@@ -45,13 +45,16 @@
         width: 29px;
         cursor: pointer;
     }
-    #backToPageOnCardArrow{
+
+    #backToPageOnCardArrow {
         width: 29px;
-        i{
+
+        i {
             font-size: 29px;
             line-height: 29px;
         }
     }
+
     #save-share-contact-buttons {
         svg {
 
@@ -141,15 +144,18 @@
     }
 
     .socials-slider {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 1rem;
+        display: flex;
+        flex-wrap: wrap;
         justify-content: center;
+        gap: 14px;
+        max-width: calc((47px * 5) + (14px * 4));
+        margin: 0 auto;
 
         .card-social-link {
             width: 47px;
             height: 47px;
             display: block;
+            flex: 0 0 auto;
 
             .st0 {
                 fill: var(--custom-button-bg);
@@ -305,6 +311,7 @@
 .display-flex {
     display: flex;
 }
+
 .display-none {
     display: none;
 }

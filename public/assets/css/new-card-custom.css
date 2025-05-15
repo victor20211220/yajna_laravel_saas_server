@@ -11957,15 +11957,18 @@ textarea.form-control-lg {
   font-size: 23px;
 }
 .business-card .socials-slider {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 1rem;
+  display: flex;
+  flex-wrap: wrap;
   justify-content: center;
+  gap: 14px;
+  max-width: 291px;
+  margin: 0 auto;
 }
 .business-card .socials-slider .card-social-link {
   width: 47px;
   height: 47px;
   display: block;
+  flex: 0 0 auto;
 }
 .business-card .socials-slider .card-social-link .st0 {
   fill: var(--custom-button-bg);
