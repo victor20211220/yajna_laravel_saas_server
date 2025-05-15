@@ -1094,19 +1094,18 @@ class BusinessController extends Controller
         $business = Business::where('slug', $slug)->first();
         $vcard = new VCard();
 
-        $lastname = '';
-        $firstname = $business->title;
-        $additional = '';
-        $prefix = '';
-        $suffix = '';
-        $cardLogo = isset($business->logo) && !empty($business->logo) ? asset(Storage::url('card_logo/' . $business->logo)) : asset('custom/img/logo-placeholder-image-2.png');
         // add personal data
-        $vcard->addName($lastname, $firstname, $additional, $prefix, $suffix);
+        $name = $business->title;
+        $vcard->addName($name);
 
         // add work data
-        $vcard->addCompany($business->title);
-        $vcard->addRole($business->designation);
+        $role = $business->designation;
+        if ($business->sub_title) $vcard->addCompany($business->sub_title);
 
+        if ($business->designation) $vcard->addJobtitle($role);
+
+        $logo = Utility::get_file('card_logo');
+        $cardLogo = $business->logo ? $logo . '/' . $business->logo : Utility::imagePlaceholderUrl();
         $cardLogoResponse = Http::get($cardLogo);
         if ($cardLogoResponse->successful()) {
             $cardLogoData = $cardLogoResponse->body();
@@ -1114,50 +1113,40 @@ class BusinessController extends Controller
             $localImagePath = public_path('card/card_logo.jpg');
             file_put_contents($localImagePath, $cardLogoData);
             $vcard->addPhoto($localImagePath);
-
         }
-        $contacts = ContactInfo::where('business_id', $business->id)->first();
 
-        if (!empty($contacts) && !empty($contacts->content)) {
-            if (isset($contacts['is_enabled']) && $contacts['is_enabled'] == '1') {
-                $contact = json_decode($contacts->content, true);
-                foreach ($contact as $key => $val) {
-                    foreach ($val as $key2 => $val2) {
-                        if ($key2 == 'Email') {
-                            $vcard->addEmail($val2, 'TYPE=EMAIL');
-                        }
-                        if ($key2 == 'Phone') {
-                            $vcard->addPhoneNumber($val2, 'TYPE=Phone NO');
-                        }
-                        if ($key2 == 'Whatsapp') {
-                            $vcard->addPhoneNumber($val2, 'WORK');
-                        }
-                        if ($key2 == 'Web_url') {
-                            $vcard->addURL($val2);
-                        }
+        if ($business->phone) $vcard->addPhoneNumber($business->phone, 'TYPE=Phone NO');
 
-                    }
+        if ($business->email) $vcard->addEmail($business->email, 'TYPE=EMAIL');
 
-                }
-            }
+        if ($business->website) $vcard->addURL($business->website);
 
-        }
-        $sociallinks = social::where('business_id', $business->id)->first();
+        if ($business->address) $vcard->addAddress($business->address);
+
+        $sociallinks = social::socialData($business->id);
         $social_content = [];
         if (!empty($sociallinks->content)) {
-            $social_content = json_decode($sociallinks->content);
+            $social_content = (array)json_decode($sociallinks->content);
         }
-        if (!is_null($social_content) && !is_null($sociallinks)) {
-            if (isset($sociallinks['is_enabled']) && $sociallinks['is_enabled'] == '1') {
-                foreach ($social_content as $social_key => $social_val) {
-                    foreach ($social_val as $social_key1 => $social_val1) {
-                        if ($social_key1 != 'id') {
-                            $vcard->addURL($social_val1, 'TYPE=' . $social_key1);
-                        }
+        if (!Utility::isInitialSocials($social_content) && count($social_content)) {
+            foreach ($social_content as $id => $social_item) {
+                foreach ($social_item as $key => $social_val) {
+                    if ($key === "id" || empty($social_val)) continue;
+                    $platform = strtolower($key);
+                    $link = $social_val;
+                    if ($platform === 'whatsapp') {
+                        // Remove non-digits from the number
+                        $digitsOnly = preg_replace('/\D/', '', $social_val);
+                        $link = 'https://wa.me/' . $digitsOnly;
+                    } elseif (!preg_match('/^https?:\/\//i', $link)) {
+                        $link = url($link);
                     }
+                    $vcard->addURL($link, 'TYPE=' . $key);
                 }
             }
         }
+        if ($business->description) $vcard->addNote(nl2br(e($business->description)));
+
         $path = public_path('/card');
         \File::delete($path);
         if (!is_dir($path)) {
@@ -1168,7 +1157,6 @@ class BusinessController extends Controller
         $vcard->save();
         $file = $vcard->getFilename() . '.' . $vcard->getFileExtension();
         self::download($path . '/' . $file);
-
 
     }
 
@@ -1837,8 +1825,8 @@ class BusinessController extends Controller
     {
         $business = Business::find($request->business_id);
         $banner = $business['banner'];
-        if($banner){
-            $file = 'card_banner/'. $banner;
+        if ($banner) {
+            $file = 'card_banner/' . $banner;
             if (File::exists($file)) {
                 File::delete($file);
             }
@@ -1880,7 +1868,7 @@ class BusinessController extends Controller
     public function pixel_edit($business_id, $id)
     {
         $PixelField = PixelFields::where('id', $id)->first();
-        return view('pixelfield.edit', compact( 'business_id', 'PixelField'));
+        return view('pixelfield.edit', compact('business_id', 'PixelField'));
     }
 
     public function pixel_update(Request $request, $id)

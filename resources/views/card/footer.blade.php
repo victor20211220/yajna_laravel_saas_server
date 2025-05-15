@@ -46,7 +46,7 @@
 
         $(document).off('shown.bs.modal', '.share-card-modal').on('shown.bs.modal', '.share-card-modal', function () {
             const $container = $(this).find('.qr-code-container');
-            const url = "{{ env('APP_URL').'/'.$business->slug }}";
+            const url = "{{ route('get.vcard',[$business->slug]) }}";
             const qrCode = new QRCodeStyling({
                 width: 162,
                 height: 162,

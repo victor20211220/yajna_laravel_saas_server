@@ -1699,7 +1699,7 @@
                     width: 162,
                     height: 162,
                     type: "svg",
-                    data: "{{ env('APP_URL').'/'.$business->slug }}",
+                    data: "{{ route('get.vcard',[$business->slug]) }}",
                     margin: 0,
                     image: $(`#qrCodeImageBuffer`)[0].src,
                     imageOptions: {
