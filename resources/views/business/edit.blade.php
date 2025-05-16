@@ -1877,7 +1877,7 @@
                 val = 'https://' + val; // temporarily fix for validation
             }
             // Validate hostname properly
-            const domainPattern = /^(https?:\/\/)?([\w\-]+\.)+[a-z]{2,}(\:\d+)?(\/.*)?$/i;
+            const domainPattern = /^(https?:\/\/)?([\w\-]+\.)+[a-z]{2,}(:\d+)?(\/.*)?$/i;
             if (val && !domainPattern.test(val)) {
                 toastrs("", "Please enter a valid website URL (e.g. example.com)", "error");
                 return;
