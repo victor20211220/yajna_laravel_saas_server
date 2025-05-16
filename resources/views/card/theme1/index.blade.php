@@ -203,6 +203,27 @@
                                 </video>
                                 {!! svg('vcard/video_play.svg', ['class' => 'video-play-overlay']) !!}
                             </div>
+                            <div class="video-slide-wrapper position-relative">
+                                <video class="video-slide-thumb" data-full="{{ $url }}" muted playsinline
+                                       preload="metadata">
+                                    <source src="{{ $url }}" type="video/mp4">
+                                </video>
+                                {!! svg('vcard/video_play.svg', ['class' => 'video-play-overlay']) !!}
+                            </div>
+                            <div class="video-slide-wrapper position-relative">
+                                <video class="video-slide-thumb" data-full="{{ $url }}" muted playsinline
+                                       preload="metadata">
+                                    <source src="{{ $url }}" type="video/mp4">
+                                </video>
+                                {!! svg('vcard/video_play.svg', ['class' => 'video-play-overlay']) !!}
+                            </div>
+                            <div class="video-slide-wrapper position-relative">
+                                <video class="video-slide-thumb" data-full="{{ $url }}" muted playsinline
+                                       preload="metadata">
+                                    <source src="{{ $url }}" type="video/mp4">
+                                </video>
+                                {!! svg('vcard/video_play.svg', ['class' => 'video-play-overlay']) !!}
+                            </div>
                         @endif
                     @endforeach
                 </div>
