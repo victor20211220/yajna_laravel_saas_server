@@ -1024,6 +1024,7 @@
         $(function () {
             toggleBannerControls({{ $hasBanner ? "1": "0" }});
             $(`#deleteBannerBtn`).click(function () {
+                $(this).prop('disabled', true);
                 var business_id = '{{$business->id}}';
                 $.ajax({
                     url: '{{ route('business.delete-banner') }}',
