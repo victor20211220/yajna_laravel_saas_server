@@ -290,7 +290,7 @@
                                 @endif
 
                                 @if ($business->shareContactField->is_phone_enabled)
-                                    <input type="text" name="phone"
+                                    <input type="tel" pattern="[0-9]{10,15}" name="phone"
                                            class="form-control bg-light border-0 rounded-3 py-3 text-center"
                                            placeholder="Phone number"
                                            @if($business->shareContactField->is_phone_required) required @endif>
