@@ -329,7 +329,7 @@
 
                             <div class="d-grid">
                                 <button type="submit"
-                                        class="btn btn-dark rounded-3 py-2 d-flex justify-content-center align-items-center gap-2">
+                                        class="btn btn-primary rounded-3 py-2 d-flex justify-content-center align-items-center gap-2">
                                     <i class="bi bi-arrow-repeat"></i>
                                     <span>Share Contact</span>
                                 </button>
