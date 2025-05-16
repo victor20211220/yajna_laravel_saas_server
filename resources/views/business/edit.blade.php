@@ -901,31 +901,29 @@
         <div class="modal-dialog">
             <div class="modal-content p-3">
                 <!-- Back Button -->
-                <form action="" id="socialItemForm">
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                        <button type="button" class="btn p-0 d-flex align-items-center gap-2 border-0"
-                                style="font-size: 1rem; font-weight: 500;" id="closeSocialItemModal">
-                            <i class="bi bi-chevron-left"></i> Back
-                        </button>
-                    </div>
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <button type="button" class="btn p-0 d-flex align-items-center gap-2 border-0"
+                            style="font-size: 1rem; font-weight: 500;" id="closeSocialItemModal">
+                        <i class="bi bi-chevron-left"></i> Back
+                    </button>
+                </div>
 
-                    <hr class="my-0">
+                <hr class="my-0">
 
-                    <!-- Social Icon and Name -->
-                    <div class="d-flex align-items-center gap-3 my-4">
-                        <img id="socialItemModalIcon" src="" alt="Icon" style="width: 40px;">
-                        <h6 id="socialItemModalName" class="mb-0"></h6>
-                    </div>
+                <!-- Social Icon and Name -->
+                <div class="d-flex align-items-center gap-3 my-4">
+                    <img id="socialItemModalIcon" src="" alt="Icon" style="width: 40px;">
+                    <h6 id="socialItemModalName" class="mb-0"></h6>
+                </div>
 
-                    <!-- Input Field -->
-                    <div class="mb-4">
-                        <input type="text" class="form-control" id="socialItemModalInput"
-                               placeholder="Enter profile link">
-                    </div>
+                <!-- Input Field -->
+                <div class="mb-4">
+                    <input type="text" class="form-control" id="socialItemModalInput"
+                           placeholder="Enter profile link">
+                </div>
 
-                    <!-- Add Button -->
-                    <button type="button" class="btn btn-dark w-100 rounded" id="saveSocialItemBtn">Add</button>
-                </form>
+                <!-- Add Button -->
+                <button type="button" class="btn btn-dark w-100 rounded" id="saveSocialItemBtn">Add</button>
             </div>
         </div>
     </div>
@@ -1204,6 +1202,7 @@
     </script>
 
     <script id="socialManagementScript">
+        let $socialsSlider;
         const socialSvgs = {
             @foreach ($businessfields as $key)
             "{{ strtolower($key) }}": `{!! svg('vcard/socials/' . strtolower($key) . '.svg', ['class' => 'w-100 h-100']) !!}`,
@@ -1237,6 +1236,7 @@
         })
 
         $(function () {
+            $socialsSlider = $('.socials-slider');
             $saveSocialItemBtn = $('#saveSocialItemBtn');
             // Handle Save/Add/Update
             $saveSocialItemBtn.on('click', function () {
@@ -1266,7 +1266,7 @@
                 }
                 if (editSocialId) {
                     const editSocialRowSelector = `#${editSocialId}`;
-                    $(editSocialRowSelector).find('.social-link-href').val(inputVal);
+                    $(editSocialRowSelector).find('.social-link-href').val(inputVal).trigger('change');
                     $(`${editSocialRowSelector}_preview`).attr('href', previewLink).show();
                 } else {
                     // Create new card + hidden inputs
@@ -1298,11 +1298,10 @@
                         id="${newSocialDataId}_preview">
                        ${svgHtml}
                     </a>`;
-                    $('.socials-slider').append(newSocialSlide);
+                    $socialsSlider.append(newSocialSlide);
                     socials_row_no++;
                 }
-                $(`.social-row input[type="hidden"]`).trigger('change');
-                $('.socials-slider').show();
+                $socialsSlider.show();
                 $('#socialItemModal').modal('hide');
             });
 
@@ -1396,7 +1395,9 @@
             const $socialRow = $(this).closest('.social-row');
             $('.socials-slider .card-social-link').eq($socialRow.index()).remove();
             $socialRow.remove();
-            $(`.social-row input[type="hidden"]`).trigger('change');
+            if ($('#inputrow_socials .social-row').length === 0) {
+                $socialsSlider.hide();
+            }
         });
 
     </script>
@@ -1779,16 +1780,23 @@
             const cancelSaveButtonSelectors = ".reset-form, #submitUpdateBusinessForm, .sticky-bottom-bar"
             $(cancelSaveButtonSelectors).hide();
 
-            $form.on('input change', 'input, textarea, select', function () {
+            function checkFormChanged() {
                 const current = $form.serialize();
-
                 const fileChanged = $form.find('input[type="file"]').toArray().some(input => input.files.length > 0);
-
                 if (current !== original || fileChanged) {
                     $(cancelSaveButtonSelectors).show();
                 } else {
                     $(cancelSaveButtonSelectors).hide();
                 }
+            }
+
+            $form.on('input change', 'input, textarea, select', function () {
+                checkFormChanged();
+            });
+            const observer = new MutationObserver(checkFormChanged);
+            observer.observe($form[0], {
+                childList: true,
+                subtree: true,
             });
 
 

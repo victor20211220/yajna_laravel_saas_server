@@ -63,7 +63,7 @@
             </div>
             <!-- Social Icons Slider -->
             <div
-                class="socials-slider mb-4 pb-2" {!! Utility::isInitialSocials($social_content) ? "style=\"display:none;\"": ""!!}>
+                class="socials-slider mb-4 pb-2" {!! Utility::isInitialSocials($social_content) || empty($social_val) ? "style=\"display:none;\"": ""!!}>
                 @if (count($social_content))
                     @foreach ($social_content as $id => $social_item)
                         @foreach ($social_item as $key => $social_val)
