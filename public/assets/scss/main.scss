@@ -95,9 +95,9 @@ input:-webkit-autofill {
 }
 
 .toggle-sidebar-icon {
-    margin-top: 42px;
     cursor: pointer;
     width: 17px;
+    display: none;
 }
 
 
@@ -107,7 +107,7 @@ input:-webkit-autofill {
     margin-left: 300px;
 }
 
-.main-content.collapsed {
+.main-content.expanded {
     margin-left: 0;
 }
 
@@ -670,7 +670,7 @@ a {
                 left: -4px;
                 width: 32px; /* 32 + 6*2 */
                 height: 32px;
-                border: 2px solid transparent;
+                border-width: 2px;
             }
         }
 
@@ -723,22 +723,12 @@ a {
     }
 }
 
-// Mobile Specific Adjustments
-@media (max-width: 767.98px) {
-    * {
-        font-size: 14px;
-    }
-    .logo-img {
-        max-height: 40px;
-    }
-
+// smaller screen size Specific Adjustments
+@media (max-width: 1499.89px) {
     .page-title {
         margin-left: 2rem;
     }
 
-    .card-edit-right-block {
-        min-width: 300px;
-    }
     .sidebar {
         position: fixed;
         top: 0;
@@ -747,7 +737,8 @@ a {
         z-index: 1045;
     }
     .toggle-sidebar-icon {
-        margin-top: 50px;
+        margin-top: 43px;
+        display: block;
 
         &#openSidebar {
             margin-left: 18px !important;
@@ -757,6 +748,22 @@ a {
     #mainContent {
         margin-left: 0 !important;
         padding: 21px 1rem;
+    }
+}
+
+// Mobile Specific Adjustments
+@media (max-width: 767.98px) {
+    * {
+        font-size: 14px;
+    }
+    .toggle-sidebar-icon {
+        margin-top: 50px;
+    }
+    .card-edit-right-block {
+        min-width: 300px;
+    }
+
+    #mainContent {
 
         #updateBusinessForm {
             .card-body {

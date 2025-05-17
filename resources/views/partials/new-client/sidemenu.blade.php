@@ -45,8 +45,8 @@
 @endphp
     <!-- Sidebar -->
 <div id="sidebar" class="sidebar p-3 position-fixed d-flex flex-column flex-shrink-0">
-    {!! svg('/user_interface/close_sidebar.svg', ['class' => 'position-absolute z-3 top-0 me-3 end-0 toggle-sidebar-icon d-block d-md-none', 'id' => 'closeSidebar']) !!}
-    <a class="mt-4 mt-xl-2 mb-4" href="{{ url('/') }}">
+    {!! svg('/user_interface/close_sidebar.svg', ['class' => 'position-absolute z-3 top-0 me-3 end-0 toggle-sidebar-icon', 'id' => 'closeSidebar']) !!}
+    <a class="mt-4 mt-md-2 mb-4" href="{{ url('/') }}">
         <img src="{{ asset('assets/images/icons/logo.svg') }}" alt="" class="logo-img">
     </a>
 

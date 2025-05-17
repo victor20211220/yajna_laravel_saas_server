@@ -26,7 +26,7 @@
 <!-- Main Content -->
 <div id="mainContent" class="main-content position-relative">
     <div id="mainContentOverlay" class="position-absolute top-0 start-0 w-100 h-100 display-none"></div>
-    {!! svg('/user_interface/open_sidebar.svg', ['class' => 'position-absolute z-3 top-0 ms-5 start-0 toggle-sidebar-icon d-block d-md-none', 'id' => 'openSidebar']) !!}
+    {!! svg('/user_interface/open_sidebar.svg', ['class' => 'position-absolute z-3 top-0 ms-5 start-0 toggle-sidebar-icon', 'id' => 'openSidebar']) !!}
     @yield('title')
     @yield('content')
 </div>
