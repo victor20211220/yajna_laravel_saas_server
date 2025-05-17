@@ -18,7 +18,7 @@
     <!-- [ auth-signup ] start -->
     {{ Form::open(['route' => 'login.submit', 'method' => 'post', 'id' => 'loginForm']) }}
     <h2 class="fw-bold mb-3 text-center text-md-start">Welcome!</h2>
-    <div class="mb-4 text-center">Enter your Email or Phone Number to log in
+    <div class="mb-4 mb-4 text-center text-md-start">Enter your Email or Phone Number to log in
     </div>
 
     <div class="mb-3">
