@@ -1,16 +1,13 @@
 @php
     use App\Models\Utility;
 
-    $company_logo = \App\Models\Utility::GetLogo();
-    $logo = \App\Models\Utility::get_file('uploads/logo/');
     $user = \Auth::user();
-    $bussiness_id = $user->current_business;
+    $business_id = $user->current_business;
+    $business = \App\Models\Business::findOrFail($business_id);
+
     $plan = \App\Models\Plan::getPlansUser($user->plan);
-    $module = Nwidart\Modules\Facades\Module::all();
-    $activemodule = \App\Models\userActiveModule::getActiveModule();
-    // $menus = \App\Models\Utility::getMenu();
-    $menus = \App\Models\Utility::moduleIsActive();
-    $profile = \App\Models\Utility::get_file('uploads/avatar');
+    $logo = Utility::get_file('card_logo');
+
     $menuItems = [
         [
             'label' => 'Profile',
@@ -38,7 +35,7 @@
             'icon' => 'user_interface/settings.svg',
         ],
     ];
-    if(!$bussiness_id) array_splice($menuItems, 0, 3);
+    if(!$business_id) array_splice($menuItems, 0, 3);
 @endphp
     <!-- Sidebar -->
 <div id="sidebar" class="sidebar p-3 position-fixed d-flex flex-column flex-shrink-0">
@@ -85,7 +82,7 @@
             <button class="btn w-100 d-flex align-items-center justify-content-between dropdown-toggle" id="myDropdown">
                 <span class="d-flex align-items-center gap-2 d-block">
                     <img class="rounded-circle user-avatar" style="width: 36px; height: 36px;"
-                         src="{{ !empty($user->avatar) ? $profile . '/' . $user->avatar : $profile . '/avatar.png' }}"
+                         src="{{ $business->logo ? $logo.'/'.$business->logo: Utility::imagePlaceholderUrl() }}"
                          alt=""/>
                     <span>{{ \Auth::user()->name }}</span>
                 </span>
@@ -118,7 +115,9 @@
             </ul>
         </div>
         <div class="d-block d-md-none">
-            <button class="btn btn-transparent w-100 mb-4 border-0" onclick="event.preventDefault(); document.getElementById('frm-logout').submit();">Sign Out</button>
+            <button class="btn btn-transparent w-100 mb-4 border-0"
+                    onclick="event.preventDefault(); document.getElementById('frm-logout').submit();">Sign Out
+            </button>
             <div class="text-12 text-center text-muted">&copy; {{ date('Y') }} Tapeetap. All Rights Reserved</div>
         </div>
     </div>
