@@ -30,8 +30,10 @@ class BusinessAnalyticsController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
-    public function index(Request $request, Business $business)
+    public function index(Request $request)
     {
+        $user = \Auth::user();
+        $business =  Business::find($user->current_business);
         $from = now()->startOfWeek();
         $to = now()->endOfWeek();
 

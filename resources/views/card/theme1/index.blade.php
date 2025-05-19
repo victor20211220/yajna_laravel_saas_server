@@ -35,16 +35,16 @@
         </div>
 
         <!-- Name, Title, Company -->
-        <section class="text-center pt-3">
+        <section class="text-center pt-3 mt-1">
             @php $business_title = $business->title @endphp
-            <div class="title fw-medium mb-3"
+            <div class="title fw-medium mb-3 lh-1"
                  id="{{ $stringid . '_title' }}_preview" {!! Utility::hideEmptyCardElement($business_title) !!}>{{ $business_title }}</div>
 
             @php
                 $designation = $business->designation;
                 $sub_title = $business->sub_title;
             @endphp
-            <div class="display-flex justify-content-center align-items-center gap-2 mb-4 pb-2"
+            <div class="display-flex justify-content-center align-items-center gap-2 mb-4 pb-2 lh-1"
                  id="roleAndCompanyOnVcard" {!! Utility::hideEmptyCardElement([$designation, $sub_title], "and") !!}>
                 <div id="{{ $stringid . '_designation' }}_preview" {!! Utility::hideEmptyCardElement($designation) !!}>
                     {{ $designation}}

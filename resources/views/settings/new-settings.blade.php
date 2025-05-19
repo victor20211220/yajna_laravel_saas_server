@@ -3,9 +3,11 @@
     {{ __('Settings') }}
 @endsection
 @section('title')
-    <h3 class="mb-4 page-title">
-        {{ __('Settings') }}
-    </h3>
+    <div class="mb-4">
+        <h3 class="page-title">
+            {{ __('Settings') }}
+        </h3>
+    </div>
 @endsection
 @section('content')
     {{-- Personal Info --}}

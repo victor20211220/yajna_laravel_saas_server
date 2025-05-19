@@ -9,7 +9,7 @@ $(document).ready(function () {
     });
 
     $('.gallery-slide-image').on('click', function () {
-        if(isOnEditFormPage()) return;
+        if (isOnEditFormPage()) return;
         const fullUrl = $(this).data('full');
         $('#imageViewerModalImg').attr('src', fullUrl);
         $('#imageViewerModal').modal('show');
@@ -26,7 +26,7 @@ $(document).ready(function () {
 
     // Optional: Play in modal
     $('.video-slide-thumb').on('click', function () {
-        if(isOnEditFormPage()) return;
+        if (isOnEditFormPage()) return;
         const videoUrl = $(this).data('full');
         $('#modalVideoSource').attr('src', videoUrl);
         $('#modalVideoPlayer')[0].load();
@@ -54,12 +54,18 @@ $(document).ready(function () {
         });
     })
 
+    $('#openShareCardModalBtn').on('click', function () {
+        if (isOnEditFormPage()) return;
+        $('#shareCardModal').modal('show');
+    })
+
     $('#openShareContactModalBtn').on('click', function () {
-        if(isOnEditFormPage()) return;
+        if (isOnEditFormPage()) return;
         $('#shareContactModal').modal('show');
     })
 
 });
-function isOnEditFormPage(){
+
+function isOnEditFormPage() {
     return $('#updateBusinessForm').length !== 0;
 }

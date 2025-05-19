@@ -136,7 +136,7 @@ class BusinessController extends Controller
                     $currentuser->current_business = $business->id;
                     $currentuser->save();
                 }
-                return redirect()->route('business.edit', $business->id)->with('success', __('Business Created Successfully'));
+                return redirect()->route('business.edit')->with('success', __('Business Created Successfully'));
             } else {
                 return redirect()->back()->with('error', __('This email is already linked to another business. Please use a different email or remove the existing one'));
             }
@@ -148,21 +148,14 @@ class BusinessController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param \App\Models\Business $business
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
      */
-    public function edit(Business $business, $id)
+    public function edit()
     {
         $user = \Auth::user();
 
         $id = $user->current_business;
-
-        if ($id == 0) {
-            $business = Business::where('created_by', \Auth::user()->creatorId())->first();
-        } else {
-            $business = Business::where('id', $id)->first();
-            $count = Business::where('id', $id)->where('created_by', \Auth::user()->creatorId())->count();
-        }
+        $business = Business::where('id', $id)->first();
         if ($business) {
             $businessfields = Utility::getFields();
 

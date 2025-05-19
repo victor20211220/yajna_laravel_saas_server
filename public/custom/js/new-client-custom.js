@@ -2,7 +2,7 @@ const $sidebar = $('#sidebar');
 const $mainContent = $('#mainContent');
 const $openSidebar = $('#openSidebar');
 const $closeSidebar = $('#closeSidebar');
-const $mainContentOverlay = $('#mainContentOverlay');
+const $bodyOverlay = $('#bodyOverlay');
 
 const sidebarToggle = () => {
     if ($(window).width() < 1500) { //on smaller screens, hide sidebar and expand mainContent
@@ -12,25 +12,25 @@ const sidebarToggle = () => {
         $sidebar.removeClass('sidebar-hidden');
         $mainContent.removeClass('expanded');
     }
-    $mainContentOverlay.hide();
+    $bodyOverlay.hide();
 }
 
 
 $openSidebar.on('click', () => { // when click open button, opens the sidebar and overlay
     $sidebar.removeClass('sidebar-hidden');
-    $mainContentOverlay.show();
+    $bodyOverlay.show();
 });
 
 $closeSidebar.on('click', () => { // when click close button, close the sidebar and remove overlay
     $sidebar.addClass('sidebar-hidden');
-    $mainContentOverlay.hide();
+    $bodyOverlay.hide();
 });
 // Optional: Handle resizing (auto close on small screens)
 $(window).on('resize', () => {
     sidebarToggle();
 });
 $(document).on('click', '#mainContentOverlay', () => {
-    $mainContentOverlay.hide();
+    $bodyOverlay.hide();
     $sidebar.addClass('sidebar-hidden');
 });
 

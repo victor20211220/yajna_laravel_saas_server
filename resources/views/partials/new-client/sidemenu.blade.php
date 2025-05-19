@@ -16,18 +16,15 @@
             'label' => 'Profile',
             'route' => 'business.edit',
             'icon' => 'user_interface/profile.svg',
-            'params' => ['id' => $bussiness_id],
         ],
         [
             'label' => 'Contact Book',
             'route' => 'business.contacts.show',
-            'params' => ['id' => $bussiness_id],
             'icon' => 'user_interface/contact_book.svg',
         ],
         [
             'label' => 'Analytics',
             'route' => 'business.analytics.index',
-            'params' => ['business' => $bussiness_id],
             'icon' => 'user_interface/analytics.svg',
         ],
         [
@@ -46,7 +43,7 @@
     <!-- Sidebar -->
 <div id="sidebar" class="sidebar p-3 position-fixed d-flex flex-column flex-shrink-0">
     {!! svg('/user_interface/close_sidebar.svg', ['class' => 'position-absolute z-3 top-0 me-3 end-0 toggle-sidebar-icon', 'id' => 'closeSidebar']) !!}
-    <a class="mt-4 mt-md-2 mb-4" href="{{ url('/') }}">
+    <a class="mt-4 mt-md-2 mb-4 text-center" href="{{ url('/') }}">
         <img src="{{ asset('assets/images/icons/logo.svg') }}" alt="" class="logo-img">
     </a>
 

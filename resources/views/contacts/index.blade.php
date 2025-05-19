@@ -7,41 +7,43 @@
     {{ __('Contact Book') }}
 @endsection
 @section('title')
-    <h3 class="mb-2 page-title">
-        {{ __('Contact Book') }}
-    </h3>
+    <div class="mb-4">
+        <h3 class="page-title">
+            {{ __('Contact Book') }}
+        </h3>
+    </div>
 @endsection
 @section('content')
-    <div id="contactBookPage">
-        <div class="pb-2"></div>
-        <div class="mb-4 d-none d-xl-block">
+    <div id="contactBookPage" class="bg-white bg-md-transparent pb-3 pb-md-0">
+        <div class="mb-4 d-none d-xl-block lh-1">
             All the contacts you collect will appear here. You can follow up, export, or organize them with
             tags.
         </div>
-        <div class="d-flex justify-content-between justify-content-md-start align-items-center mb-4 gap-3">
-            <button class="btn btn-primary" id="openCreateContactModalBtn">
+        <div
+            class="d-flex justify-content-between justify-content-md-start align-items-center px-3 px-md-0 py-3 py-md-4 pt-md-0 mb-3 mb-md-4 border-bottom border-secondary gap-3">
+            <button class="btn btn-primary btn-icon" id="openCreateContactModalBtn">
                 {!! svg('user_interface/contact_book.svg', ['class' => 'me-3']) !!} Create Contact
             </button>
-            <button id="exportCSV" class="btn btn-white">
+            <button id="exportCSV" class="btn btn-secondary btn-md-white btn-icon">
                 {!! svg('user_interface/export_contacts.svg', ['class' => 'me-3']) !!} Export Contacts
             </button>
         </div>
 
-        <div class="d-flex gap-3 align-items-start justify-content-start mb-3 filter-inputs flex-column flex-md-row">
-            <div class="position-relative">
+        <div class="d-flex gap-3 px-3 px-md-0 align-items-start justify-content-start mb-3 mb-md-4 filter-inputs flex-column flex-md-row">
+            <div class="position-relative btn-icon">
                 <i class="bi bi-search position-absolute top-50 translate-middle-y ms-3"></i>
                 <input type="text" class="form-control ps-5" placeholder="Search"
                        id="searchInput">
             </div>
-            <div id="reportrange" class="form-control d-flex justify-content-between align-items-center">
+            <div id="reportrange" class="form-control btn-icon">
                 <i class="bi bi-calendar4"></i>
                 <span></span> <img src="{{ asset('assets/images/icons/user_interface/arrows.svg') }}" alt="" width="7px"
                                    height="11px">
             </div>
 
         </div>
-        <div class="card table-responsive">
-            <table id="contactsTable" class="table table-hover borderless contacts-table">
+        <div class="card table-responsive mx-3 mx-md-0 border-1 border-md-0 border-secondary">
+            <table id="contactsTable" class="table table-hover borderless contacts-table mb-0">
                 <thead class="d-none d-md-table-header-group">
                 <tr>
                     <th><input type="checkbox" id="checkAll"></th>
@@ -206,7 +208,6 @@
             function filterRowsByDateRange(start, end) {
                 const from = new Date(start);
                 const to = new Date(end);
-
                 $('#contactsTable tbody tr').each(function () {
                     const dateText = $(this).find('td').eq(3).text().trim();
                     const rowDate = new Date(dateText);

@@ -1,14 +1,15 @@
 @extends('layouts.new-client')
 @section('page-title')
-    {{ __('Contact Book') }}
+    {{ __('Support') }}
 @endsection
 @section('title')
-    <h3 class="mb-4 page-title">
-        {{ __('Support') }}
-    </h3>
+    <div class="mb-4">
+        <h3 class="page-title">
+            {{ __('Support') }}
+        </h3>
+    </div>
 @endsection
 @section('content')
-    <div class="pb-2"></div>
     <div class="card p-4">
         <div class="card-title">Contact us</div>
         <p class="mb-4">Our team of experts is available to provide support through email</p>

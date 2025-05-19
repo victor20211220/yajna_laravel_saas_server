@@ -16,7 +16,7 @@ class ContactsController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Contracts\View\View
      */
-    public function index($id = "")
+    public function index()
     {
         $user = \Auth::user();
         $business_id = $user->current_business;

@@ -22,7 +22,7 @@
     {{ __('Profile') }}
 @endsection
 @section('title')
-    <div class="d-xl-flex gap-5 mb-4 pb-xl-2">
+    <div class="d-xl-flex gap-5 mb-4">
         <div class="d-flex flex-column w-100 gap-4 gap-md-5">
             <div class="d-flex justify-content-between align-items-center">
                 <h3 class="mb-0 page-title">
@@ -37,7 +37,7 @@
                             {{__('Save Changes')}}
                         </button>
                     </div>
-                    <button type="button" class="btn btn-primary btn-icon d-block d-xl-none">
+                    <button type="button" class="btn btn-primary btn-icon d-xl-none">
                         {!! svg('/user_interface/eye.svg', ['class' => 'fill-white']) !!}
                         <a href="{{ route('get.vcard',[$business->slug]) }}"
                            target="_blank" class="text-white">

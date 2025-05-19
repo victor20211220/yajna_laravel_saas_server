@@ -11854,6 +11854,7 @@ textarea.form-control-lg {
   --bs-border-color: #E5E5E5;
   --bs-body-color: #171717;
   --bs-body-font-family: "Inter", sans-serif !important;
+  --bs-secondary-rgb: 229, 229, 229;
 }
 
 html, body {
@@ -11915,8 +11916,11 @@ input:-webkit-autofill {
 
 .card {
   border: none !important;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+}
+.card .card-header {
+  padding: 1rem;
 }
 
 .user-avatar {
@@ -12028,7 +12032,7 @@ input:-webkit-autofill {
 #updateBusinessForm .card-body section .section-title {
   font-size: 18px;
   font-weight: 500;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .form-group {
@@ -12325,12 +12329,11 @@ a {
 #contactBookPage .filter-inputs > * {
   width: 358px;
 }
-#contactBookPage .dataTable-top {
-  padding: 0;
+#contactBookPage .dataTable-container {
+  border-bottom: 0;
 }
-#contactBookPage .table td,
-#contactBookPage .table tbody tr {
-  border: none !important;
+#contactBookPage .dataTable-top, #contactBookPage .dataTable-bottom {
+  display: none;
 }
 #contactBookPage .table td,
 #contactBookPage .table th {
@@ -12371,7 +12374,7 @@ a {
   line-height: 0;
 }
 
-#mainContentOverlay {
+#bodyOverlay {
   background-color: rgba(0, 0, 0, 0.5); /* #aaa with transparency */
   z-index: 1000; /* same as Bootstrap modal backdrop */
 }
@@ -12393,7 +12396,7 @@ a {
     --bs-btn-padding-y: 4px;
   }
   #mainContent #updateBusinessForm .card-body section {
-    padding: 16px;
+    padding: 1rem;
   }
   #mainContent #updateBusinessForm .card-body section .section-title {
     font-size: 14px;
@@ -12448,17 +12451,6 @@ a {
     border-radius: 10px;
   }
 }
-@media (min-width: 768px) {
-  .fill-md-primary .st0 {
-    fill: var(--bs-primary-rgb);
-  }
-  .text-md-primary {
-    color: var(--bs-primary-rgb) !important;
-  }
-  .d-md-table-header-group {
-    display: table-header-group !important;
-  }
-}
 @media (max-width: 1499.89px) {
   .page-title {
     margin-left: 2rem;
@@ -12483,9 +12475,29 @@ a {
     padding: 21px 1rem;
   }
 }
+@media (min-width: 768px) {
+  .fill-md-primary .st0 {
+    fill: var(--bs-primary-rgb);
+  }
+  .text-md-primary {
+    color: var(--bs-primary-rgb) !important;
+  }
+  .d-md-table-header-group {
+    display: table-header-group !important;
+  }
+  .bg-md-transparent {
+    background: transparent !important;
+  }
+  .btn-md-white {
+    background: #FFFFFF !important;
+  }
+  .p-md-0 {
+    padding: 0 !important;
+  }
+}
 @media (max-width: 767.98px) {
   * {
-    font-size: 14px;
+    font-size: 13px;
   }
   .toggle-sidebar-icon {
     margin-top: 50px;
@@ -12505,6 +12517,10 @@ a {
   }
   #mainContent #updateBusinessForm .card-body .social-row {
     width: 100%;
+  }
+  #mainContent #contactBookPage .card {
+    border: solid 1px #E5E5E5 !important;
+    box-shadow: none !important;
   }
   #mainContent #contactBookPage .filter-inputs > * {
     width: 100%;

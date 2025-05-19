@@ -10,9 +10,9 @@
         <h3 class="mb-0 page-title">
             {{ __('Analytics') }}
         </h3>
-        <div id="reportrange" class="btn btn-primary">
+        <div id="reportrange" class="btn btn-primary btn-icon">
             <i class="bi bi-calendar"></i>&nbsp;
-            <span></span> <i class="bi bi-chevron-down"></i>
+            <span></span> <i class="bi bi-chevron-down btn-icon"></i>
         </div>
     </div>
 @endsection

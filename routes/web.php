@@ -119,7 +119,7 @@ Route::group(['middleware' => ['verified']], function () {
     Route::resource('business', BusinessController::class)->except(['edit', 'destroy'])->middleware(['XSS', 'auth', 'CheckPlan']);
 
     Route::middleware(['auth', 'XSS', 'CheckPlan'])->group(function () {
-        Route::get('business/edit/{id}', [BusinessController::class, 'edit'])->name('business.edit');
+        Route::get('edit-profile', [BusinessController::class, 'edit'])->name('business.edit');
         Route::get('business/theme-edit/{id}', [BusinessController::class, 'edit2'])->name('business.edit2');
         Route::get('business/analytics/{id}', [BusinessController::class, 'analytics'])->name('business.analytics');
         Route::post('business/edit-theme/{id}', [BusinessController::class, 'editTheme'])->name('business.edit-theme');
@@ -203,12 +203,12 @@ Route::group(['middleware' => ['verified']], function () {
         Route::any('refund/{order_id}/{user_id}', [PlanController::class, 'refundPlan'])->name('plan.refund')->middleware(['auth', 'XSS']);
 
 
-        Route::get('/business/{business}/analytics', [BusinessAnalyticsController::class, 'index'])
+        Route::get('/analytics', [BusinessAnalyticsController::class, 'index'])
             ->name('business.analytics.index');
         Route::get('/support', [SupportController::class, 'index'])->name('support.index');
         Route::post('/support/send', [SupportController::class, 'send'])->name('support.send');
 
-        Route::prefix('new-settings')->group(function () {
+        Route::prefix('/settings')->group(function () {
             Route::get('/', [NewSettingController::class, 'index'])->name('new-settings.index');
             Route::post('/update-profile', [NewSettingController::class, 'updateProfile'])->name('new-settings.updateProfile');
             Route::post('/update-password', [NewSettingController::class, 'updatePassword'])->name('new-settings.updatePassword');
@@ -387,7 +387,7 @@ Route::group(['middleware' => ['verified']], function () {
     Route::get('/contacts/show', [ContactsController::class, 'index'])->middleware('XSS', 'auth')->name('contacts.index');
     Route::get('/contacts/{id}/show', [ContactsController::class, 'show'])->name('contacts.show');
     Route::delete('/contacts/delete/{id}', [ContactsController::class, 'destroy'])->middleware('XSS', 'auth')->name('contacts.destroy');
-    Route::get('/contacts/business/show{id}', [ContactsController::class, 'index'])->middleware('XSS', 'auth')->name('business.contacts.show');
+    Route::get('/contacts', [ContactsController::class, 'index'])->middleware('XSS', 'auth')->name('business.contacts.show');
     Route::get('/contacts/edit/{id}', [ContactsController::class, 'edit'])->middleware('XSS', 'auth')->name('contacts.edit');
     Route::post('/contacts/update/{id}', [ContactsController::class, 'update'])->middleware('XSS', 'auth')->name('Contacts.update');
 

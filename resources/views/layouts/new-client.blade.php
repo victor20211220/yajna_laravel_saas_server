@@ -13,6 +13,7 @@
 @include('partials.new-client.header')
 
 <body class="position-relative display-none">
+<div id="bodyOverlay" class="position-absolute top-0 start-0 w-100 h-100 display-none"></div>
 <input type="hidden" id="path_admin" value="{{ url('/') }}">
 <div class="loader-bg">
     <div class="loader-track">
@@ -25,7 +26,6 @@
 
 <!-- Main Content -->
 <div id="mainContent" class="main-content position-relative">
-    <div id="mainContentOverlay" class="position-absolute top-0 start-0 w-100 h-100 display-none"></div>
     {!! svg('/user_interface/open_sidebar.svg', ['class' => 'position-absolute z-3 top-0 ms-5 start-0 toggle-sidebar-icon', 'id' => 'openSidebar']) !!}
     @yield('title')
     @yield('content')

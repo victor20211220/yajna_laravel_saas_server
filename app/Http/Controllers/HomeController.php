@@ -51,8 +51,7 @@ class HomeController extends Controller
                     die;
                 } else {
                     if (\Auth::user()->type == 'company') {
-                        $user = \Auth::user();
-                        return redirect()->route('business.edit', $user->current_business);
+                        return redirect()->route('business.edit');
                     }
 
                     $uri = url()->full();

@@ -67,7 +67,7 @@ class AuthenticatedSessionController extends Controller
                     if (!empty($datetime1) && $datetime1 < $datetime2) {
                         $user->assignplan(1);
 
-                        return redirect()->intended(RouteServiceProvider::HOME)->with('error', __('Your plan expired limit is over, please upgrade your plan.'));
+                        return redirect(RouteServiceProvider::HOME)->with('error', __('Your plan expired limit is over, please upgrade your plan.'));
                     }
                 }
                 if ($plan->is_trial == 'on' && $user->trial_expire_date != null) {
@@ -76,7 +76,7 @@ class AuthenticatedSessionController extends Controller
                     if (!empty($datetime1) && $datetime1 < $datetime2) {
                         $user->assignplan(1);
 
-                        return redirect()->intended(RouteServiceProvider::HOME)->with('error', __('Your trial plan is expired, Please upgrade your plan.'));
+                        return redirect(RouteServiceProvider::HOME)->with('error', __('Your trial plan is expired, Please upgrade your plan.'));
                     }
                 }
             }
@@ -117,7 +117,7 @@ class AuthenticatedSessionController extends Controller
 
             }
         }
-        return redirect()->intended(RouteServiceProvider::HOME);
+        return redirect(RouteServiceProvider::HOME);
     }
 
     public function showLoginForm($lang = '')

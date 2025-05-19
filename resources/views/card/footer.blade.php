@@ -39,10 +39,6 @@
 
 <script id="vCardQrCodeManagementScript">
     $(function () {
-        $('#openShareCardModalBtn').on('click', function () {
-            if (isOnEditFormPage()) return;
-            $('#shareCardModal').modal('show');
-        })
 
         $(document).off('shown.bs.modal', '.share-card-modal').on('shown.bs.modal', '.share-card-modal', function () {
             const $container = $(this).find('.qr-code-container');
