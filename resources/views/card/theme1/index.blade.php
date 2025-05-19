@@ -6,7 +6,7 @@
 @endphp
 @extends('card.layouts')
 @section('contentCard')
-    <div class="business-card position-relative mx-auto custom-rounded-34 display-none"
+    <div class="business-card position-absolute top-0 start-50 translate-middle-x z-10 custom-rounded-34 display-none"
          id="businessCard">
         @if($isSelfUser && !$isOnEditFormPage)
             <a href="{{ route('home') }}" class="position-absolute top-0 start-0 m-4 z-1" id="backToPageOnCardArrow">
