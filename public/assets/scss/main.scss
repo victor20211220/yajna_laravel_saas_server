@@ -73,7 +73,8 @@ input:-webkit-autofill {
     border: none !important;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
-    .card-header{
+
+    .card-header {
         padding: 1rem;
     }
 }
@@ -617,6 +618,7 @@ a {
 .page-title {
     margin-bottom: 0 !important;
     line-height: 37px;
+    font-weight: 600;
 }
 
 @media(max-width: 1600px) {
@@ -716,7 +718,8 @@ a {
 // smaller screen size Specific Adjustments
 @media (max-width: 1499.89px) {
     .page-title {
-        margin-left: 2rem;
+        margin-left: calc(49px - 1rem);
+        font-size: 25px;
     }
 
     .sidebar {

@@ -12382,6 +12382,7 @@ a {
 .page-title {
   margin-bottom: 0 !important;
   line-height: 37px;
+  font-weight: 600;
 }
 
 @media (max-width: 1600px) {
@@ -12453,7 +12454,8 @@ a {
 }
 @media (max-width: 1499.89px) {
   .page-title {
-    margin-left: 2rem;
+    margin-left: calc(49px - 1rem);
+    font-size: 25px;
   }
   .sidebar {
     position: fixed;
