@@ -1,6 +1,6 @@
 @php
     use App\Models\Business;
-    $siteLogo = asset('assets/images/logo.png');
+    $siteLogo = asset('assets/images/qrcode-logo.png');
 @endphp
 
     <!-- jQuery -->

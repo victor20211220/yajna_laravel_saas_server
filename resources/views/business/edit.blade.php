@@ -11,7 +11,7 @@
     $gallery_path= Utility::get_file('gallery');
     $qr_path = Utility::get_file('qrcode');
     $isProClient = Utility::isProClient($business_id);
-    $siteLogo = asset('assets/images/logo.png');
+    $siteLogo = asset('assets/images/qrcode-logo.png');
 
 @endphp
 @extends('layouts.new-client')

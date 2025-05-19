@@ -9,7 +9,7 @@
     $email_link = "mailto:?body=".$body;
     $facebook_link = "https://www.facebook.com/sharer.php?u=".$body;
     $isProClient = \App\Models\Utility::isProClient($business->id);
-    $siteLogo = asset('assets/images/logo.png');
+    $siteLogo = asset('assets/images/qrcode-logo.png');
 @endphp
 <div class="modal fade share-card-modal {{ $class }}" id="{{ $id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
