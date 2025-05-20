@@ -36,4 +36,28 @@
             </div>
         </div>
     </div>
+    <div class="my-3"></div>
+    <div class="card p-4">
+        <div class="card-title mb-3">FAQ</div>
+        <div class="accordion" id="faqAccordion">
+            @foreach ($faqs as $index => $faq)
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="heading{{ $index }}">
+                        <button class="accordion-button collapsed fw-normal" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapse{{ $index }}" aria-expanded="false"
+                                aria-controls="collapse{{ $index }}">
+                            {!! $faq['title'] !!}
+                        </button>
+                    </h2>
+                    <div id="collapse{{ $index }}" class="accordion-collapse collapse"
+                         aria-labelledby="heading{{ $index }}" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            {!! $faq['content'] !!}
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+
 @endsection

@@ -119,7 +119,7 @@
             <div
                 class="display-flex justify-content-start align-items-center gap-3 mb-3" {!! Utility::hideEmptyCardElement($phone) !!}>
                 {!! svg('vcard/phone.svg') !!}
-                <a id="{{ $stringid . '_phone' }}_preview" href="tel:{{ $phone }}">
+                <a id="{{ $stringid . '_phone' }}_preview" href="tel:{{ str_replace(' ', '', $phone) }}">
                     {{ $phone }}
                 </a>
             </div>
@@ -151,7 +151,8 @@
         </section>
 
         @if($isProClient)
-            <section id="vcard-services-section" {!! Utility::hideSection(isset($services['is_enabled']) && $services['is_enabled']) !!}>
+            <section
+                id="vcard-services-section" {!! Utility::hideSection(isset($services['is_enabled']) && $services['is_enabled']) !!}>
                 <div class="section-title">Services</div>
                 <div class="mb-4 pb-2"></div>
                 @php $service_key = 1; @endphp
@@ -169,7 +170,8 @@
                 </div>
             </section>
 
-            <section id="vcard-gallery-section" {!! Utility::hideSection(isset($gallery['is_enabled']) && $gallery['is_enabled']) !!}>
+            <section
+                id="vcard-gallery-section" {!! Utility::hideSection(isset($gallery['is_enabled']) && $gallery['is_enabled']) !!}>
                 <div class="section-title">Gallery</div>
                 <div class="mb-4 pb-2"></div>
                 <div class="gallery-slider invisible">
@@ -184,7 +186,8 @@
                 </div>
             </section>
 
-            <section id="vcard-featured-videos-section" {!! Utility::hideSection(isset($gallery['is_video_enabled']) && $gallery['is_video_enabled']) !!}>
+            <section
+                id="vcard-featured-videos-section" {!! Utility::hideSection(isset($gallery['is_video_enabled']) && $gallery['is_video_enabled']) !!}>
                 <div class="section-title">Featured Video</div>
                 <div class="mb-4 pb-2"></div>
                 <div class="video-slider invisible">
@@ -267,81 +270,9 @@
         </div>
     </div>
     <!-- Modal -->
-    <div class="modal fade vcard-modal" id="shareContactModal" tabindex="-1" aria-labelledby="shareContactModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content rounded-4">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold mx-auto" id="shareContactModalLabel">Share Contact</h5>
-                    <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    @if ($business->shareContactField)
-                        <form method="POST" action="{{ route('contacts.store') }}">
-                            @csrf
-                            <div class="d-grid gap-3 mb-4">
 
-                                @if ($business->shareContactField->is_name_enabled)
-                                    <input type="text" name="name"
-                                           class="form-control bg-light border-0 rounded-3 py-3 text-center"
-                                           placeholder="Name"
-                                           @if($business->shareContactField->is_name_required) required @endif>
-                                @endif
-
-                                @if ($business->shareContactField->is_phone_enabled)
-                                    <input type="tel" pattern="[0-9]{10,15}" name="phone"
-                                           class="form-control bg-light border-0 rounded-3 py-3 text-center"
-                                           placeholder="Phone number"
-                                           @if($business->shareContactField->is_phone_required) required @endif>
-                                @endif
-
-                                @if ($business->shareContactField->is_email_enabled)
-                                    <input type="email" name="email"
-                                           class="form-control bg-light border-0 rounded-3 py-3 text-center"
-                                           placeholder="Email"
-                                           @if($business->shareContactField->is_email_required) required @endif>
-                                @endif
-
-                                @if ($business->shareContactField->is_company_enabled)
-                                    <input type="text" name="company"
-                                           class="form-control bg-light border-0 rounded-3 py-3 text-center"
-                                           placeholder="Company"
-                                           @if($business->shareContactField->is_company_required) required @endif>
-                                @endif
-
-                                @if ($business->shareContactField->is_job_title_enabled)
-                                    <input type="text" name="job_title"
-                                           class="form-control bg-light border-0 rounded-3 py-3 text-center"
-                                           placeholder="Job Title"
-                                           @if($business->shareContactField->is_job_title_required) required @endif>
-                                @endif
-
-                                @if ($business->shareContactField->is_notes_enabled)
-                                    <textarea name="message"
-                                              class="form-control bg-light border-0 rounded-3 py-3 text-center"
-                                              rows="3" placeholder="Notes"
-                                              @if($business->shareContactField->is_notes_required) required @endif></textarea>
-                                @endif
-
-                                <input type="hidden" name="business_id" value="{{ $business->id }}">
-                            </div>
-
-                            <div class="d-grid">
-                                <button type="submit"
-                                        class="btn btn-primary rounded-3 py-2 d-flex justify-content-center align-items-center gap-2">
-                                    <i class="bi bi-arrow-repeat"></i>
-                                    <span>Share Contact</span>
-                                </button>
-                            </div>
-                        </form>
-                    @endif
-
-                </div>
-            </div>
-        </div>
-    </div>
     @if(!$isOnEditFormPage)
         @include('components.share-card-modal', ['id' => 'shareCardModal', 'class' => 'vcard-modal'])
+        @include('components.share-contact-modal-content', ['id' => 'shareContactModal'])
     @endif
 @endsection

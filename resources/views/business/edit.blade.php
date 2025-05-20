@@ -845,6 +845,7 @@
         <div class="d-none d-xl-block position-sticky align-self-start sticky-top-32">
             <div class="position-relative shadow-lg custom-box">
                 @include('card.' . $card_theme->theme . '.index', ['is_on_form_preview' => true])
+                @include('components.share-contact-modal-content', ['is_on_form_preview' => true, 'id' => 'shareContactModalPreview'])
             </div>
         </div>
     </div>
@@ -1684,12 +1685,64 @@
         });
     </script>
 
-    <script id="autoContactPopupManagementScript">
-        $("#is_auto_contact_popup_enabled").change(function () {
-            const enable = $(this).is(":checked");
+    <script id="contactSharePreviewManagementScript">
+        $(function () {
+            const $is_auto_contact_popup_enabled = $('#is_auto_contact_popup_enabled');
+            const $modal = $('#shareContactModalPreview');
             const $text = $('#isAutoContactPopupText');
-            $text.text(enable ? "ON" : "OFF");
+            if ($is_auto_contact_popup_enabled.is(":checked")) $modal.addClass('d-block');
+
+            // 1. Toggle modal visibility based on popup switch
+            $is_auto_contact_popup_enabled.on('change', function () {
+                const enable = $(this).is(":checked");
+                if (enable) {
+                    $modal.addClass('d-block');
+                    $text.text("ON");
+                } else {
+                    $modal.removeClass('d-block');
+                    $text.text("OFF");
+                }
+            });
+
+            // 2. Field toggle logic
+            const fields = ['name', 'phone', 'email', 'company', 'job_title', 'notes'];
+
+            fields.forEach(field => {
+                const enabledSelector = `input[name="is_${field}_enabled"]`;
+                const requiredSelector = `input[name="is_${field}_required"]`;
+                const previewFieldSelector = `#shareContactModalPreview [name="${field === 'notes' ? 'message' : field}"]`;
+
+                function updateFieldVisibility() {
+                    const isEnabled = $(enabledSelector).is(':checked');
+                    const isRequired = $(requiredSelector).is(':checked');
+                    const $input = $(previewFieldSelector);
+
+                    if (isEnabled) {
+                        $input.closest('.form-control, textarea').show();
+                        if (isRequired) {
+                            $input.attr('required', 'required');
+                        } else {
+                            $input.removeAttr('required');
+                        }
+                    } else {
+                        $input.closest('.form-control, textarea').hide();
+                        $input.removeAttr('required');
+                    }
+                }
+
+                // Init on load
+                updateFieldVisibility();
+
+                // Bind change events
+                $(enabledSelector + ',' + requiredSelector).on('change', updateFieldVisibility);
+            });
+
+            $('#shareContactModalPreview .btn-close').click(function () {
+                $modal.removeClass('d-block');
+            })
         });
+
+
     </script>
 
     <script id="qrCodeManagementScript">
@@ -1808,6 +1861,19 @@
     </script>
 
     <script id="submitFormScript">
+
+        function getFormattedPhoneNumber(input) {
+            const iti = window.intlTelInputGlobals.getInstance(input);
+            const fullNumber = iti.getNumber(); // e.g., +23059469464
+            const dialCode = '+' + iti.getSelectedCountryData().dialCode; // e.g., +230
+
+            if (fullNumber.startsWith(dialCode)) {
+                return dialCode + ' ' + fullNumber.slice(dialCode.length);
+            }
+
+            return fullNumber;
+        }
+
         $('#submitUpdateBusinessForm').click(function () {
             $(`#updateBusinessForm`).submit();
         })
@@ -1861,14 +1927,15 @@
             if (!socialValid) return;
 
 
-            const phoneInput = $('#{{ $business_id }}_phone');
-            const phoneVal = phoneInput.val().trim();
+            const $phoneInput = $('#{{ $business_id }}_phone');
+            const phoneVal = $phoneInput.val().trim();
             const phonePattern = /^\+[0-9\s\-]{7,15}$/;
 
             if (!phonePattern.test(phoneVal)) {
                 toastrs("", "Please enter a valid phone number (e.g. +1234567890)", "error");
                 return;
             }
+            $phoneInput.val(getFormattedPhoneNumber($phoneInput[0]));
 
             const websiteInput = $('#{{ $business_id }}_website');
             let val = websiteInput.val().trim();

@@ -5468,7 +5468,7 @@ textarea.form-control-lg {
   outline: 0;
 }
 
-.modal-backdrop {
+.modal-backdrop, #shareContactModalPreview:before {
   --bs-backdrop-zindex: 1050;
   --bs-backdrop-bg: #000;
   --bs-backdrop-opacity: 0.5;
@@ -5480,10 +5480,10 @@ textarea.form-control-lg {
   height: 100vh;
   background-color: var(--bs-backdrop-bg);
 }
-.modal-backdrop.fade {
+.modal-backdrop.fade, .fade#shareContactModalPreview:before {
   opacity: 0;
 }
-.modal-backdrop.show {
+.modal-backdrop.show, .show#shareContactModalPreview:before {
   opacity: var(--bs-backdrop-opacity);
 }
 
@@ -7303,7 +7303,7 @@ textarea.form-control-lg {
   position: relative !important;
 }
 
-.position-absolute {
+.position-absolute, #shareContactModalPreview:before {
   position: absolute !important;
 }
 
@@ -7549,7 +7549,7 @@ textarea.form-control-lg {
   width: 75% !important;
 }
 
-.w-100 {
+.w-100, #shareContactModalPreview:before {
   width: 100% !important;
 }
 
@@ -7581,7 +7581,7 @@ textarea.form-control-lg {
   height: 75% !important;
 }
 
-.h-100 {
+.h-100, #shareContactModalPreview:before {
   height: 100% !important;
 }
 
@@ -12383,6 +12383,31 @@ a {
   margin-bottom: 0 !important;
   line-height: 37px;
   font-weight: 600;
+}
+
+#shareContactModalPreview:before {
+  content: "";
+  overflow-x: hidden;
+  overflow-y: auto;
+  opacity: 0;
+}
+#shareContactModalPreview.d-block:before {
+  opacity: var(--bs-backdrop-opacity);
+}
+#shareContactModalPreview .modal-dialog {
+  z-index: 1060;
+}
+
+#faqAccordion .accordion-button:not(.collapsed) {
+  background-color: transparent !important;
+  box-shadow: none;
+  border-color: transparent;
+}
+#faqAccordion .accordion-button {
+  transition: none;
+}
+#faqAccordion .accordion-button:focus {
+  box-shadow: none;
 }
 
 @media (max-width: 1600px) {

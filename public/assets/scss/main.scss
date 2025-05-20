@@ -621,6 +621,41 @@ a {
     font-weight: 600;
 }
 
+#shareContactModalPreview {
+    &:before {
+        content: "";
+        @extend .modal-backdrop, .position-absolute, .w-100, .h-100;
+        overflow-x: hidden;
+        overflow-y: auto;
+        opacity: 0;
+    }
+
+    &.d-block:before {
+        opacity: var(--bs-backdrop-opacity);
+    }
+
+    .modal-dialog {
+        z-index: 1060;
+    }
+}
+#faqAccordion{
+    .accordion-button:not(.collapsed) {
+        background-color: transparent !important;
+        box-shadow: none;
+        border-color: transparent;
+    }
+
+    .accordion-button {
+        transition: none;
+    }
+
+    .accordion-button:focus {
+        box-shadow: none;
+    }
+
+}
+
+
 @media(max-width: 1600px) {
     :root {
         --bs-body-font-size: 14px;

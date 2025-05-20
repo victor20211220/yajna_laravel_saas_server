@@ -1,0 +1,42 @@
+$gap-sizes: (
+    1: 0.25rem,
+    2: 0.5rem,
+    3: 1rem,
+    4: 1.5rem,
+    5: 3rem
+);
+
+$breakpoints: (
+    "": null,
+    "sm": 576px,
+    "md": 768px,
+    "lg": 992px,
+    "xl": 1200px,
+    "xxl": 1400px
+);
+
+@each $breakpoint, $min-width in $breakpoints {
+    @if $min-width != null {
+        @media (min-width: #{$min-width}) {
+            @each $key, $value in $gap-sizes {
+                .gap-#{$breakpoint}-#{$key} {
+                    gap: 0 !important;
+
+                    > *:not(:last-child) {
+                        margin-right: $value;
+                    }
+                }
+            }
+        }
+    } @else {
+        @each $key, $value in $gap-sizes {
+            .gap-#{$key} {
+                gap: 0 !important;
+
+                > *:not(:last-child) {
+                    margin-right: $value;
+                }
+            }
+        }
+    }
+}
