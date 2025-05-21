@@ -6,7 +6,7 @@
         "sass": "^1.87.0"
     },
     "scripts": {
-        "sass:watch": "sass --watch public/assets/scss/new-custom.scss:public/assets/css/new-custom.css public/assets/scss/new-card-custom.scss:public/assets/css/new-card-custom.css",
-        "sass:compile": "sass public/assets/scss/new-custom.scss:public/assets/css/new-custom.css public/assets/scss/new-card-custom.scss:public/assets/css/new-card-custom.css"
+        "sass:watch": "sass --watch public/assets/scss/new-client.scss:public/assets/css/new-client.css public/assets/scss/new-card.scss:public/assets/css/new-card.css",
+        "sass:compile": "sass public/assets/scss/new-client.scss:public/assets/css/new-client.css public/assets/scss/new-card.scss:public/assets/css/new-card.css"
     }
 }

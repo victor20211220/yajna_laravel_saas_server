@@ -78,8 +78,9 @@
         </a>
         @endImpersonating
         <div class="btn btn-primary w-100 mb-3 rounded-pill cursor-auto">{{ $plan->name }}</div>
-        <div class="d-none d-md-block dropdown sidebar-user-dropdown">
-            <button class="btn w-100 d-flex align-items-center justify-content-between dropdown-toggle" id="myDropdown">
+        <div class="d-none d-md-block dropdown">
+            <button class="btn w-100 d-flex align-items-center justify-content-between dropdown-toggle"
+                    data-bs-toggle="dropdown" aria-expanded="false">
                 <span class="d-flex align-items-center gap-2 d-block">
                     <img class="rounded-circle user-avatar" style="width: 36px; height: 36px;"
                          src="{{ $business->logo ? $logo.'/'.$business->logo: Utility::imagePlaceholderUrl() }}"

@@ -40,15 +40,3 @@ $(function () {
     $('body').fadeIn(300);
     $('[data-bs-toggle="tooltip"]').tooltip();
 })
-
-// Adjustment for the username dropdown on sidebar
-$(document).on('click', '#myDropdown', function (e) {
-    e.preventDefault();
-    console.log('clicked');
-    const $this = $(this);
-    $this.toggleClass('show');
-    const ariaExpanded = $this.attr('aria-expanded')
-    $this.attr('aria-expanded', ariaExpanded === "false" ? "true" : "false");
-    const $dropdownMenu = $(this).closest('.dropdown').find('.dropdown-menu')
-    $dropdownMenu.toggleClass('show');
-})

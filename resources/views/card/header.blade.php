@@ -23,5 +23,5 @@
         --custom-section-border-color: '#C9CCD1';
     }
 </style>
-<link rel="stylesheet" href="{{ asset('assets/css/new-card-custom.css?v='.time()) }}">
+<link rel="stylesheet" href="{{ asset('assets/css/new-card.css?v='.time()) }}">
 {{--end custom color picker--}}

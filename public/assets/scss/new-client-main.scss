@@ -281,15 +281,6 @@ a {
             pointer-events: none;
         }
     }
-
-    .sidebar-user-dropdown {
-        .dropdown-menu.show {
-            position: absolute;
-            inset: auto auto 0px 0px;
-            margin: 0px;
-            transform: translate(0px, -52px);
-        }
-    }
 }
 
 .sticky-top-32 {

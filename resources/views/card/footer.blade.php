@@ -1,6 +1,7 @@
 @php
     use App\Models\Business;
     $siteLogo = asset('assets/images/qrcode-logo.png');
+    $isOnEditFormPage = Route::currentRouteName() === 'business.edit';
 @endphp
 
     <!-- jQuery -->
@@ -9,14 +10,17 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 
 <!-- Bootstrap 5 JS -->
+
+@if(!$isOnEditFormPage)
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+@endif
 
 <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
 <script src="{{ asset('custom/libs/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
 <script src="{{ asset('custom/js/socialSharing.js') }}"></script>
 <script src="{{ asset('custom/js/custom-toast.js?v='.time()) }}"></script>
 <script src="{{ asset('custom/js/vcard-section-border-color-util.js?v='.time()) }}"></script>
-<script src="{{ asset('custom/' . $theme . '/js/new-custom.js?v='.time()) }}" defer="defer"></script>
+<script src="{{ asset('custom/' . $theme . '/js/new-card.js?v='.time()) }}" defer="defer"></script>
 <script>
     $(function () {
         @if($business->is_auto_contact_popup_enabled)

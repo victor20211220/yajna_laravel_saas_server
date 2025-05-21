@@ -12098,12 +12098,6 @@ a {
   transform: translateY(-50%);
   pointer-events: none;
 }
-#sidebar .sidebar-user-dropdown .dropdown-menu.show {
-  position: absolute;
-  inset: auto auto 0px 0px;
-  margin: 0px;
-  transform: translate(0px, -52px);
-}
 
 .sticky-top-32 {
   top: 8rem;
@@ -12696,4 +12690,4 @@ a {
   }
 }
 
-/*# sourceMappingURL=new-custom.css.map */
+/*# sourceMappingURL=new-client.css.map */

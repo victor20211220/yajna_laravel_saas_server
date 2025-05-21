@@ -19,7 +19,7 @@
     var type_err = "{{ __('Invalid file type. Please select a valid file (' . $setting_arr['types'] . ').') }}";
     var size_err = "{{ __('File size exceeds the maximum limit of ' . $setting_arr['max_size'] / 1024 . 'MB.') }}";
 </script>
-<script src="{{asset('custom/js/new-client-custom.js?v='.time())}}"></script>
+<script src="{{asset('custom/js/new-client.js?v='.time())}}"></script>
 @stack('custom-scripts')
 
 

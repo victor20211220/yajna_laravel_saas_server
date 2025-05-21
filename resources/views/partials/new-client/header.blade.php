@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
     @stack('custom-styles')
-    <link rel="stylesheet" href="{{ asset('assets/css/new-custom.css?v='.time()) }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/new-client.css?v='.time()) }}">
 </head>
 
 
