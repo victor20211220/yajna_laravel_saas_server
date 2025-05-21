@@ -11983,12 +11983,16 @@ textarea.form-control-lg {
 .business-card #contact-section svg {
   width: 30px;
   height: 30px;
+  flex-shrink: 0;
 }
 .business-card #contact-section svg .st0 {
   fill: var(--custom-color);
 }
 .business-card #contact-section svg .st1 {
   fill: var(--custom-card-bg);
+}
+.business-card #contact-section a {
+  flex-grow: 1;
 }
 .business-card .gallery-slide-wrapper {
   width: 130px !important;

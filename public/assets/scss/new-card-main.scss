@@ -178,6 +178,7 @@
         svg {
             width: 30px;
             height: 30px;
+            flex-shrink: 0;
 
             .st0 {
                 fill: var(--custom-color);
@@ -186,6 +187,9 @@
             .st1 {
                 fill: var(--custom-card-bg);
             }
+        }
+        a{
+            flex-grow: 1;
         }
     }
 
