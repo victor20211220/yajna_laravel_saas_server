@@ -284,7 +284,7 @@ a {
 }
 
 .edit-profile-container {
-    min-height: calc(100vh - 6rem - 37px);
+    min-height: calc(100dvh - 6rem - 37px);
 }
 .sticky-top-32 {
     top: 2rem; // 8 * 16px = 128px
@@ -297,7 +297,7 @@ a {
 .custom-box {
     aspect-ratio: 1 / 2; // width : height = 1:2
     max-height: 900px;
-    min-height: calc(100vh - 180px);
+    min-height: calc(100dvh - 180px);
     width: 374px;
     margin-right: 76px;
     border-radius: 42px;

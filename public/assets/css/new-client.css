@@ -12100,7 +12100,7 @@ a {
 }
 
 .edit-profile-container {
-  min-height: calc(100vh - 6rem - 37px);
+  min-height: calc(100dvh - 6rem - 37px);
 }
 
 .sticky-top-32 {
@@ -12114,7 +12114,7 @@ a {
 .custom-box {
   aspect-ratio: 1/2;
   max-height: 900px;
-  min-height: calc(100vh - 180px);
+  min-height: calc(100dvh - 180px);
   width: 374px;
   margin-right: 76px;
   border-radius: 42px;
@@ -12628,7 +12628,7 @@ a {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .login-mobile-bg {
