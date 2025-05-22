@@ -29,7 +29,7 @@ $closeSidebar.on('click', () => { // when click close button, close the sidebar 
 $(window).on('resize', () => {
     sidebarToggle();
 });
-$(document).on('click', '#mainContentOverlay', () => {
+$(document).on('click', '#bodyOverlay', () => {
     $bodyOverlay.hide();
     $sidebar.addClass('sidebar-hidden');
 });
