@@ -283,8 +283,11 @@ a {
     }
 }
 
+.edit-profile-container {
+    min-height: calc(100vh - 6rem - 37px);
+}
 .sticky-top-32 {
-    top: 8rem; // 8 * 16px = 128px
+    top: 2rem; // 8 * 16px = 128px
 }
 
 .card-edit-right-block {

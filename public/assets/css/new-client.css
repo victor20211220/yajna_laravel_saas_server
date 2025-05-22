@@ -12099,8 +12099,12 @@ a {
   pointer-events: none;
 }
 
+.edit-profile-container {
+  min-height: calc(100vh - 6rem - 37px);
+}
+
 .sticky-top-32 {
-  top: 8rem;
+  top: 2rem;
 }
 
 .card-edit-right-block {

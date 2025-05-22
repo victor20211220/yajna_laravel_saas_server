@@ -68,11 +68,11 @@
     </div>
 @endsection
 @section('content')
-    <div class="d-flex gap-5">
+    <div class="d-flex gap-5 position-relative edit-profile-container">
         <div class="d-flex flex-column w-100 gap-4 gap-md-5">
             {{ Form::open(['route' => ['business.update', $business->id], 'method' => 'put', 'id' => 'updateBusinessForm', 'enctype' => 'multipart/form-data']) }}
             <input type="hidden" name="business_id" value="{{ $business->id }}">
-            <input type="hidden" name="edit_tab_key" id="edit_tab_key" value="{{ $tab }}">
+            <input type="hidden" id="edit_tab_key" value="{{ $tab }}">
             <div class="card">
                 <div class="card-header bg-white sticky-top z-0 z-1 border-bottom overflow-auto">
                     <!-- Tab Container: fixed on scroll -->
@@ -842,10 +842,12 @@
             {{ Form::close() }}
         </div>
 
-        <div class="d-none d-xl-block position-sticky align-self-start sticky-top-32">
-            <div class="position-relative shadow-lg custom-box">
-                @include('card.' . $card_theme->theme . '.index', ['is_on_form_preview' => true])
-                @include('components.share-contact-modal-content', ['is_on_form_preview' => true, 'id' => 'shareContactModalPreview'])
+        <div class="d-none d-xl-block">
+            <div class="position-sticky sticky-top-32">
+                <div class="shadow-lg custom-box">
+                    @include('card.' . $card_theme->theme . '.index', ['is_on_form_preview' => true])
+                    @include('components.share-contact-modal-content', ['is_on_form_preview' => true, 'id' => 'shareContactModalPreview'])
+                </div>
             </div>
         </div>
     </div>
@@ -1855,12 +1857,27 @@
 
             $('.reset-form').on('click', function () {
                 $form[0].reset(); // Reset form
+                $form.find('input, textarea, select').each(function () {
+                    this.dispatchEvent(new Event('change', {bubbles: true}));
+                });
+                $form.find('input[type="color"]').each(function () {
+                    this.dispatchEvent(new Event('input', {bubbles: true}));
+                });
+                /*
+                console.log('waiting...');
+                await delay(1 * 1000);
+                console.log('wait finish');
                 $(cancelSaveButtonSelectors).hide();
+
+                 */
             });
         });
     </script>
 
     <script id="submitFormScript">
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
 
         function getFormattedPhoneNumber(input) {
             const iti = window.intlTelInputGlobals.getInstance(input);
@@ -1877,7 +1894,7 @@
         $('#submitUpdateBusinessForm').click(function () {
             $(`#updateBusinessForm`).submit();
         })
-        $(`#updateBusinessForm`).submit(function (e) {
+        $(`#updateBusinessForm`).submit(async function (e) {
             e.preventDefault();
             const form = $(this)[0];
 
@@ -1951,6 +1968,8 @@
             }
 
             if (form.checkValidity()) {
+                await delay(10);
+                $('#edit_tab_key').attr('name', 'edit_tab_key');
                 form.submit();
             } else {
                 form.reportValidity(); // shows built-in validation UI
