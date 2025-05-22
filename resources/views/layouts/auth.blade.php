@@ -49,7 +49,7 @@
     <link rel="icon" href="{{ $logo . '/favicon.png' }}" type="image/x-icon"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     @stack('css-page')
-    <link rel="stylesheet" href="{{ asset('assets/css/new-custom.css?v='.time()) }}"/>
+    <link rel="stylesheet" href="{{ asset('assets/css/new-client.css?v='.time()) }}"/>
 
 </head>
 
