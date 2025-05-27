@@ -1863,13 +1863,6 @@
                 $form.find('input[type="color"]').each(function () {
                     this.dispatchEvent(new Event('input', {bubbles: true}));
                 });
-                /*
-                console.log('waiting...');
-                await delay(1 * 1000);
-                console.log('wait finish');
-                $(cancelSaveButtonSelectors).hide();
-
-                 */
             });
         });
     </script>
@@ -1894,6 +1887,7 @@
         $('#submitUpdateBusinessForm').click(function () {
             $(`#updateBusinessForm`).submit();
         })
+
         $(`#updateBusinessForm`).submit(async function (e) {
             e.preventDefault();
             const form = $(this)[0];
