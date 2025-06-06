@@ -605,6 +605,23 @@ class BusinessController extends Controller
         $business->card_text_color = $request->card_text_color;
         $business->button_text_color = $request->button_text_color;
 
+        $galleryinfo = Gallery::where('business_id', $business_id)->first();
+        $is_gallery_enabled = $request->is_gallery_enabled === "on";
+        $is_video_enabled = $request->is_video_enabled === "on";
+        if ($galleryinfo) {
+            $galleryinfo->is_enabled = $is_gallery_enabled;
+            $galleryinfo->is_video_enabled = $is_video_enabled;
+            $galleryinfo->created_by = \Auth::user()->creatorId();
+            $galleryinfo->save();
+        } else {
+            Gallery::create([
+                'business_id' => $business_id,
+                'is_enabled' => $is_gallery_enabled,
+                'is_video_enabled' => $is_video_enabled,
+                'created_by' => \Auth::user()->creatorId()
+            ]);
+        }
+
         $service = service::where('business_id', $business_id)->first();
         $services_payload = $request->services;
         $is_service_enabled = $request->is_services_enabled === "on";
