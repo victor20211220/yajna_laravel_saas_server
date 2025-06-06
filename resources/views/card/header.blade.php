@@ -1,4 +1,7 @@
 @php
+    use App\Models\Utility;
+    $logo = Utility::get_file('uploads/logo/');
+    $company_favicon= Utility::getValByName('company_favicon');
     $url_link = env('APP_URL') . '/' . $business->slug;
 @endphp
 <meta charset="UTF-8">
@@ -6,6 +9,7 @@
 <meta name="author" content="{{ $business->title }}">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
 <meta name="HandheldFriendly" content="True">
+<link rel="icon" href="{{ $logo."/". $company_favicon }}" type="image" sizes="16x16">
 <title>{{ $business->title }}</title>
 <!-- Slick Carousel -->
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>

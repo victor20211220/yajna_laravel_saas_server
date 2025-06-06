@@ -162,6 +162,7 @@ class SupportController extends Controller
         $request->validate([
             'subject' => 'required|string|max:255',
             'message' => 'required|string',
+            'attachment' => 'nullable|file|max:10240', // max 10MB
         ]);
 
         $superAdmin = User::where('type', 'super admin')->first();
@@ -197,9 +198,17 @@ class SupportController extends Controller
             'mail.from.name' => $settings['mail_from_name'] ?: $setting['mail_from_name'],
         ]);
 
-        Mail::mailer(config('mail.driver'))->raw($request->message, function ($mail) use ($request, $superAdmin) {
-            $mail->to($superAdmin->email)
-                ->subject($request->subject);
+        Mail::mailer(config('mail.driver'))->send([], [], function ($mail) use ($request) {
+            $mail->to(env('SUPPORT_EMAIL'))
+                ->subject($request->subject)
+                ->text($request->message);
+
+            if ($request->hasFile('attachment')) {
+                $mail->attach($request->file('attachment')->getRealPath(), [
+                    'as' => $request->file('attachment')->getClientOriginalName(),
+                    'mime' => $request->file('attachment')->getMimeType(),
+                ]);
+            }
         });
 
         return redirect()->back()->with('success', 'Email sent successfully!');

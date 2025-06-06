@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 53.34 53.34">
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g>
+      <circle class="st0" fill="#171717" id="Email_Button" data-name="Email Button" cx="26.67" cy="26.67" r="26.67" transform="translate(-8.18 41.11) rotate(-67.5)"/>
+      <g id="Email_Icon" data-name="Email Icon">
+        <polygon class="st1" fill="#fff" points="40.28 17.24 13.07 17.24 26.67 28.61 40.28 17.24"/>
+        <polygon class="st1" fill="#fff" points="14.01 20.47 14.01 36.1 39.3 36.1 39.3 20.47 26.67 30.92 14.01 20.47"/>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
 </head>
 <body style="margin: 0; padding: 0; background: #ffffff; font-family: Inter, sans-serif;">
-<div style="max-width: 358px; margin: 0 auto; padding: 29px 16px; text-align: center;">
+<div style="max-width: 358px; margin: 0 100px; padding: 29px 16px; text-align: center;">
 
     <!-- Logo -->
     <img src="{{ asset('assets/images/logo.png') }}" alt="tapeetap"
@@ -36,7 +36,7 @@
         Have questions or need help? Reach out anytime at support@tapeetap.com
     </p>
 
-    <p style="font-size: 11px; color: #171717; margin: 0;">©{{ date('Y') }} Tapeetap. All rights reserved</p>
+    <p style="font-size: 11px; color: #171717; margin: 0;">&copy; {{ date('Y') }} Tapeetap. All Rights Reserved</p>
 </div>
 </body>
 </html>

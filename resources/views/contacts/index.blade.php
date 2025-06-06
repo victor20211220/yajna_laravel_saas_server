@@ -15,7 +15,7 @@
 @endsection
 @section('content')
     <div id="contactBookPage" class="bg-white bg-md-transparent pb-3 pb-md-0">
-        <div class="mb-4 d-none d-xl-block lh-1">
+        <div class="mb-4 d-none d-xl-block lh-1 section-subtitle">
             All the contacts you collect will appear here. You can follow up, export, or organize them with
             tags.
         </div>
@@ -24,12 +24,21 @@
             <button class="btn btn-primary btn-icon" id="openCreateContactModalBtn">
                 {!! svg('user_interface/contact_book.svg', ['class' => 'me-3']) !!} Create Contact
             </button>
-            <button id="exportCSV" class="btn btn-secondary btn-md-white btn-icon">
-                {!! svg('user_interface/export_contacts.svg', ['class' => 'me-3']) !!} Export Contacts
-            </button>
+            <div class="dropdown dropdown-center">
+                <button class="btn btn-white btn-md-white btn-icon" data-bs-toggle="dropdown" aria-expanded="false">
+                    {!! svg('user_interface/export_contacts.svg', ['class' => 'me-3']) !!} Export Contacts
+                </button>
+                <ul class="dropdown-menu shadow rounded border-0 p-2">
+                    <li><a class="dropdown-item export-button" href="javascript:void(0)" data-format="csv">Export
+                            CSV</a></li>
+                    <li><a class="dropdown-item export-button" href="javascript:void(0)" data-format="xlsx">Export
+                            XLSX</a></li>
+                </ul>
+            </div>
         </div>
 
-        <div class="d-flex gap-3 px-3 px-md-0 align-items-start justify-content-start mb-3 mb-md-4 filter-inputs flex-column flex-md-row">
+        <div
+            class="d-flex gap-3 px-3 px-md-0 align-items-center justify-content-start mb-3 mb-md-4 filter-inputs flex-column flex-md-row">
             <div class="position-relative btn-icon">
                 <i class="bi bi-search position-absolute top-50 translate-middle-y ms-3"></i>
                 <input type="text" class="form-control ps-5" placeholder="Search"
@@ -40,16 +49,23 @@
                 <span></span> <img src="{{ asset('assets/images/icons/user_interface/arrows.svg') }}" alt="" width="7px"
                                    height="11px">
             </div>
-
+            <div id="bulkActions" class="d-flex gap-4 align-items-center ms-auto justify-content-between d-none">
+                <div class="d-flex justify-content-between align-items-center gap-2">
+                    <input type="checkbox" id="removeChecked" checked>
+                    <span id="selectedCount"></span>
+                </div>
+                <button class="btn btn-primary" id="bulkDeleteBtn">Delete Contacts</button>
+            </div>
         </div>
         <div class="card table-responsive mx-3 mx-md-0 border-1 border-md-0 border-secondary">
-            <table id="contactsTable" class="table table-hover borderless contacts-table mb-0">
+            <table id="contactsTable" class="table borderless contacts-table mb-0">
                 <thead class="d-none d-md-table-header-group">
                 <tr>
                     <th><input type="checkbox" id="checkAll"></th>
                     <th>Name</th>
                     <th class="d-none d-md-table-cell">Email</th>
                     <th class="d-none d-md-table-cell">Date Added</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -64,6 +80,19 @@
                         </td>
                         <td class="d-none d-md-table-cell">{{ $val->email }}</td>
                         <td class="d-none d-md-table-cell">{{ \Carbon\Carbon::parse($val->created_at)->format('d F, Y') }}</td>
+                        <td class="text-end">
+                            <div class="dropdown dropstart">
+                                <a href="#" class="text-muted btn btn-white border-0  btn-icon rounded-circle justify-content-center" data-bs-toggle="dropdown" aria-expanded="false">
+                                    {!! svg('user_interface/contact_dropdown_dots.svg') !!}
+                                </a>
+                                <ul class="dropdown-menu shadow rounded border-0 p-2">
+                                    <li><a class="dropdown-item view-contact lh-base" href="#" data-id="{{ $val->id }}">View
+                                            Contact</a></li>
+                                    <li><a class="dropdown-item delete-contact  lh-base" href="#"
+                                           data-id="{{ $val->id }}">Delete Contact</a></li>
+                                </ul>
+                            </div>
+                        </td>
                     </tr>
                 @endforeach
                 </tbody>
@@ -179,6 +208,7 @@
                 paging: false,
                 columns: [
                     {select: 0, sortable: false}, // last column (index 4) = dropdown
+                    {select: 4, sortable: false}, // last column (index 4) = dropdown
                 ],
             });
 
@@ -189,20 +219,6 @@
             $('#entriesSelect').on('change', function () {
                 dataTable.options.perPage = parseInt(this.value);
                 dataTable.update();
-            });
-
-            $('#exportCSV').on('click', function () {
-                dataTable.export({
-                    type: "csv",
-                    filename: "contacts_export",
-                    download: true
-                });
-            });
-
-
-            $('#clearDateFilter').on('click', function () {
-                $('#fromDate, #toDate').val('');
-                $('#contactsTable tbody tr').show();
             });
 
             function filterRowsByDateRange(start, end) {
@@ -220,14 +236,42 @@
                 });
             }
 
-            $('#checkAll').on('change', function () {
-                $('.row-checkbox').prop('checked', this.checked);
+            $('#checkAll').click(function () {
+                const isChecked = this.checked;
+                $('#contactsTable tbody tr:visible').each(function () {
+                    $(this).find('.row-checkbox').prop('checked', isChecked);
+                });
             });
 
             $('#openCreateContactModalBtn').click(function () {
                 $('#createContactModal').modal('show');
             })
+        });
 
+        // export CSV/XLSX
+        $('.export-button').click(function () {
+            const format = $(this).data('format');
+            const selectedIds = [];
+
+            $('.row-checkbox:checked').each(function () {
+                const id = $(this).closest('tr').find('.view-contact').data('id');
+                if (id) selectedIds.push(id);
+            });
+
+            const params = new URLSearchParams();
+            params.append('format', format);
+
+            if (selectedIds.length > 0) {
+                params.append('ids', selectedIds.join(','));
+            }
+
+            window.location.href = `/contacts/export?${params.toString()}`;
+        });
+
+
+        $(document).on('change', '#removeChecked', function () {
+            $('#contactsTable input[type="checkbox"]').prop('checked', false);
+            updateBulkUI();
         });
 
         $(document).on('click', '.view-contact', function (e) {
@@ -254,6 +298,65 @@
                 }
             });
         });
+
+        $(document).on('click', '.delete-contact', function (e) {
+            e.preventDefault();
+            const id = $(this).data('id');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This contact will be deleted.",
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+            }).then(result => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/contacts/${id}`,
+                        type: 'DELETE',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        success: () => location.reload()
+                    });
+                }
+            });
+        });
+
+        function updateBulkUI() {
+            const checked = $('#contactsTable tbody tr:visible .row-checkbox:checked').length;
+            if (checked > 0) {
+                $('#bulkActions').removeClass('d-none');
+                $('#selectedCount').html(`<b>Selected</b> (${checked})`);
+            } else {
+                $('#bulkActions').addClass('d-none');
+            }
+        }
+
+        $(document).on('change', '.row-checkbox, #checkAll', updateBulkUI);
+
+        $('#bulkDeleteBtn').click(function () {
+            const ids = $('.row-checkbox:checked').closest('tr').map(function () {
+                return $(this).find('.view-contact').data('id');
+            }).get();
+
+            if (ids.length === 0) return;
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Selected contacts will be deleted.',
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+            }).then(result => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/contacts/bulk-delete`,
+                        type: 'POST',
+                        data: {ids},
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        success: () => location.reload()
+                    });
+                }
+            });
+
+        });
+
 
     </script>
 @endpush

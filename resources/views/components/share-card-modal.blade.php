@@ -1,5 +1,6 @@
 <!-- Modal -->
 @props([
+    'is_on_form_preview' => false,
     'id',
     'class' => '',
 ])
@@ -57,11 +58,13 @@
                 </section>
 
                 <section class="border-0">
-                    <div class="section-title">Your QR code</div>
+                    <div class="section-title">{{ $is_on_form_preview ? "Your" : "Scan ".$business->title }} QR code</div>
                     <div class="qr-code-container d-flex flex-column gap-4 justify-content-center align-items-center">
                         <div data-name="generated" class="mb-4"></div>
-                        <button type="button" class="btn btn-secondary" data-name="download-button">Download QR Code
-                        </button>
+                        @if($is_on_form_preview)
+                            <button type="button" class="btn btn-secondary" data-name="download-button">Download QR Code
+                            </button>
+                        @endif
                     </div>
                 </section>
             </div>

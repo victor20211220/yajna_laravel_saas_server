@@ -1,4 +1,39 @@
+function checkClamp($desc, $arrow) {
+// Temporarily remove clamp to measure full height
+    $desc.removeClass('collapsed expanded');
+    const fullHeight = $desc[0].getBoundingClientRect().height;
+
+    // Apply clamp to measure 3-line height
+    $desc.addClass('collapsed');
+    const clampHeight = $desc[0].getBoundingClientRect().height;
+
+    // If more content exists, show arrow
+    console.log(fullHeight, clampHeight)
+    if (fullHeight > clampHeight + 10) {
+        $arrow.show();
+    } else {
+        $arrow.hide();
+    }
+
+}
+
 $(document).ready(function () {
+    const $desc = $('.toggleable-description');
+    const $arrow = $('.toggle-arrow');
+    checkClamp($desc, $arrow);
+
+    // Watch for content changes
+    const observer = new MutationObserver(() => {
+        checkClamp($desc, $arrow);
+    });
+
+    observer.observe($desc[0], {childList: true, subtree: true, characterData: true});
+
+    $arrow.on('click', function () {
+        $(this).toggleClass("up");
+        $desc.toggleClass('collapsed expanded');
+    });
+
     $('.gallery-slider').on('init', function () {
         $(this).show()
     }).slick({
@@ -25,11 +60,22 @@ $(document).ready(function () {
     });
 
     // Optional: Play in modal
-    $('.video-slide-thumb').on('click', function () {
+    $('.video-play-overlay').on('click', function () {
         if (isOnEditFormPage()) return;
-        const videoUrl = $(this).data('full');
-        $('#modalVideoSource').attr('src', videoUrl);
-        $('#modalVideoPlayer')[0].load();
+        const url = $(this).data('url');
+        const isVideoFile = /\.(mp4|webm|ogg)$/i.test(url);
+        if (isVideoFile) {
+            $('#modalIframePlayer').hide().attr('src', '');
+            $('#modalVideoPlayer')
+                .attr('src', url)
+                .show()
+                .get(0)
+                .load(); // force reload
+        } else {
+            const embedUrl = url.replace('watch?v=', 'embed/');
+            $('#modalVideoPlayer').hide().attr('src', '');
+            $('#modalIframePlayer').attr('src', embedUrl).show(); // iframe auto-loads
+        }
         $('#videoViewerModal').modal('show');
     });
 

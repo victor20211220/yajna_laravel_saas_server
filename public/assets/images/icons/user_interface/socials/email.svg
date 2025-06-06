@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 39.97 39.97">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+      }
+
+      .cls-2 {
+        fill: url(#linear-gradient);
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="19.98" y1="-162.33" x2="19.98" y2="-122.36" gradientTransform="translate(0 -122.36) scale(1 -1)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7ef"/>
+      <stop offset="1" stop-color="#5776ff"/>
+    </linearGradient>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g id="InterfaceIcon">
+      <g id="_02.Envelope" data-name=" 02.Envelope">
+        <rect id="Background" class="cls-2" x="0" y="0" width="39.97" height="39.97" rx="3" ry="3"/>
+        <g id="_02.Envelope-2" data-name=" 02.Envelope-2">
+          <path class="cls-1" d="M22.22,20.46l8.48-8.26c-.19-.08-.4-.12-.61-.12H9.87c-.21,0-.41.04-.61.12l8.48,8.26c1.24,1.21,3.22,1.21,4.47,0Z"/>
+          <path class="cls-1" d="M17.46,21.33l-8.92-8.51c-.17.26-.26.56-.26.87v12.6c0,.88.72,1.6,1.6,1.6h20.22c.88,0,1.6-.72,1.6-1.6v-12.6c0-.31-.09-.61-.26-.87l-8.92,8.51c-1.41,1.35-3.64,1.35-5.05,0h0Z"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

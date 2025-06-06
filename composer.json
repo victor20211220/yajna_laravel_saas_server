@@ -33,6 +33,7 @@
         "orhanerday/open-ai": "^5.2",
         "paymentwall/paymentwall-php": "^2.2",
         "paytabscom/laravel_paytabs": "^1.7",
+        "phpoffice/phpspreadsheet": "^1.29",
         "pragmarx/google2fa-laravel": "^2.2",
         "psr/simple-cache": "^3.0",
         "rachidlaasri/laravel-installer": "^4.1",

@@ -10,10 +10,10 @@
     @enderror
 </div>
 <div class="form-group">
-    {{ Form::label('Business', __('Business'), ['class' => 'form-control-label']) }}
+    {{ Form::label('slug', __('Custom URL'), ['class' => 'form-control-label']) }}
     <x-required></x-required>
-    {{ Form::text('business_title', null, ['class' => 'form-control mt-2','required'=>'required','placeholder' => __('Enter Business Title')]) }}
-    @error('business_title')
+    {{ Form::text('slug', null, ['class' => 'form-control mt-2','required'=>'required','placeholder' => __('Enter Custom URL')]) }}
+    @error('slug')
     <span class="invalid-favicon text-xs text-danger" role="alert">{{ $message }}</span>
     @enderror
 </div>

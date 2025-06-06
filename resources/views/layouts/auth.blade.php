@@ -46,7 +46,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Favicon -->
 
-    <link rel="icon" href="{{ $logo . '/favicon.png' }}" type="image/x-icon"/>
+    <link rel="icon" href="{{ $logo."/". $company_favicon }}" type="image" sizes="16x16">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     @stack('css-page')
     <link rel="stylesheet" href="{{ asset('assets/css/new-client.css?v='.time()) }}"/>
@@ -75,12 +75,14 @@
         <!-- Footer (always bottom) -->
         <div class="text-center small mt-4">
             <div class="footer-links">
-                <a href="#" class="text-decoration-none me-2 text-white text-md-primary">Terms of Use</a>
+                <a href="{{ route('about.privacy') }}" class="text-decoration-none me-2 text-white text-md-primary">Terms
+                    of Use</a>
                 <span class="mx-1 text-white text-md-primary">|</span>
-                <a href="#" class="text-decoration-none ms-2 text-white text-md-primary">Privacy Policy</a>
+                <a href="{{ route('about.terms') }}" class="text-decoration-none ms-2 text-white text-md-primary">Privacy
+                    Policy</a>
             </div>
             <div class="mt-2 copyright text-md-primary">
-                Copyright &copy; {{ date('Y') }} Tapeetap All Rights Reserved
+                &copy; {{ date('Y') }} Tapeetap. All Rights Reserved
             </div>
         </div>
 

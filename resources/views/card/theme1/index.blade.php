@@ -16,9 +16,10 @@
 
         {!! svg('vcard/top_corner_share.svg', ['class' => 'position-absolute top-0 end-0 m-4 z-1', 'id' => 'openShareCardModalBtn']) !!}
         <div class="cover-photo w-100 position-relative">
-            <img src="{{ $business->banner ? $banner . '/' . $business->banner : "/assets/images/white-blank.png" }}"
-                 alt="cover-photo"
-                 class="object-fit-cover w-100 h-100" id="banner_preview">
+            <img
+                src="{{ $business->banner ? $banner . '/' . $business->banner : asset('assets/images/icons/user_interface/cover_photo_placeholder.png') }}"
+                alt="cover-photo"
+                class="object-fit-cover w-100 h-100" id="banner_preview">
             <div class="overlay position-absolute top-0 bottom-0 start-0 end-0"></div>
         </div>
 
@@ -34,7 +35,7 @@
                  alt="company-logo" id="business_company_logo_preview">
         </div>
 
-        <!-- Name, Title, Company -->
+        <!-- Name, Title, Company, Socials -->
         <section class="text-center pt-3 mt-1">
             @php $business_title = $business->title @endphp
             <div class="title fw-medium mb-3 lh-1"
@@ -56,41 +57,18 @@
                      class="button-bg-color" {!! Utility::hideEmptyCardElement($sub_title) !!}>{{ $sub_title }}</div>
             </div>
 
-            @php $description = $business->description @endphp
-            <div id="{{ $stringid . '_desc' }}_preview"
-                 {!! Utility::hideEmptyCardElement($description) !!}  class="mb-4 pb-2">
-                {!! nl2br(e($description)) !!}
-            </div>
-            <!-- Social Icons Slider -->
-            <div
-                class="socials-slider mb-4 pb-2" {!! Utility::isInitialSocials($social_content) || empty($social_content) ? "style=\"display:none;\"": ""!!}>
-                @if (count($social_content))
-                    @foreach ($social_content as $id => $social_item)
-                        @foreach ($social_item as $key => $social_val)
-                            @php
-                                if($key === "id") continue;
-                                $link = $social_val;
-                                $platform = strtolower($key);
-                                if($social_val){
-                                    if ($platform === 'whatsapp') {
-                                        // Remove non-digits from the number
-                                        $digitsOnly = preg_replace('/\D/', '', $social_val);
-                                        $link = 'https://wa.me/' . $digitsOnly;
-                                    } elseif (!preg_match('/^https?:\/\//i', $link)) {
-                                        $link = url($link);
-                                    }
-                                }
-                            @endphp
-                            <a href="{{ $link }}" target="_blank" class="card-social-link"
-                               id="{{ 'socials_' . $id . '_preview' }}" {!! Utility::hideEmptyCardElement($social_val) !!}>
-                                {!! svg('vcard/socials/'.$platform.'.svg', ['class' => 'w-100 h-100']) !!}
-                            </a>
-                        @endforeach
-                    @endforeach
-                @endif
+            <div class="position-relative">
+                @php $description = $business->description @endphp
+                <div id="{{ $stringid . '_desc' }}_preview"
+                     {!! Utility::hideEmptyCardElement($description) !!}  class="mb-4 pb-2 toggleable-description">
+                    {!! nl2br(e($description)) !!}
+                </div>
+                <div class="toggle-arrow position-absolute bottom-0 start-0 end-0 mx-auto">
+                    {!! svg('vcard/description-toggle.svg') !!}
+                </div>
             </div>
 
-            <div class="d-flex justify-content-center gap-3" id="save-share-contact-buttons">
+            <div class="d-flex justify-content-center gap-3 mb-4 pb-2" id="save-share-contact-buttons">
                 <a href="{{ route('bussiness.save', $business->slug) }}"
                    class="btn button-bg button-color rounded-pill flex-grow-1 d-flex justify-content-center align-items-center gap-2 py-2"
                    id="save-contact-on-vcard">
@@ -103,54 +81,107 @@
                     Share Contact
                 </button>
             </div>
-        </section>
 
-        <!-- Contact -->
-        @php
-            $phone = $business->phone;
-            $address = $business->address;
-            $email = $business->email;
-            $website = $business->website;
-        @endphp
-        <section
-            id="contact-section" {!! Utility::hideEmptyCardElement([$phone, $address, $email, $website], "and") !!}>
-            <div class="section-title">Contact</div>
-            <div class="mb-4 pb-2"></div>
+            <!-- Social Icons Slider -->
             <div
-                class="display-flex justify-content-start align-items-center gap-3 mb-3" {!! Utility::hideEmptyCardElement($phone) !!}>
-                {!! svg('vcard/phone.svg') !!}
-                <a id="{{ $stringid . '_phone' }}_preview" href="tel:{{ str_replace(' ', '', $phone) }}">
-                    {{ $phone }}
-                </a>
-            </div>
-            <div
-                class="display-flex justify-content-start align-items-center gap-3 mb-3" {!! Utility::hideEmptyCardElement($address) !!}>
-                {!! svg('vcard/address.svg') !!}
-                <a id="{{ $stringid . '_address' }}_preview"
-                   href="https://www.google.com/maps/search/?api=1&query={{ urlencode($address) }}"
-                   target="_blank">
-                    {{ $address }}
-                </a>
-            </div>
-            <div
-                class="display-flex justify-content-start align-items-center gap-3 mb-3" {!! Utility::hideEmptyCardElement($email) !!}>
-                {!! svg('vcard/email.svg') !!}
-                <a id="{{ $stringid . '_email' }}_preview" href="mailto:{{ $email }}">
-                    {{ $email }}
-                </a>
-            </div>
-            <div
-                class="display-flex justify-content-start align-items-center gap-3 mb-3" {!! Utility::hideEmptyCardElement($website) !!}>
-                {!! svg('vcard/website.svg') !!}
-                <a id="{{ $stringid . '_website' }}_preview"
-                   href="https://{{ $website }}"
-                   target="_blank">
-                    {{ $website }}
-                </a>
+                class="socials-slider" {!! Utility::isInitialSocials($social_content) || empty($social_content) ? "style=\"display:none;\"": ""!!}>
+                @if (count($social_content))
+                    @foreach ($social_content as $id => $social_item)
+                        @foreach ($social_item as $key => $social_val)
+                            @php
+                                if($key === "id") continue;
+                                $link = $social_val;
+                                $platform = strtolower($key);
+                                if($social_val){
+                                    switch ($platform){
+                                        case "whatsapp":
+                                        case "phone":
+                                            $digitsOnly = preg_replace('/\D/', '', $social_val);
+                                            $link = ($platform === "whatsapp" ? "https://wa.me/": "tel:" ). $digitsOnly;
+                                            break;
+
+                                        case "address":
+                                            $link = "https://www.google.com/maps/search/?api=1&query=". urlencode($social_val);
+                                            break;
+
+                                        case "email":
+                                            $link = "mailto:". $social_val;
+                                            break;
+
+                                        case "website":
+                                            $link = "https://". $social_val;
+                                            break;
+                                    }
+                                }
+                            @endphp
+                            <div class="card-social-link">
+                                <a href="{{ $link }}" target="_blank"
+                                   id="{{ 'socials_' . $id . '_preview' }}" {!! Utility::hideEmptyCardElement($social_val) !!}>
+                                    {!! svg('vcard/socials/'.$platform.'.svg', ['class' => 'w-100']) !!}
+                                </a>
+                                <p>{{ $key }}</p>
+                            </div>
+
+                        @endforeach
+                    @endforeach
+                @endif
             </div>
         </section>
 
         @if($isProClient)
+            <section
+                id="vcard-gallery-section" {!! Utility::hideSection(isset($gallery['is_enabled']) && $gallery['is_enabled']) !!}>
+                <div class="section-title">Gallery</div>
+                <div class="mb-4 pb-2"></div>
+                <div class="gallery-slider invisible">
+                    @foreach ($gallery_contents as $gallery_content)
+                        @if(in_array($gallery_content->type, ['image', 'custom_image_link']))
+                            @php $url = $gallery_content->type === 'image' ? $gallery_path . '/' . $gallery_content->value : $gallery_content->value; @endphp
+                            <div class="gallery-slide-wrapper">
+                                <img src="{{ $url }}" class="gallery-slide-image" alt="Gallery" data-full="{{ $url }}">
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+            </section>
+
+            <section
+                id="vcard-featured-videos-section" {!! Utility::hideSection(isset($gallery['is_video_enabled']) && $gallery['is_video_enabled']) !!}>
+                <div class="section-title">Video</div>
+                <div class="mb-4 pb-2"></div>
+                <div class="video-slider invisible">
+                    @foreach ($gallery_contents as $gallery_content)
+                        @if(in_array($gallery_content->type, ['video', 'custom_video_link']))
+                            @php
+                                $url = $gallery_content->type === 'video'
+                                    ? $gallery_path . '/' . $gallery_content->value
+                                    : $gallery_content->value;
+                            @endphp
+
+                            <div class="video-slide-wrapper position-relative">
+                                @if(Utility::isDirectVideoFile($url))
+                                    <video class="object-fit-cover video-slide-thumb">
+                                        <source src="{{ $url }}" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                @else
+                                    <iframe class="video-slide-thumb pointer-events-none"
+                                            src="{{ str_replace('watch?v=', 'embed/', $url) }}?controls=0"
+                                            frameborder="0"
+                                            allowfullscreen></iframe>
+                                @endif
+                                <img
+                                    src="{{ asset('assets/images/icons/vcard/video_play.svg') }}"
+                                    alt=""
+                                    class="video-play-overlay"
+                                    data-url="{{ $url }}"
+                                />
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+            </section>
+
             <section
                 id="vcard-services-section" {!! Utility::hideSection(isset($services['is_enabled']) && $services['is_enabled']) !!}>
                 <div class="section-title">Services</div>
@@ -170,46 +201,6 @@
                 </div>
             </section>
 
-            <section
-                id="vcard-gallery-section" {!! Utility::hideSection(isset($gallery['is_enabled']) && $gallery['is_enabled']) !!}>
-                <div class="section-title">Gallery</div>
-                <div class="mb-4 pb-2"></div>
-                <div class="gallery-slider invisible">
-                    @foreach ($gallery_contents as $gallery_content)
-                        @if(in_array($gallery_content->type, ['image', 'custom_image_link']))
-                            @php $url = $gallery_content->type === 'image' ? $gallery_path . '/' . $gallery_content->value : $gallery_content->value; @endphp
-                            <div class="gallery-slide-wrapper">
-                                <img src="{{ $url }}" class="gallery-slide-image" alt="Gallery" data-full="{{ $url }}">
-                            </div>
-                        @endif
-                    @endforeach
-                </div>
-            </section>
-
-            <section
-                id="vcard-featured-videos-section" {!! Utility::hideSection(isset($gallery['is_video_enabled']) && $gallery['is_video_enabled']) !!}>
-                <div class="section-title">Featured Video</div>
-                <div class="mb-4 pb-2"></div>
-                <div class="video-slider invisible">
-                    @foreach ($gallery_contents as $gallery_content)
-                        @if(in_array($gallery_content->type, ['video', 'custom_video_link']))
-                            @php
-                                $url = $gallery_content->type === 'video'
-                                    ? $gallery_path . '/' . $gallery_content->value
-                                    : $gallery_content->value;
-                            @endphp
-
-                            <div class="video-slide-wrapper position-relative">
-                                <video class="video-slide-thumb" data-full="{{ $url }}" muted playsinline
-                                       preload="metadata">
-                                    <source src="{{ $url }}" type="video/mp4">
-                                </video>
-                                {!! svg('vcard/video_play.svg', ['class' => 'video-play-overlay']) !!}
-                            </div>
-                        @endif
-                    @endforeach
-                </div>
-            </section>
             <section id="vcard-google-review-section"
                      class="pb-0 px-5 border-0" {!! Utility::hideSection($business['google_review_enabled']) !!}>
                 <div class="d-flex justify-content-center gap-2">
@@ -234,18 +225,18 @@
             <a class="mt-4 mt-xl-2 mb-4" href="{{ url('/') }}">
                 {!! svg('logo.svg', ['class' => 'fill-text-color mx-auto d-block', 'id' => 'vcard-logo']) !!}
             </a>
+            <div class="mt-4 d-flex justify-content-center gap-3 align-items-center site-links">
+                <a href="{{ route('login') }}" class="text-primary">Login</a>
+                <a href="{{ route('login') }}" class="text-primary">Signup</a>
+                <a href="{{ route('about.terms') }}" class="text-primary">Terms of Use</a>
+                <a href="{{ route('about.privacy') }}" class="text-primary">Privacy Policy</a>
+            </div>
         </section>
     </div>
 
     <div class="modal fade vcard-modal" id="imageViewerModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 rounded-3">
-
-                <!-- Modal Header with Close Button -->
-                <div class="modal-header border-0">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
                 <!-- Modal Body with Image -->
                 <div class="modal-body p-0">
                     <img src="#" alt="Preview" class="img-fluid w-100 rounded-bottom" id="imageViewerModalImg">
@@ -256,15 +247,10 @@
     </div>
     <div class="modal fade vcard-modal" id="videoViewerModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content border-0 rounded">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title text-white"></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-0">
-                    <video id="modalVideoPlayer" class="w-100 rounded-bottom" controls autoplay>
-                        <source id="modalVideoSource" src="" type="video/mp4">
-                    </video>
+            <div class="modal-content border-0 rounded-0">
+                <div class="modal-body p-0 overflow-hidden">
+                    <video id="modalVideoPlayer" controls autoplay></video>
+                    <iframe id="modalIframePlayer" frameborder="0" allowfullscreen></iframe>
                 </div>
             </div>
         </div>

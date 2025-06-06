@@ -62,6 +62,7 @@ use App\Http\Controllers\LoginSecurityController;
 use \App\Http\Controllers\BusinessAnalyticsController;
 use \App\Http\Controllers\SupportController;
 use App\Http\Controllers\NewSettingController;
+use App\Http\Controllers\AboutController;
 
 /*
 |--------------------------------------------------------------------------
@@ -205,6 +206,7 @@ Route::group(['middleware' => ['verified']], function () {
 
         Route::get('/analytics', [BusinessAnalyticsController::class, 'index'])
             ->name('business.analytics.index');
+        Route::get('/analytics/export', [BusinessAnalyticsController::class, 'export']);
         Route::get('/support', [SupportController::class, 'index'])->name('support.index');
         Route::post('/support/send', [SupportController::class, 'send'])->name('support.send');
 
@@ -385,8 +387,11 @@ Route::group(['middleware' => ['verified']], function () {
 
     /*====================================Contacts====================================================*/
     Route::get('/contacts/show', [ContactsController::class, 'index'])->middleware('XSS', 'auth')->name('contacts.index');
+    Route::get('/contacts/export', [ContactsController::class, 'export'])->name('contacts.export');
     Route::get('/contacts/{id}/show', [ContactsController::class, 'show'])->name('contacts.show');
-    Route::delete('/contacts/delete/{id}', [ContactsController::class, 'destroy'])->middleware('XSS', 'auth')->name('contacts.destroy');
+    Route::delete('/contacts/{id}', [ContactsController::class, 'destroy'])->name('contacts.destroy');
+    Route::post('/contacts/bulk-delete', [ContactsController::class, 'bulkDelete'])->name('contacts.bulkDelete');
+
     Route::get('/contacts', [ContactsController::class, 'index'])->middleware('XSS', 'auth')->name('business.contacts.show');
     Route::get('/contacts/edit/{id}', [ContactsController::class, 'edit'])->middleware('XSS', 'auth')->name('contacts.edit');
     Route::post('/contacts/update/{id}', [ContactsController::class, 'update'])->middleware('XSS', 'auth')->name('Contacts.update');
@@ -402,6 +407,10 @@ Route::group(['middleware' => ['verified']], function () {
     Route::get('businessqr/download/', [BusinessController::class, 'downloadqr'])->name('download.qr');
 
     Route::post('business/destroy/', [BusinessController::class, 'destroyGallery'])->name('destory.gallery');
+
+    Route::get('/gallery/{business_id}', [BusinessController::class, 'getGallery'])->name('gallery.fetch');
+    Route::post('/gallery/store', [BusinessController::class, 'storeGalleryItem'])->name('gallery.store');
+
     Route::post('business/delete-banner/', [BusinessController::class, 'deleteBanner'])->name('business.delete-banner');
 
     Route::post('business/pwa/{id}', [BusinessController::class, 'savePWA'])->name('business.pwa-setting');
@@ -504,3 +513,6 @@ Route::any('card-pay-with-paypal/{id}', [PaypalController::class, 'cardPayWithPa
 Route::get('get-payment-status/{id}', [PaypalController::class, 'cardGetPaymentStatus'])->name('card.get.payment.status');
 
 Route::post('/analytics/track', [BusinessAnalyticsController::class, 'track'])->name('analytics.track');
+
+Route::get('/about/privacy', [AboutController::class, 'privacy'])->name('about.privacy');
+Route::get('/about/terms', [AboutController::class, 'terms'])->name('about.terms');

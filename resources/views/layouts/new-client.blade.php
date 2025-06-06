@@ -12,8 +12,8 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 @include('partials.new-client.header')
 
-<body class="position-relative display-none">
-<div id="bodyOverlay" class="position-absolute top-0 start-0 w-100 h-100 display-none"></div>
+<body class="position-relative display-none" data-view-id="{{ Str::uuid() }}">
+<div id="bodyOverlay" class="position-fixed top-0 start-0 w-100 h-100 display-none"></div>
 <input type="hidden" id="path_admin" value="{{ url('/') }}">
 <div class="loader-bg">
     <div class="loader-track">
@@ -25,7 +25,7 @@
 @include('partials.new-client.sidemenu')
 
 <!-- Main Content -->
-<div id="mainContent" class="main-content position-relative">
+<div id="mainContent" class="main-content position-relative {{ request()->routeIs('business.edit') ? 'pb-0' : ''}}">
     {!! svg('/user_interface/open_sidebar.svg', ['class' => 'position-absolute z-3 top-0 ms-5 start-0 toggle-sidebar-icon', 'id' => 'openSidebar']) !!}
     @yield('title')
     @yield('content')

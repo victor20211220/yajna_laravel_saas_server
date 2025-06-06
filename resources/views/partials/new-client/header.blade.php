@@ -21,6 +21,7 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
     @stack('custom-styles')
     <link rel="stylesheet" href="{{ asset('assets/css/new-client.css?v='.time()) }}">
+    <link rel="icon" href="{{ $logo."/". $company_favicon }}" type="image" sizes="16x16">
 </head>
 
 

@@ -8,17 +8,22 @@
 <div class="modal {{ $is_on_form_preview ? "position-sticky": "fade vcard-modal"}}" id="{{ $id }}" tabindex="-1"
      aria-labelledby="shareContactModalLabel"
      aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content rounded-4">
             <div class="modal-header border-0">
-                <h5 class="modal-title fw-bold mx-auto" id="shareContactModalLabel">Share Contact</h5>
-                <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"
+                <button type="button" class="btn-close position-absolute end-0 me-3 mt-3" data-bs-dismiss="modal"
                         aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <div class="text-center">
+                    <img src="{{ $business->logo ? $logo . '/' . $business->logo : Utility::imagePlaceholderUrl() }}"
+                         alt="profile-picture" class="rounded-circle border border-color-custom border-0 mb-4"
+                         id="business_logo_preview_1">
+                </div>
+                <p class="fw-bold text-center mb-0">Share your contact with <span id="{{ $business->id . '_title' }}_preview_1">{{ $business->title }}</span></p>
                 @if ($business->shareContactField)
                     <form method="POST"
-                          action="{{ route('contacts.store') }}" {!! $is_on_form_preview ? "onsubmit=\"return false;\"": ""  !!}>
+                          action="{{ route('contacts.store') }}" {!! $is_on_form_preview ? "onsubmit=\"return false;\"": ""  !!} class="p-3">
                         @csrf
                         <div class="d-grid gap-3 mb-4">
                             @php
@@ -26,11 +31,12 @@
                             @endphp
                             @if ($is_name_enabled || $is_on_form_preview)
                                 <input type="text" name="name"
-                                       class="form-control bg-light border-0 rounded-3 py-3 text-center"
-                                       placeholder="Name" {!! Utility::hideEmptyCardElement([$is_on_form_preview, !$is_name_enabled], "and") !!}
-                                @if($business->shareContactField->is_name_required)
-                                    required
-                                @endif>
+                                       class="form-control bg-light border-0 rounded-3 py-2 text-center"
+                                       placeholder="Name"
+                                       {!! Utility::hideEmptyCardElement([$is_on_form_preview, !$is_name_enabled], "and") !!}
+                                       @if($business->shareContactField->is_name_required)
+                                           required
+                                    @endif>
                             @endif
 
                             @php
@@ -38,8 +44,9 @@
                             @endphp
                             @if ($is_phone_enabled || $is_on_form_preview)
                                 <input type="tel" pattern="[0-9]{10,15}" name="phone"
-                                       class="form-control bg-light border-0 rounded-3 py-3 text-center"
-                                       placeholder="Phone number" {!! Utility::hideEmptyCardElement([$is_on_form_preview, !$is_phone_enabled], "and") !!}
+                                       class="form-control bg-light border-0 rounded-3 py-2 text-center"
+                                       placeholder="Phone number"
+                                       {!! Utility::hideEmptyCardElement([$is_on_form_preview, !$is_phone_enabled], "and") !!}
                                        @if($business->shareContactField->is_phone_required) required @endif>
                             @endif
 
@@ -48,8 +55,9 @@
                             @endphp
                             @if ($is_email_enabled || $is_on_form_preview)
                                 <input type="email" name="email"
-                                       class="form-control bg-light border-0 rounded-3 py-3 text-center"
-                                       placeholder="Email" {!! Utility::hideEmptyCardElement([$is_on_form_preview, !$is_email_enabled], "and") !!}
+                                       class="form-control bg-light border-0 rounded-3 py-2 text-center"
+                                       placeholder="Email"
+                                       {!! Utility::hideEmptyCardElement([$is_on_form_preview, !$is_email_enabled], "and") !!}
                                        @if($business->shareContactField->is_email_required) required @endif>
                             @endif
 
@@ -58,8 +66,9 @@
                             @endphp
                             @if ($is_company_enabled || $is_on_form_preview)
                                 <input type="text" name="company"
-                                       class="form-control bg-light border-0 rounded-3 py-3 text-center"
-                                       placeholder="Company" {!! Utility::hideEmptyCardElement([$is_on_form_preview, !$is_company_enabled], "and") !!}
+                                       class="form-control bg-light border-0 rounded-3 py-2 text-center"
+                                       placeholder="Company"
+                                       {!! Utility::hideEmptyCardElement([$is_on_form_preview, !$is_company_enabled], "and") !!}
                                        @if($business->shareContactField->is_company_required) required @endif>
                             @endif
 
@@ -68,8 +77,9 @@
                             @endphp
                             @if ($is_job_title_enabled || $is_on_form_preview)
                                 <input type="text" name="job_title"
-                                       class="form-control bg-light border-0 rounded-3 py-3 text-center"
-                                       placeholder="Job Title" {!! Utility::hideEmptyCardElement([$is_on_form_preview, !$is_job_title_enabled], "and") !!}
+                                       class="form-control bg-light border-0 rounded-3 py-2 text-center"
+                                       placeholder="Job Title"
+                                       {!! Utility::hideEmptyCardElement([$is_on_form_preview, !$is_job_title_enabled], "and") !!}
                                        @if($business->shareContactField->is_job_title_required) required @endif>
                             @endif
 
@@ -78,8 +88,9 @@
                             @endphp
                             @if ($is_notes_enabled || $is_on_form_preview)
                                 <textarea name="message"
-                                          class="form-control bg-light border-0 rounded-3 py-3 text-center"
-                                          rows="3" placeholder="Notes" {!! Utility::hideEmptyCardElement([$is_on_form_preview, !$is_notes_enabled], "and") !!}
+                                          class="form-control bg-light border-0 rounded-3 py-2 text-center"
+                                          rows="3" placeholder="Notes"
+                                          {!! Utility::hideEmptyCardElement([$is_on_form_preview, !$is_notes_enabled], "and") !!}
                                           @if($business->shareContactField->is_notes_required) required @endif></textarea>
                             @endif
 

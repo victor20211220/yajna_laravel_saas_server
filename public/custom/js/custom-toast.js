@@ -4,10 +4,10 @@ function toastrs(title, message, type) {
     var cls = '';
     if (type === "success") {
         icon = 'fas fa-check-circle';
-        cls = 'primary';
+        cls = '';
     } else {
         icon = 'fas fa-times-circle';
-        cls = 'danger';
+        cls = '';
     }
 
     // console.log(type,cls);
@@ -22,7 +22,7 @@ function toastrs(title, message, type) {
         offset: {x: 15, y: 15},
         spacing: 10,
         z_index: 1080,
-        delay: 2500,
+        delay: 500,
         timer: 2000,
         url_target: "_blank",
         mouse_over: !1,

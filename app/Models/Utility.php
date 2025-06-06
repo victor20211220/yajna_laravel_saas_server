@@ -104,15 +104,19 @@ class Utility extends Model
     public static function getFields()
     {
         $icons = [
-            'Behance',
-            'Facebook',
-            'WhatsApp',
-            'Instagram',
-            'LinkedIn',
-            'Twitter',
-            'YouTube',
-            'Pinterest',
-            'TikTok',
+            'Phone' => true,
+            'WhatsApp' => true,
+            'Email' => true,
+            'Address' => true,
+            'Website' => true,
+            'Facebook' => false,
+            'Behance' => false,
+            'Instagram' => false,
+            'LinkedIn' => false,
+            'Twitter' => false,
+            'YouTube' => false,
+            'Pinterest' => false,
+            'TikTok' => false,
         ];
 
         return $icons;
@@ -3465,9 +3469,27 @@ class Utility extends Model
         return (isset($toggle) && $toggle) ? "" : "style=\"display:none;\"";
     }
 
+    public static function initialSocials()
+    {
+        $platforms = ['WhatsApp', 'Facebook'];
+        $socials = [];
+
+        foreach ($platforms as $i => $platform) {
+            $p_id = $i + 1;
+            $socials[$p_id] = [$platform => null, 'id' => (string)$p_id];
+        };
+
+        return json_encode($socials);
+    }
+
     public static function isInitialSocials($socials)
     {
-        return (json_encode($socials) === '{"1":{"WhatsApp":null,"id":"1"},"2":{"Facebook":null,"id":"2"},"3":{"Instagram":null,"id":"3"},"4":{"TikTok":null,"id":"4"},"5":{"YouTube":null,"id":"5"},"6":{"LinkedIn":null,"id":"6"}}');
+        return (json_encode($socials) === self::initialSocials());
+    }
+
+    public static function isDirectVideoFile($url)
+    {
+        return preg_match('/\.(mp4|webm|ogg)$/i', $url);
     }
 
 }

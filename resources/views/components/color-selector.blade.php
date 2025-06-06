@@ -4,11 +4,12 @@
     'tooltip_title' => '',           // label to display above
     'value' => '#ffffff', // initial value
     'colors' => [],    // array of hex colors like ['#000000', '#FF0000']
+    'class' => '',
 ])
 <div class="form-group">
     <div class="color-group mb-4" data-input-id="{{ $id }}">
         <div class="position-relative mb-3">
-            <label class="form-label mb-0">{{ __($label) }}</label>
+            <label class="mb-0 {{ $class }}">{{ __($label) }}</label>
             @if($tooltip_title)
                 @include('components/more-info', ['label' => $tooltip_title])
             @endif
@@ -29,9 +30,9 @@
                     name="{{ $id }}"
                     id="{{ $id }}"
                     value="{{ $value }}"
-                    class="form-control form-control-color p-0 border-0 position-absolute top-0 start-0 w-100 h-100 opacity-0 cursor-pointer"
-                    aria-label="{{ $label }}"
-                >
+                    class="color-input position-absolute opacity-0 pointer-events-none"
+                />
+                <div class="color-picker-trigger" data-input-id="{{ $id }}"></div>
             </div>
         </div>
     </div>

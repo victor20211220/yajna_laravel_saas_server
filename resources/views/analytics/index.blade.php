@@ -53,7 +53,17 @@
         <div class="card stats-card mb-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div class="fw-semibold">Page Views</div>
-                <button id="exportDailyBtn" class="btn"><i class="bi bi-download"></i></button>
+                <div class="dropdown">
+                    <a href="#" class="text-muted btn" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-download"></i>
+                    </a>
+                    <ul class="dropdown-menu shadow rounded border-0 p-2">
+                        <li><a class="dropdown-item export-button" href="javascript:void(0)" data-source="daily-views-clicks" data-format="csv">Export
+                                CSV</a></li>
+                        <li><a class="dropdown-item export-button" href="javascript:void(0)" data-source="daily-views-clicks" data-format="xlsx">Export
+                                XLSX</a></li>
+                    </ul>
+                </div>
             </div>
             <canvas id="viewsChart" height="100"></canvas>
         </div>
@@ -63,7 +73,17 @@
                 <div class="card h-100">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div class="fw-semibold">Type of views</div>
-                        <button id="exportDevicesBtn" class="btn"><i class="bi bi-download"></i></button>
+                        <div class="dropdown">
+                            <a href="#" class="text-muted btn" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            <ul class="dropdown-menu shadow rounded border-0 p-2">
+                                <li><a class="dropdown-item export-button" href="javascript:void(0)" data-source="views-by-device" data-format="csv">Export
+                                        CSV</a></li>
+                                <li><a class="dropdown-item export-button" href="javascript:void(0)" data-source="views-by-device" data-format="xlsx">Export
+                                        XLSX</a></li>
+                            </ul>
+                        </div>
                     </div>
                     <canvas id="deviceChart" height="200"></canvas>
                 </div>
@@ -72,7 +92,17 @@
                 <div class="card h-100">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div class="fw-semibold">Link Taps</div>
-                        <button id="exportCategoriesBtn" class="btn"><i class="bi bi-download"></i></button>
+                        <div class="dropdown">
+                            <a href="#" class="text-muted btn" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            <ul class="dropdown-menu shadow rounded border-0 p-2">
+                                <li><a class="dropdown-item export-button" href="javascript:void(0)" data-source="clicks-by-category" data-format="csv">Export
+                                        CSV</a></li>
+                                <li><a class="dropdown-item export-button" href="javascript:void(0)" data-source="clicks-by-category" data-format="xlsx">Export
+                                        XLSX</a></li>
+                            </ul>
+                        </div>
                     </div>
                     <canvas id="categoryChart" height="200"></canvas>
                 </div>
@@ -83,7 +113,6 @@
 
 @push('custom-scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <script>
         const isProClient = {{ $isProClient ? "true": "false"}};
         let hasRedirected = false; // track if we’ve already handled the first load
@@ -267,61 +296,19 @@
             }
         });
 
-        function exportCSV(filename, headers, rows) {
-            const escapeCSV = val => {
-                if (typeof val === 'string' && (val.includes(',') || val.includes('"'))) {
-                    return `"${val.replace(/"/g, '""')}"`;
-                }
-                return val;
-            };
-
-            const csv = [
-                headers.map(escapeCSV).join(','),
-                ...rows.map(row => row.map(escapeCSV).join(','))
-            ].join('\n');
-
-            const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.setAttribute('download', filename);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-
         // Export daily views & clicks
-        document.getElementById('exportDailyBtn').addEventListener('click', () => {
-            const headers = ['Date', 'Views'];
-            const labels = Object.keys(viewCounts);
-            const rows = labels.map(label => [
-                label,
-                viewCounts[label],
-            ]);
-            exportCSV('daily-views-clicks.csv', headers, rows);
-        });
+        $('.export-button').click(function(){
+            const source = $(this).data('source');
+            const format = $(this).data('format');
 
-        // Export device views
-        document.getElementById('exportDevicesBtn').addEventListener('click', () => {
-            const headers = ['Device', 'Views'];
-            const rows = Object.entries(deviceCounts);
-            exportCSV('views-by-device.csv', headers, rows);
-        });
-
-        // Export category clicks
-        document.getElementById('exportCategoriesBtn').addEventListener('click', () => {
-            const headers = ['Category', 'Clicks'];
-            const rows = Object.entries({
-                'Social': categoryCounts['social'],
-                'Save Contact': categoryCounts['save_contact'],
-                'Share Contact': categoryCounts['share_contact'],
-                'Contact Info': categoryCounts['contact_info'],
-                'Services': categoryCounts['services'],
-                'Gallery': categoryCounts['gallery'],
-                'Video': categoryCounts['video'],
-                'Google Review': categoryCounts['google_review']
+            const params = new URLSearchParams({
+                data: source,
+                format: format,
+                start_date: start.format('YYYY-MM-DD'),
+                end_date: end.format('YYYY-MM-DD')
             });
-            exportCSV('clicks-by-category.csv', headers, rows);
+
+            window.location.href = `/analytics/export?${params.toString()}`;
         });
     </script>
 @endpush

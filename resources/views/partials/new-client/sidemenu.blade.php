@@ -56,7 +56,7 @@
             @endphp
 
             <div
-                class="d-flex align-items-center gap-2 rounded-2 py-2 px-3 mb-3 {{ $isActive ? 'bg-primary text-white' : '' }}">
+                class="d-flex align-items-center gap-2 rounded-2 py-2 px-3 mb-3 menu-link {{ $isActive ? 'bg-primary text-white' : '' }}">
                 <div class="d-flex align-items-center justify-content-center" style="width: 20px;">
                     {!! svg($item['icon'], [
                         'class' => ($isActive ? 'fill-white' : 'fill-primary') . ' w-100 h-auto'
@@ -103,9 +103,9 @@
                         <i class="bi bi-gear"></i>
                     </a>
                 </li>
-                <li><a class="dropdown-item d-flex justify-content-between" href="#"><span>Privacy</span><i
+                <li><a class="dropdown-item d-flex justify-content-between" href="{{ route('about.privacy') }}"><span>Privacy</span><i
                             class="bi bi-lock"></i></a></li>
-                <li><a class="dropdown-item d-flex justify-content-between" href="#"><span>Terms</span><i
+                <li><a class="dropdown-item d-flex justify-content-between" href="{{ route('about.terms') }}"><span>Terms</span><i
                             class="bi bi-file-text"></i></a></li>
                 <li>
                     <hr class="dropdown-divider">
@@ -119,7 +119,11 @@
             <button class="btn btn-transparent w-100 mb-4 border-0"
                     onclick="event.preventDefault(); document.getElementById('frm-logout').submit();">Sign Out
             </button>
-            <div class="text-12 text-center text-muted">&copy; {{ date('Y') }} Tapeetap. All Rights Reserved</div>
+            <div class="text-center">
+                <a href="{{ route('about.privacy') }}" class="text-decoration-none me-2 app-text-secondary">Terms of Use</a>
+                <span class="mx-1 app-text-secondary">|</span>
+                <a href="{{ route('about.terms') }}" class="text-decoration-none ms-2 app-text-secondary">Privacy Policy</a>
+            </div>
         </div>
     </div>
     <div class="py-5 my-4 d-block d-md-none"></div>

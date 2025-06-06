@@ -410,7 +410,7 @@ class BusinessController extends Controller
 
         $count = Business::where('id', $business->id)->where('created_by', \Auth::user()->creatorId())->count();
         if ($count === 0) {
-            return redirect()->route('business.index')->with('error', __('This card number is not yours.'));
+            return redirect()->back()->with('error', __('This card number is not yours.'));
         }
 
         $count = Business::where('slug', $request->slug)->count();
@@ -419,11 +419,12 @@ class BusinessController extends Controller
                 $business->slug = $request->slug;
             } elseif ($count == 1) {
                 if ($business->slug != $request->slug) {
-                    return redirect()->route('business.index')->with('error', __('Slug is already used.........!'));
+                    return redirect()->back()->with('error', __('Slug is already used.........!'));
                 }
             }
         }
 
+        /*
         if (is_null($business->banner) && is_null($business->logo)) {
             $validator = \Validator::make(
                 $request->all(),
@@ -437,6 +438,7 @@ class BusinessController extends Controller
                 return redirect()->back()->with('error', $messages->first());
             }
         }
+        */
 
         if ($request->hasFile('logo')) {
             $logoname = $business['logo'] ? $business['logo'] : '';
@@ -465,8 +467,19 @@ class BusinessController extends Controller
                 if ($path['flag'] == 1) {
                     $url = $path['url'];
                 } else {
-                    return redirect()->route('business.index', \Auth::user()->id)->with('error', __($path['msg']));
+                    return redirect()->back()->with('error', __($path['msg']));
                 }
+            }
+        }
+
+        if ($request->is_business_logo_deleted === "1") {
+            $logo = $business['logo'];
+            if ($logo) {
+                $file = 'card_logo/' . $logo;
+                if (File::exists($file)) {
+                    File::delete($file);
+                }
+                $business->logo = null;
             }
         }
 
@@ -501,8 +514,19 @@ class BusinessController extends Controller
                 if ($path['flag'] == 1) {
                     $url = $path['url'];
                 } else {
-                    return redirect()->route('business.index', \Auth::user()->id)->with('error', __($path['msg']));
+                    return redirect()->back()->with('error', __($path['msg']));
                 }
+            }
+        }
+
+        if ($request->is_banner_deleted === "1") {
+            $banner = $business['banner'];
+            if ($banner) {
+                $file = 'card_banner/' . $banner;
+                if (File::exists($file)) {
+                    File::delete($file);
+                }
+                $business->banner = null;
             }
         }
 
@@ -538,8 +562,19 @@ class BusinessController extends Controller
                 if ($path['flag'] == 1) {
                     $url = $path['url'];
                 } else {
-                    return redirect()->route('business.index', \Auth::user()->id)->with('error', __($path['msg']));
+                    return redirect()->back()->with('error', __($path['msg']));
                 }
+            }
+        }
+
+        if ($request->is_business_company_logo_deleted === "1") {
+            $company_logo = $business['company_logo'];
+            if ($company_logo) {
+                $file = 'card_company_logo/' . $company_logo;
+                if (File::exists($file)) {
+                    File::delete($file);
+                }
+                $business->company_logo = null;
             }
         }
 
@@ -565,17 +600,10 @@ class BusinessController extends Controller
             }
         }
 
-        $business->phone = $request->phone;
-        $business->address = $request->address;
-        $business->email = $request->email;
-        $business->website = $request->website;
-
-
         $business->card_bg_color = $request->card_bg_color;
         $business->button_bg_color = $request->button_bg_color;
         $business->card_text_color = $request->card_text_color;
         $business->button_text_color = $request->button_text_color;
-
 
         $service = service::where('business_id', $business_id)->first();
         $services_payload = $request->services;
@@ -590,6 +618,7 @@ class BusinessController extends Controller
             }
             $service_content = json_encode($service_content);
         }
+
         if (!is_null($service)) {
             $service->content = $service_content;
             $service->is_enabled = $is_service_enabled;
@@ -603,102 +632,6 @@ class BusinessController extends Controller
                 'created_by' => \Auth::user()->creatorId()
             ]);
         }
-
-        //Gallery
-        $fileName = "";
-        $gallery_content = [];
-        $galleryinfo = Gallery::where('business_id', $business_id)->first();
-        if ($galleryinfo && $galleryinfo->content) {
-            $gallery_content = (array)json_decode($galleryinfo->content);
-        }
-        if ($request->hasFile('upload_video')) {
-            $image_size_video = $request->file('upload_video')->getSize();
-            $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size_video);
-            if ($result == 1) {
-                $settings = Utility::getStorageSetting();
-                $video = $request->file('upload_video');
-                $ext = $video->getClientOriginalExtension();
-                $fileName = 'video_' . uniqid() . '.' . $ext;
-                if ($settings['storage_setting'] == 'local') {
-                    $dir = 'gallery/';
-                } else {
-                    $dir = 'gallery/';
-                }
-                $path = Utility::upload_file($request, 'upload_video', $fileName, $dir);
-
-                if ($path['flag'] == 1) {
-                    $url = $path['url'];
-                } else {
-                    return redirect()->route('business.index', \Auth::user()->id)->with('error', __($path['msg']));
-                }
-            }
-        }
-
-        if ($request->hasFile('upload_image')) {
-            $image_size_img = $request->file('upload_image')->getSize();
-            $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size_img);
-            if ($result == 1) {
-                $settings = Utility::getStorageSetting();
-                $images = $request->file('upload_image');
-                $ext = $images->getClientOriginalExtension();
-                $fileName = 'image_' . uniqid() . '.' . $ext;
-                if ($settings['storage_setting'] == 'local') {
-                    $dir = 'gallery/';
-                } else {
-                    $dir = 'gallery/';
-                }
-                $path = Utility::upload_file($request, 'upload_image', $fileName, $dir, []);
-
-                if ($path['flag'] == 1) {
-                    $url = $path['url'];
-                } else {
-                    return redirect()->route('business.index', \Auth::user()->id)->with('error', __($path['msg']));
-                }
-            }
-        }
-
-        if ($request->galleryoption === "custom_image_link" && $request->custom_image_link) {
-            $fileName = $request->custom_image_link;
-        }
-        if ($request->galleryoption === "custom_video_link" && $request->custom_video_link) {
-            $fileName = $request->custom_video_link;
-        }
-
-        $gallery_contents = [];
-        if ($fileName) {
-            $gallery_content[] = (object)[
-                'id' => count($gallery_content),
-                'type' => $request->galleryoption,
-                'value' => $fileName,
-            ];
-            foreach ($gallery_content as $key => $value) {
-                $gallery_contents[] = [
-                    'id' => $key,
-                    'type' => $value->type,
-                    'value' => $value->value,
-                ];
-            }
-        }
-        $is_gallery_enabled = $request->is_gallery_enabled === "on";
-        $is_video_enabled = $request->is_video_enabled === "on";
-        if ($galleryinfo) {
-            $galleryinfo->is_enabled = $is_gallery_enabled;
-            $galleryinfo->is_video_enabled = $is_video_enabled;
-            if ($fileName) {
-                $galleryinfo->content = json_encode($gallery_contents);
-            }
-            $galleryinfo->created_by = \Auth::user()->creatorId();
-            $galleryinfo->save();
-        } else {
-            Gallery::create([
-                'business_id' => $business_id,
-                'content' => $fileName ? json_encode($gallery_contents) : null,
-                'is_enabled' => $is_gallery_enabled,
-                'is_video_enabled' => $is_video_enabled,
-                'created_by' => \Auth::user()->creatorId()
-            ]);
-        }
-
 
         $business->google_review_link = $request->google_review_link;
         $business->google_review_enabled = $request->google_review_enabled === "on";
@@ -752,6 +685,18 @@ class BusinessController extends Controller
                 $business_qr->image = $fileName;
             }
         }
+
+        if ($request->is_qrcode_image_deleted === "1") {
+            $old_qrcode_image = ($business_qr && $business_qr->image) ? $business_qr->image : null;
+            if ($old_qrcode_image) {
+                $file = 'qrcode/' . $old_qrcode_image;
+                if (File::exists($file)) {
+                    File::delete($file);
+                }
+                $business_qr->image = null;
+            }
+        }
+
         $business_qr->business_id = $business_id;
         $business_qr->background_color = "#FFFFFF";
         $business_qr->radius = 26;
@@ -1108,14 +1053,6 @@ class BusinessController extends Controller
             $vcard->addPhoto($localImagePath);
         }
 
-        if ($business->phone) $vcard->addPhoneNumber($business->phone, 'TYPE=Phone NO');
-
-        if ($business->email) $vcard->addEmail($business->email, 'TYPE=EMAIL');
-
-        if ($business->website) $vcard->addURL($business->website);
-
-        if ($business->address) $vcard->addAddress($business->address);
-
         $sociallinks = social::socialData($business->id);
         $social_content = [];
         if (!empty($sociallinks->content)) {
@@ -1127,14 +1064,34 @@ class BusinessController extends Controller
                     if ($key === "id" || empty($social_val)) continue;
                     $platform = strtolower($key);
                     $link = $social_val;
-                    if ($platform === 'whatsapp') {
-                        // Remove non-digits from the number
-                        $digitsOnly = preg_replace('/\D/', '', $social_val);
-                        $link = 'https://wa.me/' . $digitsOnly;
-                    } elseif (!preg_match('/^https?:\/\//i', $link)) {
-                        $link = url($link);
+                    if (in_array($platform, ["phone", "email", "website", "address"])) {
+                        switch ($platform) {
+                            case "phone":
+                                $vcard->addPhoneNumber($social_val, 'TYPE=Phone NO');
+                                break;
+
+                            case "email":
+                                $vcard->addEmail($social_val, 'TYPE=EMAIL');
+                                break;
+
+                            case "website":
+                                $vcard->addURL($social_val);
+                                break;
+
+                            case "address":
+                                $vcard->addAddress($social_val);
+                                break;
+                        }
+                    } else {
+                        if ($platform === 'whatsapp') {
+                            // Remove non-digits from the number
+                            $digitsOnly = preg_replace('/\D/', '', $social_val);
+                            $link = 'https://wa.me/' . $digitsOnly;
+                        } elseif (!preg_match('/^https?:\/\//i', $link)) {
+                            $link = url($link);
+                        }
+                        $vcard->addURL($link, 'TYPE=' . $key);
                     }
-                    $vcard->addURL($link, 'TYPE=' . $key);
                 }
             }
         }
@@ -1789,6 +1746,50 @@ class BusinessController extends Controller
         }
     }
 
+    public function getGallery($business_id)
+    {
+        $gallery = Gallery::where('business_id', $business_id)->first();
+        $items = $gallery && $gallery->content ? json_decode($gallery->content) : [];
+        return response()->json($items);
+    }
+
+    public function storeGalleryItem(Request $request)
+    {
+        $request->validate([
+            'business_id' => 'required|exists:galleries,business_id',
+            'galleryoption' => 'required',
+            'file' => 'nullable|file|mimes:jpg,jpeg,png,mp4,webm',
+            'link' => 'nullable|url'
+        ]);
+
+        $gallery = Gallery::firstOrCreate(['business_id' => $request->business_id]);
+
+        $items = $gallery->content ? json_decode($gallery->content, true) : [];
+
+        $value = null;
+        if ($request->hasFile('file')) {
+            $ext = $request->file('file')->getClientOriginalExtension();
+            $fileName = $request->galleryoption . '_' . uniqid() . '.' . $ext;
+            $path = Utility::upload_file($request, 'file', $fileName, 'gallery/');
+            if (!$path['flag']) return response()->json(['error' => $path['msg']], 500);
+            $value = $fileName;
+        } elseif ($request->link) {
+            $value = $request->link;
+        }
+
+        $items[] = [
+            'id' => uniqid(),
+            'type' => $request->galleryoption,
+            'value' => $value
+        ];
+
+        $gallery->content = json_encode($items);
+        $gallery->save();
+
+        return response()->json(['success' => true]);
+    }
+
+
     public function destroyGallery(Request $request)
     {
         $id = $request->business_id;
@@ -1801,7 +1802,7 @@ class BusinessController extends Controller
         $gallery_detailss = [];
         foreach ($gallery_details as $key => $data) {
             // if we found it,
-            if ($data->id === (int)$data_id) {
+            if ((string)$data->id === $data_id) {
                 if (in_array($data->type, ['image', 'video'])) {
                     Utility::changeStorageLimit(\Auth::user()->creatorId(), 'gallery/' . $data->value);
                 }
@@ -1812,9 +1813,7 @@ class BusinessController extends Controller
         $gallery_content = json_encode($gallery_detailss);
         $gallery->content = $gallery_content;
         $gallery->save();
-        session()->flash('tab', 3);
-        return true;
-
+        return response()->json(['success' => true]);
     }
 
     public function deleteBanner(Request $request)

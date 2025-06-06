@@ -25,12 +25,8 @@
     <meta name="keywords" content="Dashboard Template" />
     <meta name="author" content="Workdo" />
 
-    <!-- Favicon icon -->
-    @if(Auth::user()->type == 'super admin')
-        <link rel="icon" href="{{$logo.'/favicon.png'}}" type="image" sizes="16x16">
-    @else
-        <link rel="icon" href="{{ $logo . (isset($company_favicon) && !empty($company_favicon) ? $company_favicon : 'favicon.png'. '?' . time()) }}" type="image" sizes="16x16">
-    @endif
+
+    <link rel="icon" href="{{ $logo."/". $company_favicon }}" type="image" sizes="16x16">
 
     <!-- font css -->
 

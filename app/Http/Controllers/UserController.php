@@ -63,16 +63,22 @@ class UserController extends Controller
             $company_default_language = \DB::table('settings')->select('value')->where('name', 'company_default_language')->first();
             $user = \Auth::user();
 
-
             if ($user->type == 'super admin') {
                 $validator = \Validator::make(
                     $request->all(),
                     [
                         'name' => 'required|max:120',
                         'email' => 'required|email|unique:users',
-                        'business_title' => 'required',
+                        'slug' => 'required',
                     ]
                 );
+
+                $validator->after(function ($validator) use ($request) {
+                    if (\DB::table('businesses')->where('slug', $request->slug)->exists()) {
+                        $validator->errors()->add('slug', 'The business url is already used.........!');
+                    }
+                });
+
                 if ($validator->fails()) {
                     $messages = $validator->getMessageBag();
                     return redirect()->back()->with('error', $messages->first());
@@ -156,25 +162,15 @@ class UserController extends Controller
                 }
 
             }
-            $userArr = [
-                'user_name' => $user->name,
-                'user_email' => $user->email,
-                'user_password' => $request->password,
-                'user_type' => $user->type,
-                'created_by' => $user->created_by,
-            ];
-
 
             //create business
-            $slug = Utility::createSlug('businesses', $request->business_title);
 
             $card_theme = [];
             $card_theme['theme'] = $request->theme;
             $card_theme['order'] = Utility::getDefaultThemeOrder($request->theme);
 
             $business = Business::create([
-                'title' => $request->business_title,
-                'slug' => $slug,
+                'slug' => $request->slug,
                 'card_theme' => json_encode($card_theme),
                 'theme_color' => !empty($request->theme_color) ? $request->theme_color : 'color1-' . $request->theme,
                 'created_by' => $user->id,
@@ -184,17 +180,9 @@ class UserController extends Controller
             $business->theme = $request->theme;
             $business->save();
 
-            $platforms = ['WhatsApp', 'Facebook', 'Instagram', 'TikTok', 'YouTube', 'LinkedIn'];
-            $socials = [];
-
-            foreach ($platforms as $i => $platform) {
-                $p_id = $i + 1;
-                $socials[$p_id] = [$platform => null, 'id' => (string)$p_id];
-            };
-
             social::create([
                 'business_id' => $business->id,
-                'content' => json_encode($socials),
+                'content' => Utility::initialSocials(),
                 'created_by' => \Auth::user()->creatorId()
             ]);
 

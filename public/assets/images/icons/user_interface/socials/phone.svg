@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 39.97 39.97">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+      }
+
+      .cls-2 {
+        fill: url(#Degradado_sin_nombre_8);
+      }
+    </style>
+    <linearGradient id="Degradado_sin_nombre_8" data-name="Degradado sin nombre 8" x1=".88" y1=".88" x2="39.09" y2="39.09" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#00fb73"/>
+      <stop offset="1" stop-color="#00b25b"/>
+    </linearGradient>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g>
+      <rect class="cls-2" width="39.97" height="39.97" rx="3" ry="3"/>
+      <path id="Phone_Icon" data-name="Phone Icon" class="cls-1" d="M14.82,10.06c.21-.05.41-.03.62.08.21.1.35.26.43.47l1.87,4.36c.08.18.09.37.04.56-.05.2-.16.37-.31.53l-2.33,1.91c.7,1.51,1.64,2.85,2.82,4.05,1.18,1.19,2.54,2.14,4.06,2.84l1.91-2.33c.16-.16.33-.26.53-.31.19-.05.38-.04.56.04l4.36,1.87c.21.08.36.22.47.43.1.21.13.41.08.62l-.93,4.05c-.03.23-.13.42-.31.55-.18.13-.38.19-.58.19-3.27,0-6.3-.82-9.1-2.45-2.72-1.61-4.89-3.77-6.5-6.5-1.63-2.8-2.45-5.84-2.45-9.1,0-.21.06-.4.19-.58.13-.18.31-.28.55-.31l4.05-.93Z"/>
+    </g>
+  </g>
+</svg>

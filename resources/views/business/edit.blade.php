@@ -12,11 +12,14 @@
     $qr_path = Utility::get_file('qrcode');
     $isProClient = Utility::isProClient($business_id);
     $siteLogo = asset('assets/images/qrcode-logo.png');
+    $imagePlaceholderUrl = Utility::imagePlaceholderUrl();
 
 @endphp
 @extends('layouts.new-client')
 @push('custom-styles')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/css/intlTelInput.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/css/intlTelInput.min.css"/>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/nano.min.css"/> <!-- 'nano' theme -->
 @endpush
 @section('page-title')
     {{ __('Profile') }}
@@ -29,18 +32,17 @@
                     {{ __('Profile') }}
                 </h3>
                 <div class="d-flex align-items-center justify-content-between ms-auto gap-3 mb-0">
-                    <div class="d-none d-xl-block">
+                    <div class="d-none d-md-block">
                         <button type="reset" class="btn reset-form me-3">
                             {{__('Unsaved Changes')}}
                         </button>
-                        <button type="button" class="btn btn-dark" id="submitUpdateBusinessForm">
+                        <button type="button" class="btn btn-primary submit-form">
                             {{__('Save Changes')}}
                         </button>
                     </div>
-                    <button type="button" class="btn btn-primary btn-icon d-xl-none">
+                    <button type="button" class="btn btn-primary btn-icon d-xl-none" id="openPreviewOnTabletMobile">
                         {!! svg('/user_interface/eye.svg', ['class' => 'fill-white']) !!}
-                        <a href="{{ route('get.vcard',[$business->slug]) }}"
-                           target="_blank" class="text-white">
+                        <a href="javascript:void(0)" class="text-white">
                             {{  __('Preview') }}
                         </a>
                     </button>
@@ -69,53 +71,67 @@
 @endsection
 @section('content')
     <div class="d-flex gap-5 position-relative edit-profile-container">
-        <div class="d-flex flex-column w-100 gap-4 gap-md-5">
-            {{ Form::open(['route' => ['business.update', $business->id], 'method' => 'put', 'id' => 'updateBusinessForm', 'enctype' => 'multipart/form-data']) }}
+        <div class="d-flex flex-column w-100">
+            {{ Form::open(['route' => ['business.update', $business->id], 'method' => 'put', 'id' => 'updateBusinessForm', 'enctype' => 'multipart/form-data',  'novalidate' => true]) }}
             <input type="hidden" name="business_id" value="{{ $business->id }}">
             <input type="hidden" id="edit_tab_key" value="{{ $tab }}">
             <div class="card">
-                <div class="card-header bg-white sticky-top z-0 z-1 border-bottom overflow-auto">
-                    <!-- Tab Container: fixed on scroll -->
-                    <ul class="nav nav-pills nav-fill gap-2 flex-nowrap" id="pills-tab" role="tablist">
-                        <li class="nav-item" role="presentation" data-key="1">
-                            <button
-                                class="nav-link tab-btn btn-icon fw-semibold @if($tab === 1) active @endif"
-                                data-bs-toggle="pill" data-bs-target="#details-setting" type="button">
-                                {!! svg('user_interface/content.svg') !!}
-                                {{ __('Content') }}
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation" data-key="2">
-                            <button
-                                class="nav-link tab-btn btn-icon fw-semibold @if($tab === 2) active @endif"
-                                data-bs-toggle="pill" data-bs-target="#theme-setting" type="button">
-                                {!! svg('user_interface/appearance.svg') !!}
-                                {{ __('Appearance') }}
-                            </button>
-                        </li>
-                        @if($isProClient)
-                            <li class="nav-item" role="presentation" data-key="3">
+                <div class="sticky-top z-0 z-1">
+                    <div
+                        class="scroll-left d-none position-absolute top-50 start-0 translate-middle-y z-2 bg-transparent p-1">
+                        <div class="scroll-arrow-bg"></div>
+                        {!! svg('user_interface/scroll-left.svg') !!}
+                    </div>
+
+                    <div class="nav-scroll card-header bg-white border-bottom overflow-auto">
+                        <!-- Tab Container: fixed on scroll -->
+                        <ul class="nav nav-pills nav-fill gap-2 flex-nowrap" id="pills-tab" role="tablist">
+                            <li class="nav-item" role="presentation" data-key="1">
                                 <button
-                                    class="nav-link tab-btn btn-icon fw-semibold @if($tab === 3) active @endif"
-                                    data-bs-toggle="pill" data-bs-target="#sectionsTab" type="button">
-                                    {!! svg('user_interface/sections.svg') !!}
-                                    {{ __('Sections') }}
+                                    class="nav-link tab-btn btn-icon fw-semibold @if($tab === 1) active @endif"
+                                    data-bs-toggle="pill" data-bs-target="#details-setting" type="button">
+                                    {!! svg('user_interface/content.svg') !!}
+                                    {{ __('Content') }}
                                 </button>
                             </li>
-                        @endif
-                        <li class="nav-item" role="presentation" data-key="4">
-                            <button
-                                class="nav-link tab-btn btn-icon fw-semibold @if($tab === 4) active @endif"
-                                data-bs-toggle="pill" data-bs-target="#captureAndShareTab" type="button">
-                                {!! svg('user_interface/capture_and_share.svg') !!}
-                                {{ __('Capture & Share') }}
-                            </button>
-                        </li>
-                    </ul>
+                            <li class="nav-item" role="presentation" data-key="2">
+                                <button
+                                    class="nav-link tab-btn btn-icon fw-semibold @if($tab === 2) active @endif"
+                                    data-bs-toggle="pill" data-bs-target="#theme-setting" type="button">
+                                    {!! svg('user_interface/appearance.svg') !!}
+                                    {{ __('Appearance') }}
+                                </button>
+                            </li>
+                            @if($isProClient)
+                                <li class="nav-item" role="presentation" data-key="3">
+                                    <button
+                                        class="nav-link tab-btn btn-icon fw-semibold @if($tab === 3) active @endif"
+                                        data-bs-toggle="pill" data-bs-target="#sectionsTab" type="button">
+                                        {!! svg('user_interface/sections.svg') !!}
+                                        {{ __('Sections') }}
+                                    </button>
+                                </li>
+                            @endif
+                            <li class="nav-item" role="presentation" data-key="4">
+                                <button
+                                    class="nav-link tab-btn btn-icon fw-semibold @if($tab === 4) active @endif"
+                                    data-bs-toggle="pill" data-bs-target="#captureAndShareTab" type="button">
+                                    {!! svg('user_interface/capture_and_share.svg') !!}
+                                    {{ __('Capture & Share') }}
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div
+                        class="scroll-right d-none position-absolute top-50 end-0 translate-middle-y z-2  bg-transparent p-1">
+                        <div class="scroll-arrow-bg"></div>
+                        {!! svg('user_interface/scroll-right.svg') !!}
+                    </div>
+
                 </div>
                 <div class="card-body">
                     <div class="tab-content" id="pills-tabContent">
-                        <div class="tab-pane fade  @if($tab === 1) show active @endif"
+                        <div class="tab-pane fade  @if($tab === 1) active show @endif"
                              id="details-setting" role="tabpanel">
                             <!-- Profile Picture, Cover Photo, Company Logo upload start -->
                             <section
@@ -126,32 +142,35 @@
                                         @include('components/more-info', ['label' => 'Upload an image with a maximum size of 10 MB'])
                                     </div>
                                     <div class="position-relative add-image-block dropzone" data-target="business_logo">
+                                        @php
+                                            $hasLogo = $business->logo;
+                                        @endphp
                                         <img
-                                            src="{{ $business->logo ? $logo.'/'.$business->logo: Utility::imagePlaceholderUrl() }}"
+                                            src="{{ $hasLogo ? $logo.'/'.$business->logo: $imagePlaceholderUrl }}"
                                             alt="images" id="business_logo"
                                             class="rounded-circle w-100 h-100 object-fit-cover img-fluid">
-                                        <div class="position-absolute end-0 bottom-0">
-                                            <input class="d-none business_logo file-validate"
-                                                   type="file"
-                                                   name="logo"
-                                                   accept="image/*"
-                                            >
-                                            <label>
-                                                <img
-                                                    src="{{ asset('assets/images/icons/user_interface/add_picture_button.svg') }}"
-                                                    alt=""
-                                                    class="cursor-pointer"
-                                                    onclick="selectFile('business_logo')">
-                                            </label>
+                                        <input class="d-none business_logo"
+                                               type="file"
+                                               name="logo"
+                                               accept=".jpg,.jpeg,.png"
+                                        >
+                                        <input type="hidden" name="is_business_logo_deleted" value="0">
+                                        <div class="position-absolute bottom-0 end-0">
+                                            <button type="button"
+                                                    class="upload-image {{ $hasLogo ? "d-none": "" }} btn btn-icon btn-primary rounded-circle justify-content-center">
+                                                {!! svg('/user_interface/add_picture_button.svg') !!}
+                                            </button>
+                                            @include('components.image-button-options-dropdown', ['class' => !$hasLogo ? "d-none" : ""])
                                         </div>
                                     </div>
                                 </div>
+
                                 <div id="coverPhotoUpload" class="form-group">
                                     <div class="position-relative mb-2">
                                         {{ Form::label('banner', __('Cover Photo'), ['class' => 'form-label mb-0']) }}
                                         @include('components/more-info', ['label' => 'Recommended aspect ratio is 2560x1080px with a maximum size of 10 MB'])
                                     </div>
-                                    <div class="position-relative rounded-4 add-image-block dropzone"
+                                    <div class="position-relative add-image-block dropzone"
                                          data-target="banner">
                                         @php
                                             $hasBanner = isset($business->banner) && !empty($business->banner);
@@ -159,27 +178,24 @@
                                         <img
                                             src="{{ $hasBanner ? $banner . '/' . $business->banner : asset('assets/images/icons/user_interface/cover_photo_placeholder.png') }}"
                                             alt="" class="w-100 h-100 object-fit-cover img-fluid" id="banner">
+                                        <input
+                                            class="d-none banner"
+                                            type="file" name="banner"
+                                            accept=".jpg,.jpeg,.png"
+                                        >
+                                        <input type="hidden" name="is_banner_deleted" value="0">
                                         <div
-                                            class="position-absolute text-center justify-content-center d-flex align-items-center w-100">
-                                            <input
-                                                class="custom-input-file custom-input-file-link banner d-none file-validate"
-                                                type="file" name="banner" id="file-1"
-                                                accept="image/*"
-                                            >
-                                            <label for="file-1" class="{{ $hasBanner ? 'd-none': '' }}">
+                                            class="position-absolute text-center justify-content-center d-flex align-items-center w-100 h-100 top-0 left-0 {{ $hasBanner ? 'd-none': '' }}"
+                                            id="bannerUploadPlaceholderDiv">
+                                            <label>
                                                 <span class="mb-2 d-none d-md-inline-block" style="color: #9D9DA1;">Drag file for upload or</span>
                                                 <span class="mb-2 d-inline-block d-md-none" style="color: #9D9DA1;">Upload cover photo</span>
                                                 <br/>
                                                 <button type="button"
-                                                        onclick="selectFile('banner')"
-                                                        class="btn btn-primary btn-sm">{{ __('Select Files') }}</button>
+                                                        class="upload-image btn btn-primary btn-sm w-auto h-auto">{{ __('Select Files') }}</button>
                                             </label>
                                         </div>
-                                        <button type="button"
-                                                class="btn btn-white position-absolute bottom-0 end-0 rounded-circle me-2 mb-2 d-flex justify-content-center align-items-center p-0 {{ !$hasBanner ? 'd-none': '' }}"
-                                                id="deleteBannerBtn">
-                                            @include('components.delete-icon')
-                                        </button>
+                                        @include('components.image-button-options-dropdown', ['class' => "position-absolute bottom-0 end-0 mb-2 me-2 ".(!$hasBanner ? "d-none" : "")])
                                     </div>
                                 </div>
                                 @if($isProClient)
@@ -190,24 +206,26 @@
                                         </div>
                                         <div class="position-relative add-image-block dropzone"
                                              data-target="business_company_logo">
+                                            @php
+                                                $hasCompanyLogo = $business->company_logo;
+                                            @endphp
                                             <img
-                                                src="{{$business->company_logo ? $company_logo.'/'.$business->company_logo : Utility::imagePlaceholderUrl() }}"
+                                                src="{{$hasCompanyLogo ? $company_logo.'/'.$business->company_logo : $imagePlaceholderUrl }}"
                                                 alt="images" id="business_company_logo"
                                                 class="rounded-circle w-100 h-100 object-fit-cover img-fluid">
-                                            <div class="position-absolute end-0 bottom-0">
-                                                <input
-                                                    class="d-none business_company_logo file-validate"
-                                                    type="file"
-                                                    name="company_logo"
-                                                    accept="image/*"
-                                                >
-                                                <label>
-                                                    <img
-                                                        src="{{ asset('assets/images/icons/user_interface/add_picture_button.svg') }}"
-                                                        alt=""
-                                                        class="cursor-pointer"
-                                                        onclick="selectFile('business_company_logo')">
-                                                </label>
+                                            <input
+                                                class="d-none business_company_logo file-validate"
+                                                type="file"
+                                                name="company_logo"
+                                                accept=".jpg,.jpeg,.png"
+                                            >
+                                            <input type="hidden" name="is_business_company_logo_deleted" value="0">
+                                            <div class="position-absolute bottom-0 end-0">
+                                                <button type="button"
+                                                        class="upload-image {{ $hasCompanyLogo ? "d-none": "" }} btn btn-icon btn-primary rounded-circle justify-content-center">
+                                                    {!! svg('/user_interface/add_picture_button.svg') !!}
+                                                </button>
+                                                @include('components.image-button-options-dropdown', ['class' => !$hasCompanyLogo ? "d-none" : ""])
                                             </div>
                                         </div>
                                     </div>
@@ -220,41 +238,25 @@
                                 <div class="form-group">
                                     {{ Form::label('Title', __('Name'), ['class' => 'form-label']) }}
                                     <x-required></x-required>
-                                    {!! Form::text('title', $business->title, ['class' => 'form-control', 'id' => $business_id . '_title', 'data-name'=>'business_title', 'required' => true]) !!}
-                                    @error('title')
-                                    <span class="invalid-favicon text-xs text-danger"
-                                          role="alert">{{ $message }}</span>
-                                    @enderror
+                                    {!! Form::text('title', $business->title, ['class' => 'form-control', 'id' => $business_id . '_title', 'data-name'=>'business_title', 'validation-required' => 'true']) !!}
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-6 col-12">
                                         <div class="form-group">
                                             {{ Form::label('Designation', __('Job Title or Role'), ['class' => 'form-label']) }}
                                             {{ Form::text('designation', $business->designation, ['class' => 'form-control', 'id' => $business_id . '_designation', 'placeholder' => __('')]) }}
-                                            @error('title')
-                                            <span class="invalid-favicon text-xs text-danger"
-                                                  role="alert">{{ $message }}</span>
-                                            @enderror
                                         </div>
                                     </div>
                                     <div class="col-sm-6 col-12">
                                         <div class="form-group">
                                             {{ Form::label('Sub_Title', __('Company'), ['class' => 'form-label']) }}
                                             {{ Form::text('sub_title', $business->sub_title, ['class' => 'form-control validation_subtitle', 'id' => $business_id . '_subtitle', 'placeholder' => __('')]) }}
-                                            @error('sub_title')
-                                            <span class="invalid-favicon text-xs text-danger"
-                                                  role="alert">{{ $message }}</span>
-                                            @enderror
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     {{ Form::label('Description', __('Bio or Description'), ['class' => 'form-label']) }}
                                     {{ Form::textarea('description', $business->description, ['class' => 'form-control description-text','rows' => '5','cols' => '30', 'id' => $business_id . '_desc']) }}
-                                    @error('description')
-                                    <span class="invalid-favicon text-xs text-danger"
-                                          role="alert">{{ $message }}</span>
-                                    @enderror
                                 </div>
                                 <div class="d-none">
                                     <h5 class="mb-3">{{__('Personalized link:')}}</h5>
@@ -283,7 +285,7 @@
                                                         class="d-flex align-items-center justify-content-between p-2 bg-light rounded">
                                                         <div class="d-flex align-items-center gap-2">
                                                             <img
-                                                                src="{{ asset('custom/icon/white/' . strtolower($key) . '.svg') }}"
+                                                                src="{{ asset('assets/images/icons/user_interface/socials/' . strtolower($key) . '.svg') }}"
                                                                 alt="" class="colored-social-icon">
                                                             <span
                                                                 class="social-link-text">{{ $key }}</span>
@@ -302,11 +304,11 @@
 
                                                         <div class="d-flex align-items-center gap-2">
                                                             <button type="button"
-                                                                    class="btn btn-white btn-edit-social" title="Edit">
-                                                                <i class="bi bi-pencil-square"></i>
+                                                                    class="btn-edit-social btn btn-icon rounded-circle p-0">
+                                                                @include('components.edit-icon')
                                                             </button>
                                                             <button type="button"
-                                                                    class="btn btn-white btn-remove-social">
+                                                                    class="btn-remove-social btn btn-icon rounded-circle p-0">
                                                                 @include('components.delete-icon')
                                                             </button>
                                                         </div>
@@ -327,43 +329,6 @@
                             </section>
                             <!--Socials end -->
 
-                            <!--Phone, Address, Email, Website start -->
-                            <section>
-                                <p class="section-title">{{__('Add Contact To Your Card')}}</p>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            {{ Form::label('phone', __('Phone'), ['class' => 'form-label']) }}
-                                            <x-required></x-required>
-                                            <br/>
-                                            {!! Form::tel('phone', $business->phone, ['class' => 'form-control phone-input', 'id' => $business_id . '_phone', 'required' => true]) !!}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            {{ Form::label('address', __('Address'), ['class' => 'form-label']) }}
-                                            <x-required></x-required>
-                                            {!! Form::text('address', $business->address, ['class' => 'form-control', 'id' => $business_id . '_address', 'required' => true]) !!}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            {{ Form::label('email', __('Email'), ['class' => 'form-label']) }}
-                                            <x-required></x-required>
-                                            {!! Form::email('email', $business->email, ['class' => 'form-control', 'id' => $business_id . '_email', 'required' => true]) !!}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            {{ Form::label('website', __('Website'), ['class' => 'form-label']) }}
-                                            {!! Form::text('website', $business->website, ['class' => 'form-control', 'id' => $business_id . '_website', 'placeholder' => 'example.com']) !!}
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
-                            <!--Phone, Address, Email, Website end -->
                         </div>
 
                         <div class="tab-pane fade @if($tab === 2) active show @endif"
@@ -403,6 +368,71 @@
                         @if($isProClient)
                             <div class="tab-pane fade @if($tab === 3) active show @endif"
                                  id="sectionsTab" role="tabpanel">
+                                <!-- Gallery start -->
+                                <section class="mb-4" id="gallery">
+                                    <div class="section-title d-flex align-items-center justify-content-between">
+                                        <div>{{__('Add Image Gallery')}}</div>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <div
+                                                class="form-check form-switch">
+                                                <input type="checkbox"
+                                                       name="is_gallery_enabled"
+                                                       id="is_gallery_enabled"
+                                                       class="form-check-input input-primary"
+                                                    {{ isset($gallery['is_enabled']) && $gallery['is_enabled'] ? "checked=\"checked\"" : "" }}>
+                                                <label class="form-check-label"
+                                                       for="is_gallery_enabled"></label>
+                                            </div>
+                                            <div>{{__('On')}}</div>
+                                        </div>
+                                    </div>
+                                    <!-- Gallery Preview Grid (5 items per row) -->
+                                    <div class="row g-3" id="galleryPreview">
+                                    </div>
+                                    <div class="pb-4"></div>
+                                    <!-- Add More Pictures Button -->
+                                    <button type="button"
+                                            class="add-more-placeholders invalid btn btn-primary px-5 mx-auto d-block"
+                                            data-mode="image">
+                                        Add more pictures
+                                    </button>
+                                </section>
+                                <!-- Gallery end -->
+
+                                <!-- Featured Videos start -->
+                                <section class="mb-4" id="featuredVideos">
+                                    <div class="section-title d-flex align-items-center justify-content-between">
+                                        <div>{{__('Add Video Gallery')}}</div>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <div
+                                                class="form-check form-switch">
+                                                <input type="checkbox"
+                                                       name="is_video_enabled"
+                                                       id="is_video_enabled"
+                                                       class="form-check-input input-primary"
+                                                    {{ isset($gallery['is_video_enabled']) && $gallery['is_video_enabled'] ? "checked=\"checked\"" : "" }}>
+                                                <label class="form-check-label"
+                                                       for="is_video_enabled"></label>
+                                            </div>
+                                            <div>{{__('On')}}</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Video Gallery Preview -->
+                                    <div class="row g-3 mb-4" id="videoGalleryPreview">
+                                    </div>
+
+                                    <div class="pb-4"></div>
+                                    <!-- Add More Pictures Button -->
+                                    <button type="button"
+                                            class="add-more-placeholders invalid btn btn-primary px-5 mx-auto d-block"
+                                            data-mode="video">
+                                        Add more videos
+                                    </button>
+
+                                </section>
+                                <!-- Featured Videos end -->
+
                                 <!-- Services start -->
                                 <section>
                                     <div class="section-title d-flex align-items-center justify-content-between">
@@ -430,8 +460,8 @@
                                                         <label
                                                             class="form-label mb-0">Service {{ $service_key }}</label>
                                                         <button type="button"
-                                                                class="remove-service-row item-management-btn">
-                                                            @include('components.delete-icon')
+                                                                class="remove-service-row item-management-btn btn btn-icon rounded-circle p-0">
+                                                            {!! svg('/user_interface/bin_icon_primary.svg') !!}
                                                         </button>
                                                     </div>
                                                     <input type="text"
@@ -439,231 +469,16 @@
                                                            id="{{ 'service_title_' . $service_key }}"
                                                            name="{{ 'services[' . $service_key . '][title]' }}"
                                                            value="{{ $service_content->title }}"
-                                                           required/>
+                                                           validation-required="true"/>
                                                 </div>
                                             </div>
                                             @php $service_key++; @endphp
                                         @endforeach
                                     </div>
                                     <button type="button" class="btn btn-primary px-5 mx-auto d-block"
-                                            id="addNewServiceBtn">{{__('Add New Service')}}</button>
+                                            id="addNewServiceBtn">{{__('Add new service')}}</button>
                                 </section>
                                 <!-- Services end -->
-
-                                <!-- Gallery start -->
-                                <section class="mb-4" id="gallery">
-                                    <div class="section-title d-flex align-items-center justify-content-between">
-                                        <div>{{__('Add Your Gallery')}}</div>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <div
-                                                class="form-check form-switch">
-                                                <input type="checkbox"
-                                                       name="is_gallery_enabled"
-                                                       id="is_gallery_enabled"
-                                                       class="form-check-input input-primary"
-                                                    {{ isset($gallery['is_enabled']) && $gallery['is_enabled'] ? "checked=\"checked\"" : "" }}>
-                                                <label class="form-check-label"
-                                                       for="is_gallery_enabled"></label>
-                                            </div>
-                                            <div>{{__('On')}}</div>
-                                        </div>
-                                    </div>
-                                    <!-- Gallery Preview Grid (5 items per row) -->
-                                    <div class="row g-3" id="galleryPreview">
-                                        @foreach ($gallery_contents as $gallery_content)
-                                            @if(in_array($gallery_content->type, ['image', 'custom_image_link']))
-                                                @php $url = $gallery_content->type === 'image' ? $gallery_path . '/' . $gallery_content->value : $gallery_content->value; @endphp
-                                                <div class="col-12 col-lg-3">
-                                                    <div
-                                                        class="gallery-card bg-secondary position-relative border rounded overflow-hidden d-flex justify-content-center align-items-center">
-                                                        <img src="{{ $url }}" class="img-fluid gallery-image"
-                                                             alt="Gallery Image">
-                                                        <button type="button"
-                                                                class="btn item-management-btn position-absolute top-0 end-0 m-1 remove-gallery"
-                                                                data-id="{{ $gallery_content->id }}">
-                                                            @include('components.delete-icon')
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            @endif
-                                        @endforeach
-                                    </div>
-                                    <div class="pb-4"></div>
-                                    <!-- Add More Pictures Button -->
-                                    <button type="button" class="btn btn-primary px-5 mx-auto d-block"
-                                            id="openGalleryModal">
-                                        Add more pictures
-                                    </button>
-
-                                    <!-- Modal: Add Picture -->
-                                    <div class="modal fade" id="addGalleryModal" tabindex="-1" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered">
-                                            <div class="modal-content">
-
-                                                <div class="modal-header border-0 pb-0">
-                                                    <h5 class="modal-title">Add Picture</h5>
-                                                    <button type="button" class="btn-close"
-                                                            data-bs-dismiss="modal"></button>
-                                                </div>
-
-                                                <div class="modal-body">
-                                                    <!-- Type Toggle -->
-                                                    <div class="d-flex justify-content-center gap-3 mb-4"
-                                                         id="galleryOptions">
-                                                        <label class="btn btn-secondary gallery-option w-100">
-                                                            <input type="radio" class="d-none gallery_mode"
-                                                                   name="galleryoption" value="image">
-                                                            <i class="bi bi-folder me-1"></i>Upload Image
-                                                        </label>
-                                                        <label class="btn btn-secondary gallery-option w-100">
-                                                            <input type="radio" class="d-none gallery_mode"
-                                                                   name="galleryoption" value="custom_image_link">
-                                                            <i class="bi bi-folder me-1"></i> Custom Image
-                                                        </label>
-                                                    </div>
-
-                                                    <!-- Upload Image -->
-                                                    <div class="upload-image-div">
-                                                        <label class="form-label">Upload Image</label>
-                                                        <input name="upload_image" type="file" accept="image/*"
-                                                               class="form-control" id="upload_image_modal">
-                                                    </div>
-
-                                                    <!-- Custom Image Link -->
-                                                    <div class="custom-image-div d-none">
-                                                        <label class="form-label">Custom image link</label>
-                                                        <input name="custom_image_link" type="url" class="form-control"
-                                                               id="custom_image_link_modal"
-                                                               placeholder="Enter image URL">
-                                                    </div>
-
-                                                    <!-- Preview -->
-                                                    <div class="preview-img mt-3 text-center d-none">
-                                                        <img src="#" id="gallery_img_preview"
-                                                             class="img-fluid rounded border"
-                                                             style="max-height: 200px;" alt="">
-                                                    </div>
-                                                </div>
-
-                                                <div class="modal-footer justify-content-between">
-                                                    <button type="button" class="btn btn-secondary"
-                                                            id="cancelGalleryModal">Cancel
-                                                    </button>
-                                                    <button type="button" class="btn btn-dark" id="saveGalleryModal">
-                                                        Save
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </section>
-                                <!-- Gallery end -->
-
-                                <!-- Featured Videos start -->
-                                <section class="mb-4" id="featuredVideos">
-                                    <div class="section-title d-flex align-items-center justify-content-between">
-                                        <div>{{__('Add Your Featured Videos')}}</div>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <div
-                                                class="form-check form-switch">
-                                                <input type="checkbox"
-                                                       name="is_video_enabled"
-                                                       id="is_video_enabled"
-                                                       class="form-check-input input-primary"
-                                                    {{ isset($gallery['is_video_enabled']) && $gallery['is_video_enabled'] ? "checked=\"checked\"" : "" }}>
-                                                <label class="form-check-label"
-                                                       for="is_video_enabled"></label>
-                                            </div>
-                                            <div>{{__('On')}}</div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Video Gallery Preview -->
-                                    <div class="row g-3 mb-4" id="videoGalleryPreview">
-                                        @foreach ($gallery_contents as $gallery_content)
-                                            @if(in_array($gallery_content->type, ['video', 'custom_video_link']))
-                                                @php $url = $gallery_content->type === 'video' ? $gallery_path . '/' . $gallery_content->value : $gallery_content->value; @endphp
-                                                <div class="col-12 col-lg-3">
-                                                    <div class="position-relative border rounded overflow-hidden">
-                                                        <video class="w-100" controls
-                                                               style="height: 200px; object-fit: cover;">
-                                                            <source src="{{ $url }}" type="video/mp4">
-                                                            Your browser does not support the video tag.
-                                                        </video>
-                                                        <button type="button"
-                                                                class="btn item-management-btn position-absolute top-0 end-0 m-1 remove-gallery"
-                                                                data-id="{{ $gallery_content->id }}">
-                                                            @include('components.delete-icon')
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            @endif
-                                        @endforeach
-                                    </div>
-
-                                    <div class="pb-4"></div>
-                                    <!-- Add More Pictures Button -->
-                                    <button type="button" class="btn btn-primary px-5 mx-auto d-block"
-                                            id="openAddVideosModal">
-                                        Add more videos
-                                    </button>
-
-                                    <!-- Modal: Add Video -->
-                                    <div class="modal fade" id="addVideoModal" tabindex="-1" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered">
-                                            <div class="modal-content">
-                                                <div class="modal-body">
-                                                    <div class="d-flex justify-content-center gap-3 mb-4">
-                                                        <label class="btn btn-secondary gallery-option w-100">
-                                                            <input type="radio" class="d-none gallery_mode"
-                                                                   name="galleryoption" value="video">
-                                                            <i class="bi bi-folder me-1"></i>Upload Video
-                                                        </label>
-                                                        <label class="btn btn-secondary gallery-option w-100">
-                                                            <input type="radio" class="d-none gallery_mode"
-                                                                   name="galleryoption" value="custom_video_link">
-                                                            <i class="bi bi-folder me-1"></i>Custom Video
-                                                        </label>
-                                                    </div>
-
-                                                    <!-- File Upload for Video -->
-                                                    <div class="upload-video-div">
-                                                        <label class="form-label"
-                                                               for="upload_video_modal">{{ __('Upload Video') }}</label>
-                                                        <input type="file" name="upload_video" id="upload_video_modal"
-                                                               accept="video/mp4, video/webm"
-                                                               class="form-control">
-                                                    </div>
-
-                                                    <!-- Custom Video Link -->
-                                                    <div class="custom-video-div d-none mt-3">
-                                                        <label class="form-label"
-                                                               for="custom_video_link_modal">{{ __('Custom video link') }}</label>
-                                                        <input type="text" name="custom_video_link"
-                                                               id="custom_video_link_modal"
-                                                               class="form-control"
-                                                               placeholder="{{ __('Enter Your Custom Video Link') }}">
-                                                    </div>
-
-                                                    <!-- Video Preview -->
-                                                    <div class="preview-video mt-3 text-center d-none">
-                                                        <video controls id="videoPreview" class="w-100 rounded"
-                                                               style="max-height: 240px;"></video>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer justify-content-between">
-                                                    <button type="button" class="btn btn-secondary"
-                                                            id="cancelVideoModal">Cancel
-                                                    </button>
-                                                    <button type="button" class="btn btn-dark" id="saveVideoModal">Save
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </section>
-                                <!-- Featured Videos end -->
 
                                 <!-- Google Review start -->
                                 <section class="mb-5 border-0" id="googleReviewSection">
@@ -684,8 +499,8 @@
                                         </div>
                                     </div>
                                     <div class="form-group mb-0">
-                                        {{ Form::label('google_review_link', __('Link your google review page'), ['class' => 'form-label']) }}
-                                        {{ Form::url('google_review_link', $business->google_review_link, ['class' => 'form-control', 'id' => $business_id . '_google_review_link', 'data-name'=>'business_google_review_link']) }}
+                                        {{ Form::label('google_review_link', __('Link your google review page'), ['class' => 'section-subtitle']) }}
+                                        {{ Form::url('google_review_link', $business->google_review_link, ['class' => 'form-control', 'id' => $business_id . '_google_review_link', 'data-name'=>'business_google_review_link', 'validation-required' => 'false', 'validation-message' => 'Please enter a valid URL']) }}
                                     </div>
                                 </section>
                                 <!-- Google Review end -->
@@ -711,8 +526,8 @@
                                         <div>{{__('On')}}</div>
                                     </div>
                                 </div>
-                                <div>Collect and exchange contact info</div>
-                                <div class="mb-4 pb-2"></div>
+                                <div class="section-subtitle">Collect and exchange contact info</div>
+                                <div class="mb-3"></div>
                                 <div class="bg-secondary rounded p-3 p-md-4 mb-4">
                                     <h6 class="fw-bold mb-3">Form Fields</h6>
                                     <div class="row g-3 share-contact-form-fields">
@@ -759,7 +574,7 @@
                                     </div>
                                 </div>
                                 <div class="section-title d-flex align-items-center justify-content-between">
-                                    <div class="">Contact Info</div>
+                                    <div>Contact Info</div>
                                     <div class="d-flex align-items-center justify-content-center">
                                         <div
                                             class="form-check form-switch">
@@ -774,14 +589,15 @@
                                         <div>{{__('On')}}</div>
                                     </div>
                                 </div>
-                                <div>{{__('Allow leads to download your contact info directly on their phones')}}</div>
+                                <div
+                                    class="section-subtitle mb-0">{{__('Allow leads to download your contact info directly on their phones')}}</div>
                             </section>
                             <section>
                                 <div class="section-title d-flex align-items-center justify-content-between">
                                     <div>{{__('Share Your Card')}}</div>
                                 </div>
                                 <div class="form-group">
-                                    {{ Form::label('copy_card_link', __('Copy your card link'), ['class' => 'form-label']) }}
+                                    {{ Form::label('copy_card_link', __('Copy your card link'), ['class' => 'section-subtitle']) }}
                                     @include('components.copy-card-link-container')
                                 </div>
                                 <div class="row gy-4">
@@ -792,24 +608,37 @@
                                             'label' => 'Choose Colour',
                                             'value' => old('qrcode_foreground_color', $qr_detail && $qr_detail->foreground_color ? $qr_detail->foreground_color: '#000000'),
                                             'colors' => ['#000000', '#FF3C39', '#F55381', '#FC8E3A', '#F4B813', '#06C27C'],
+                                            'class' => 'section-subtitle',
                                         ])
                                         <div id="qr_type_option" class="{{ $isProClient ? "" : "display-none" }}">
                                             <div class="form-group">
-                                                {{ Form::label('qrcode_image', __('Custom Logo'), ['class' => 'form-label fw-semibold']) }}
-                                                <div class="mb-3">Add custom logo in the middle of the QR Code.</div>
-                                                <input type="file" name="qrcode_image"
-                                                       accept=".png, .jpg, .jpeg"
-                                                       class="form-control qr-data d-none qr-code-image"
-                                                       id="qrCodeImage">
-                                                <button type="button"
-                                                        class="btn btn-secondary d-flex justify-content-center align-items-center rounded-4"
-                                                        id="add_qr_code_logo_btn"
-                                                        onclick="selectNormalFile('qr-code-image')">
-                                                    <span class="mb-0 fw-semibold">Add Logo</span>
-                                                </button>
-                                                <img id="qrCodeImageBuffer" alt=""
-                                                     src="{{ $isProClient ? ($qr_detail && $qr_detail->image ? $qr_path.'/'.  $qr_detail->image: $siteLogo) : $siteLogo }}"
-                                                     class="d-none" crossorigin="anonymous">
+                                                {{ Form::label('qrcode_image', __('Custom Logo'), ['class' => 'form-label section-title']) }}
+                                                <div class="section-subtitle">Add custom logo in the middle of the QR
+                                                    Code.
+                                                </div>
+                                                <div class="position-relative add-image-block dropzone"
+                                                     data-target="qrcode_image">
+                                                    @php
+                                                        $hasQRImg = $qr_detail && $qr_detail->image;
+                                                    @endphp
+                                                    <img
+                                                        src="{{ $isProClient ? ($hasQRImg ? $qr_path.'/'.  $qr_detail->image: $imagePlaceholderUrl) : $imagePlaceholderUrl }}"
+                                                        alt="images" id="qrcode_image"
+                                                        class="rounded-circle w-100 h-100 object-fit-cover img-fluid">
+                                                    <input class="d-none qrcode_image"
+                                                           type="file"
+                                                           name="qrcode_image"
+                                                           accept=".jpg,.jpeg,.png"
+                                                    >
+                                                    <input type="hidden" name="is_qrcode_image_deleted" value="0">
+                                                    <div class="position-absolute bottom-0 end-0">
+                                                        <button type="button"
+                                                                class="upload-image {{ $hasQRImg ? "d-none": "" }} btn btn-icon btn-primary rounded-circle justify-content-center">
+                                                            {!! svg('/user_interface/add_picture_button.svg') !!}
+                                                        </button>
+                                                        @include('components.image-button-options-dropdown', ['class' => !$hasQRImg ? "d-none" : ""])
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -835,16 +664,16 @@
             <div class="sticky-bottom-bar">
                 <div class="sticky-bar-bg"></div>
                 <div class="sticky-bar-content d-flex justify-content-center gap-3 p-3 position-relative">
-                    <button type="reset" class="btn btn-secondary reset-form">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="reset" class="btn btn-white reset-form">Cancel</button>
+                    <button type="button" class="btn btn-primary submit-form">Save Changes</button>
                 </div>
             </div>
             {{ Form::close() }}
         </div>
 
         <div class="d-none d-xl-block">
-            <div class="position-sticky sticky-top-32">
-                <div class="shadow-lg custom-box">
+            <div class="position-sticky sticky-top-32" id="previewOnDesktop">
+                <div class="shadow-none shadow-xl-lg custom-box">
                     @include('card.' . $card_theme->theme . '.index', ['is_on_form_preview' => true])
                     @include('components.share-contact-modal-content', ['is_on_form_preview' => true, 'id' => 'shareContactModalPreview'])
                 </div>
@@ -875,21 +704,41 @@
     </div>
 
     <div class="modal fade" id="socialsModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{ __('Add a Social Field') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header border-0 pb-0">
+                    <button type="button" class="btn-close mt-1 me-1" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body p-4 mx-2 pt-0 mt-0">
+                    @php
+                        $recommendedFields = array_filter($businessfields, fn($value) => $value === true);
+                        $normalFields =  array_filter($businessfields, fn($value) => $value === false)
+                    @endphp
+                    <p class="modal-section-title fw-bold mb-4">Recommended</p>
                     <div class="row social-card-row">
-                        @foreach ($businessfields as $val)
-                            <div class="col-lg-4 col-md-6 mb-4">
-                                <div class="cursor-pointer text-center" onclick="socialRepeater('{{ $val }}')">
+                        @foreach ($recommendedFields as $key => $val)
+                            <div class="col-6 col-lg-4">
+                                <div class="cursor-pointer d-flex align-items-center gap-3 mb-3"
+                                     onclick="socialRepeater('{{ $key }}')">
                                     <img
-                                        src="{{ asset('assets/images/icons/user_interface/socials/' . strtolower($val) . '.svg') }}"
+                                        src="{{ asset('assets/images/icons/user_interface/socials/' . strtolower($key) . '.svg') }}"
                                         alt="image">
-                                    <h5>{{ $val }}</h5>
+                                    <div>{{ $key }}</div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    <p class="modal-section-title fw-bold mt-3 mb-4">Social Links</p>
+                    <div class="row social-card-row">
+                        @foreach ($normalFields as $key => $val)
+                            <div class="col-6 col-lg-4">
+                                <div class="cursor-pointer d-flex align-items-center gap-3 mb-3"
+                                     onclick="socialRepeater('{{ $key }}')">
+                                    <img
+                                        src="{{ asset('assets/images/icons/user_interface/socials/' . strtolower($key) . '.svg') }}"
+                                        alt="image">
+                                    <div>{{ $key }}</div>
                                 </div>
                             </div>
                         @endforeach
@@ -921,17 +770,157 @@
 
                 <!-- Input Field -->
                 <div class="mb-4">
-                    <input type="text" class="form-control" id="socialItemModalInput"
-                           placeholder="Enter profile link">
+                    <input type="text" class="form-control" id="socialItemModalInput" validation-required="true">
                 </div>
 
                 <!-- Add Button -->
-                <button type="button" class="btn btn-dark w-100 rounded" id="saveSocialItemBtn">Add</button>
+                <button type="button" class="btn btn-primary w-100 rounded" id="saveSocialItemBtn">Add</button>
             </div>
         </div>
     </div>
 
-    @include('components.share-card-modal', ['id' => 'shareCardModalOnForm'])
+    <!-- Modal: Add Picture -->
+    <div class="modal fade" id="addGalleryModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title">Add Picture</h5>
+                    <button type="button" class="btn-close"
+                            data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <!-- Type Toggle -->
+                    <div class="d-flex justify-content-center gap-3 mb-4"
+                         id="galleryOptions">
+                        <label class="btn btn-white gallery-option w-100">
+                            <input type="radio" class="d-none gallery_mode"
+                                   name="galleryoption" value="image">
+                            <i class="bi bi-folder me-1"></i>Upload Image
+                        </label>
+                        <label class="btn btn-white gallery-option w-100">
+                            <input type="radio" class="d-none gallery_mode"
+                                   name="galleryoption" value="custom_image_link">
+                            <i class="bi bi-folder me-1"></i> Custom Image
+                        </label>
+                    </div>
+
+                    <!-- Upload Image -->
+                    <div class="upload-image-div">
+                        <label class="form-label">Upload Image</label>
+                        <input name="upload_image" type="file" accept=".jpg,.jpeg,.png"
+                               class="form-control" id="upload_image_modal" validation-required="true">
+                    </div>
+
+                    <!-- Custom Image Link -->
+                    <div class="custom-image-div d-none">
+                        <label class="form-label">Custom image link</label>
+                        <input name="custom_image_link" type="url" class="form-control"
+                               id="custom_image_link_modal"
+                               placeholder="Enter image URL" validation-required="true">
+                    </div>
+
+                    <!-- Preview -->
+                    <div class="preview-img mt-3 text-center d-none">
+                        <img src="#" id="gallery_img_preview"
+                             class="img-fluid rounded border"
+                             style="max-height: 200px;" alt="">
+                    </div>
+                </div>
+
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-white"
+                            id="cancelGalleryModal" data-bs-dismiss="modal">Cancel
+                    </button>
+                    <button type="button" class="btn btn-primary" id="saveGalleryModal">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add Video -->
+    <div class="modal fade" id="addVideoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title">Add Video</h5>
+                    <button type="button" class="btn-close"
+                            data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-center gap-3 mb-4">
+                        <label class="btn btn-white gallery-option w-100">
+                            <input type="radio" class="d-none gallery_mode"
+                                   name="galleryoption" value="video">
+                            <i class="bi bi-folder me-1"></i>Upload Video
+                        </label>
+                        <label class="btn btn-white gallery-option w-100">
+                            <input type="radio" class="d-none gallery_mode"
+                                   name="galleryoption" value="custom_video_link">
+                            <i class="bi bi-folder me-1"></i>Custom Video
+                        </label>
+                    </div>
+
+                    <!-- File Upload for Video -->
+                    <div class="upload-video-div">
+                        <label class="form-label"
+                               for="upload_video_modal">{{ __('Upload Video') }}</label>
+                        <input type="file" name="upload_video" id="upload_video_modal"
+                               accept="video/mp4, video/webm"
+                               class="form-control" validation-required="true">
+                    </div>
+
+                    <!-- Custom Video Link -->
+                    <div class="custom-video-div d-none mt-3">
+                        <label class="form-label"
+                               for="custom_video_link_modal">{{ __('Custom video link') }}</label>
+                        <input type="text" name="custom_video_link"
+                               id="custom_video_link_modal"
+                               class="form-control"
+                               placeholder="{{ __('Enter Your Custom Video Link') }}" validation-required="true">
+                    </div>
+
+                    <!-- Video Preview -->
+                    <div class="preview-video mt-3 text-center d-none">
+                        <video controls id="videoPreview"
+                               class="w-100 rounded display-none"
+                               style="height: 240px;"></video>
+                        <iframe id="iframePlayer" frameborder="0" allowfullscreen
+                                class="w-100 display-none"
+                                style="height: 240px;"></iframe>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-white" data-bs-dismiss="modal">Cancel
+                    </button>
+                    <button type="button" class="btn btn-primary" id="saveVideoModal">Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @include('components.share-card-modal', ['id' => 'shareCardModalOnForm', 'is_on_form_preview' => true])
+
+    <!-- Offcanvas target -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="previewOnTablet">
+        <div class="offcanvas-header">
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body overflow-x-hidden d-flex justify-content-center align-items-center" id="previewOnTabletBody"></div>
+    </div>
+
+    <!-- Modal target -->
+    <div class="modal fade" id="previewOnMobile" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content border-0 shadow-none bg-transparent">
+                <div class="modal-body p-0 d-flex justify-content-end" id="previewOnMobileBody"></div>
+            </div>
+        </div>
+    </div>
 
 @endsection
 
@@ -941,37 +930,13 @@
             src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/intlTelInput.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/js/intlTelInput.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
     <script src="{{ asset('custom/js/vcard-section-border-color-util.js') }}"></script>
 
     <script type="text/javascript">
         var asset_path = `{{ asset('assets/images/icons/user_interface/socials/') }}`
-        $('#pills-tab .nav-item').click(function () {
-            const edit_tab_key = $(this).data('key');
-            $('#edit_tab_key').val(edit_tab_key);
-        })
-        const iti_config = {
-            initialCountry: "auto",
-            nationalMode: false,
-            formatOnDisplay: false,
-            autoFormat: false,
-            geoIpLookup: callback => {
-                fetch("https://ipapi.co/json")
-                    .then(res => res.json())
-                    .then(data => callback(data.country_code))
-                    .catch(() => callback("us"));
-            },
-            utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/utils.js"
-        };
-        $(function () {
-            $('.phone-input').each(function () {
-                const input = this;
-                window.intlTelInput(input, iti_config);
-            });
-
-        })
 
         $('[data-id="openShareCardModalOnFormBtn"]').click(function () {
             $('#shareCardModalOnForm').modal('show');
@@ -979,137 +944,190 @@
     </script>
 
     <script id="imageUploadManagementScript">
-        const toggleBannerControls = (hasImage) => {
-            if (hasImage) {
-                $('#deleteBannerBtn').removeClass('d-none');
-                $('label[for="file-1"]').addClass('d-none');
-            } else {
-                $('#deleteBannerBtn').addClass('d-none');
-                $('label[for="file-1"]').removeClass('d-none');
-            }
-        };
-        const handleImageUpload = (inputClass, targetId) => {
-            fileInput = $(`.${inputClass}`)[0];
-            currentTarget = targetId;
+        let cropper;
+        let currentTarget;
+        const $cropperModal = $('#cropperModal');
 
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                $('#cropperTarget').attr('src', e.target.result);
-                $('#zoomSlider').val(1);
-                $('#cropperModal').modal('show');
-            };
-            reader.readAsDataURL(file);
-        }
+        $('.dropzone .upload-image, .dropzone .upload-new-image').click(function () {
+            currentTarget = $(this).closest('.dropzone').data('target');
 
-        const selectFile = (targetClass) => {
-            const $input = $(`.${targetClass}`);
-
-            // Clear previous value to ensure change event fires for same file
+            const $input = $(`.${currentTarget}`);
             $input.val('');
 
             $input.off('change').on('change', function () {
-                if (this.files && this.files[0]) {
-                    handleImageUpload(targetClass, targetClass);
-                }
+                if (this.files && this.files[0]) handleImageUpload();
             });
-
             $input.trigger('click');
-        };
-
-        // crop the image
-        let cropper;
-        let currentTarget = '';
-        let fileInput = null;
-
-        $(function () {
-            toggleBannerControls({{ $hasBanner ? "1": "0" }});
-            $(`#deleteBannerBtn`).click(function () {
-                $(this).prop('disabled', true);
-                var business_id = '{{$business->id}}';
-                $.ajax({
-                    url: '{{ route('business.delete-banner') }}',
-                    type: 'POST',
-                    data: {
-                        "business_id": business_id,
-                    },
-                    success: function () {
-                        location.reload();
-                    }
-                });
-            })
-            const $cropperModal = $('#cropperModal');
-            $cropperModal.on('shown.bs.modal', function () {
-                const image = document.getElementById('cropperTarget');
-                cropper = new Cropper(image, {
-                    viewMode: 1,
-                    scalable: true,
-                    zoomable: true,
-                    dragMode: 'move',
-                    aspectRatio: currentTarget === 'banner' ? 2560 / 1080 : 1,
-                });
-
-                $('#zoomSlider').on('input', function () {
-                    cropper.zoomTo(parseFloat(this.value));
-                });
-            });
-
-            $cropperModal.on('hidden.bs.modal', function () {
-                cropper.destroy();
-                cropper = null;
-            });
-
-            $('#saveCropped').on('click', function () {
-                const canvas = cropper.getCroppedCanvas(); // ⬅️ no dimensions → keeps native cropped resolution
-                canvas.toBlob(function (blob) {
-                    // Preview
-                    const url = URL.createObjectURL(blob);
-                    $(`#${currentTarget}`).attr('src', url);
-                    $(`#${currentTarget}_preview`).attr('src', url).removeClass('d-none');
-
-                    // Convert blob to File and assign to input
-                    const file = new File([blob], 'cropped-image.jpg', {type: 'image/jpeg'});
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(file);
-                    fileInput.files = dataTransfer.files;
-                    if (currentTarget === 'banner') toggleBannerControls(true);
-                    $('#cropperModal').modal('hide');
-                }, 'image/jpeg');
-            });
-
         })
 
         // drag and drop files
-        $(function () {
-            $('.dropzone').on('dragover', function (e) {
-                e.preventDefault();
-                $(this).addClass('drag-over');
-            }).on('dragleave', function () {
-                $(this).removeClass('drag-over');
-            }).on('drop', function (e) {
-                e.preventDefault();
-                $(this).removeClass('drag-over');
+        $('.dropzone').on('dragover', function (e) {
+            e.preventDefault();
+            $(this).addClass('drag-over');
+        }).on('dragleave', function () {
+            $(this).removeClass('drag-over');
+        }).on('drop', function (e) {
+            e.preventDefault();
+            $(this).removeClass('drag-over');
 
-                const files = e.originalEvent.dataTransfer.files;
-                if (files.length && files[0].type.startsWith('image/')) {
-                    const targetId = $(this).data('target');
-                    const fileInput = $(`.${targetId}`)[0];
+            const files = e.originalEvent.dataTransfer.files;
+            if (files.length && files[0].type.startsWith('image/')) {
+                currentTarget = $(this).data('target');
 
-                    // Put dropped file into input manually
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(files[0]);
-                    fileInput.files = dataTransfer.files;
+                // Put dropped file into input manually
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(files[0]);
+                $(`.${currentTarget}`)[0].files = dataTransfer.files;
 
-                    // Trigger the crop modal
-                    handleImageUpload(targetId, targetId);
+                // Trigger the crop modal
+                handleImageUpload();
+            }
+        });
+
+        //handle image upload and open the cropper modal
+        const handleImageUpload = () => {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                initCropper(e.target.result);
+            };
+            reader.readAsDataURL($(`.${currentTarget}`)[0].files[0]);
+        }
+
+        const initCropper = (url) => {
+            const $cropperTarget = $('#cropperTarget');
+            const $zoomSlider = $('#zoomSlider');
+            const image = $cropperTarget[0];
+
+            try {
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
                 }
-            });
+            } catch {
+
+            }
+
+            $zoomSlider.val(1);
+            $cropperTarget.attr('src', url);
+
+            // Wait until image is fully loaded
+            image.onload = () => {
+                $cropperModal.off('shown.bs.modal').on('shown.bs.modal', function () {
+                    cropper = new Cropper(image, {
+                        viewMode: 1,
+                        scalable: true,
+                        zoomable: true,
+                        dragMode: 'move',
+                        aspectRatio: currentTarget === 'banner' ? 2560 / 1080 : 1,
+                    });
+
+                    $zoomSlider.on('input', function () {
+                        cropper.zoomTo(parseFloat(this.value));
+                    });
+                });
+
+                $cropperModal.modal('show');
+            };
+        };
+
+        // when save the cropped image
+        $('#saveCropped').on('click', function () {
+            const canvas = cropper.getCroppedCanvas(); // ⬅️ no dimensions → keeps native cropped resolution
+            canvas.toBlob(function (blob) {
+                // Preview
+                const url = URL.createObjectURL(blob);
+                $(`#${currentTarget}`).attr('src', url);
+                $(`#${currentTarget}_preview, #${currentTarget}_preview_1`).attr('src', url);
+
+                // Convert blob to File and assign to input
+                const file = new File([blob], 'cropped-image.jpg', {type: 'image/jpeg'});
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                $(`.${currentTarget}`)[0].files = dataTransfer.files;
+
+                // Flag the target as un-deleted
+                $(`input[name="is_${currentTarget}_deleted"][type="hidden"]`).val('0').trigger('change');
+
+                const $dropzone = $(`.dropzone[data-target="${currentTarget}"]`);
+                $dropzone.find(`.image-buttons-dropdown`).removeClass('d-none');
+                $dropzone.find(`.upload-image`).addClass('d-none');
+
+                switch (currentTarget) {
+                    // if the target is banner
+                    case "banner":
+                        //hide original upload button
+                        $('#bannerUploadPlaceholderDiv').addClass('d-none');
+                        break;
+
+                    // if the target is business_company_logo
+                    case "business_company_logo":
+                        // show the business_company_logo_preview
+                        $('#business_company_logo_preview').removeClass('d-none');
+                        break;
+
+                    case "qrcode_image":
+                        setTimeout(generate_qr, 250);
+                        break;
+                    default:
+                        break;
+                }
+
+                $('#cropperModal').modal('hide');
+
+            }, 'image/jpeg');
+        });
+
+
+        $('.dropzone .edit-image').click(function () {
+            currentTarget = $(this).closest('.dropzone').data('target');
+            initCropper($(`#${currentTarget}`).attr('src'));
+        })
+
+        // When clicked the delete image
+        $(`.dropzone .delete-image`).click(function () {
+            currentTarget = $(this).closest('.dropzone').data('target');
+
+            // Remove files set in the target
+            $(`input[name="${currentTarget}"][type="file"]`).val('');
+
+            // Flag the target as deleted
+            $(`input[name="is_${currentTarget}_deleted"][type="hidden"]`).val('1').trigger('change');
+
+            const $dropzone = $(`.dropzone[data-target="${currentTarget}"]`);
+            $dropzone.find(`.image-buttons-dropdown`).addClass('d-none');
+            $dropzone.find(`.upload-image`).removeClass('d-none');
+
+            let placeholder_src = "{{ $imagePlaceholderUrl }}";
+            switch (currentTarget) {
+                // If the target is banner
+                case "banner":
+                    // Show the original upload button
+                    $('#bannerUploadPlaceholderDiv').removeClass('d-none');
+
+                    // Set different placeholder image.
+                    placeholder_src = "{{ asset('assets/images/icons/user_interface/cover_photo_placeholder.png') }}";
+                    break;
+
+                // if the target is business_company_logo
+                case "business_company_logo":
+                    // hide the business_company_logo_preview
+                    $('#business_company_logo_preview').addClass('d-none');
+                    break;
+
+                // If the target is qrcode_image
+                case "qrcode_image":
+                    setTimeout(generate_qr, 250);
+                    break;
+            }
+
+            // Set placeholder image to the dropzone and the associated preview in the VCard
+            $(`#${currentTarget}, #${currentTarget}_preview, #${currentTarget}_preview_1`).attr('src', placeholder_src);
         })
     </script>
 
     <script id="livePreviewScript">
         const getPreviewElement = (element) => {
-            return $(`#${element.attr('id')}_preview`)
+            return $(`#${element.attr('id')}_preview, #${element.attr('id')}_preview_1`)
         }
         //input change
         $(document).on('keyup', 'input', function () {
@@ -1137,41 +1155,6 @@
                     } else {
                         $container.show();
                     }
-
-                    break;
-                }
-
-                case "{{ $business_id }}_phone":
-                case "{{ $business_id }}_address":
-                case "{{ $business_id }}_email":
-                case "{{ $business_id }}_website": {
-                    let href = val;
-                    if (id === "{{ $business_id }}_phone")
-                        href = `tel:${val}`;
-                    if (id === "{{ $business_id }}_address")
-                        href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(val)}`;
-                    if (id === "{{ $business_id }}_email")
-                        href = `mailto:${val}`;
-                    else
-                        href = `https://${val}`;
-                    previewElement.attr('href', href);
-
-                    $container = previewElement.closest('div');
-                    if (val) $container.show();
-                    else $container.hide();
-
-                    const $groupContainer = $('#contact-section');
-                    const values = [
-                        $("#{{ $business_id }}_phone").val(),
-                        $("#{{ $business_id }}_address").val(),
-                        $("#{{ $business_id }}_email").val(),
-                        $("#{{ $business_id }}_website").val(),
-                    ]
-                    if (values.every(val => val === null || val === '')) {
-                        $groupContainer.hide();
-                    } else {
-                        $groupContainer.show();
-                    }
                     break;
                 }
 
@@ -1179,8 +1162,6 @@
                 case "{{ $business_id }}_google_review_link":
                     previewElement.attr('href', val);
                     break;
-
-
             }
             //if not Google Review Link
             if (id !== "{{ $business_id }}_google_review_link") {
@@ -1205,30 +1186,74 @@
     </script>
 
     <script id="socialManagementScript">
-        let $socialsSlider;
         const socialSvgs = {
-            @foreach ($businessfields as $key)
+            @foreach ($businessfields as $key => $val)
             "{{ strtolower($key) }}": `{!! svg('vcard/socials/' . strtolower($key) . '.svg', ['class' => 'w-100 h-100']) !!}`,
             @endforeach
         };
+        const editIcon = `{!! view('components.edit-icon')  !!}`;
+        const deleteIcon = `{!! view('components.delete-icon')  !!}`;
 
-        const socialValidators = {
-            facebook: /^https?:\/\/(www\.)?facebook\.com\/.+$/i,
-            instagram: /^https?:\/\/(www\.)?instagram\.com\/.+$/i,
-            linkedin: /^https?:\/\/(www\.)?linkedin\.com\/.+$/i,
-            youtube: /^https?:\/\/(www\.)?youtube\.com\/.+$/i,
-            twitter: /^https?:\/\/(www\.)?twitter\.com\/.+$/i,
-            pinterest: /^https?:\/\/(www\.)?pinterest\.com\/.+$/i,
-            tiktok: /^https?:\/\/(www\.)?tiktok\.com\/.+$/i,
-            behance: /^https?:\/\/(www\.)?behance\.net\/.+$/i,
-            whatsapp: phone => /^\+[0-9\s\-]{7,15}$/.test(phone),
+        const linkValidators = {
+            facebook: {
+                pattern: "^https?:\/\/(www\.)?facebook\.com\/.+$",
+                message: "Please enter a valid facebook profile url: (e.g., https://facebook.com/yourprofile)"
+            },
+            instagram: {
+                pattern: "^https?:\/\/(www\.)?instagram\.com\/.+$",
+                message: "Please enter a valid instagram profile url: (e.g., https://instagram.com/yourprofile)"
+            },
+            linkedin: {
+                pattern: "^https?:\/\/(www\.)?linkedin\.com\/.+$",
+                message: "Please enter a valid linkedin profile url: (e.g., https://linkedin.com/yourprofile)"
+            },
+            youtube: {
+                pattern: "^https?:\/\/(www\.)?youtube\.com\/.+$",
+                message: "Please enter a valid youtube profile url: (e.g., https://youtube.com/yourprofile)"
+            },
+            twitter: {
+                pattern: "^https?:\/\/(www\.)?twitter\.com\/.+$",
+                message: "Please enter a valid twitter profile url: (e.g., https://twitter.com/yourprofile)"
+            },
+            pinterest: {
+                pattern: "^https?:\/\/(www\.)?pinterest\.com\/.+$",
+                message: "Please enter a valid pinterest profile url: (e.g., https://pinterest.com/yourprofile)"
+            },
+            tiktok: {
+                pattern: "^https?:\/\/(www\.)?tiktok\.com\/.+$",
+                message: "Please enter a valid tiktok profile url: (e.g., https://tiktok.com/yourprofile)"
+            },
+            behance: {
+                pattern: "^https?:\/\/(www\.)?behance\.net\/.+$",
+                message: "Please enter a valid tiktok profile url: (e.g., https://behance.net/yourprofile)"
+            },
+            whatsapp: {
+                pattern: "^[\\d \\-]{7,16}$",
+                message: "Please enter a valid whatsapp number"
+            },
+            phone: {
+                pattern: "^[\\d \\-]{7,16}$",
+                message: "Please enter a valid phone number"
+            },
+            address: {
+                pattern: "",
+                message: "Please enter the address"
+            },
+            email: {
+                pattern: "^[^@]+@[^@]+\.[^@]+$",
+                message: "Please enter a valid email address: (e.g., user@example.com)"
+            },
+            website: {
+                pattern: "^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$",
+                message: "Please enter a valid website: (e.g., my.com)"
+            },
         };
 
-
-        var socials_row_no = {{ count($social_content) + 1 }};
-        var selectedSocialName = '';
-        var selectedSocialIcon = '';
-        var editSocialId = null;
+        let socialsRowNumber = {{ count($social_content) + 1 }};
+        let selectedSocialName = "";
+        let editSocialId = null;
+        let itiInstance = null;
+        const $socialItemModalInputClone = $('#socialItemModalInput').prop('outerHTML');
 
         $(`#openSocialsModal`).click(function () {
             $('#socialsModal').modal('show');
@@ -1238,128 +1263,25 @@
             $('#socialItemModal').modal('hide');
         })
 
-        $(function () {
-            $socialsSlider = $('.socials-slider');
-            $saveSocialItemBtn = $('#saveSocialItemBtn');
-            // Handle Save/Add/Update
-            $saveSocialItemBtn.on('click', function () {
-                const inputVal = $('#socialItemModalInput').val().trim();
-                const platform = selectedSocialName.toLowerCase();
-                const validator = socialValidators[platform];
-                let previewLink = inputVal;
-                if (platform === 'whatsapp') {
-                    const cleaned = inputVal.replace(/\D/g, ''); // remove +, dashes, spaces
-                    previewLink = `https://wa.me/${cleaned}`;
-                }
-
-                let isValid = false;
-
-                if (validator instanceof RegExp) {
-                    isValid = validator.test(inputVal);
-                } else if (typeof validator === 'function') {
-                    isValid = validator(inputVal);
-                }
-
-                if (!isValid) {
-                    const msg = platform === 'whatsapp'
-                        ? 'Please enter a valid WhatsApp phone number (e.g., +1234567890)'
-                        : `Please enter a valid ${selectedSocialName} link (e.g., https://${platform}.com/yourprofile)`;
-                    toastrs("", msg, "error");
-                    return;
-                }
-                if (editSocialId) {
-                    const editSocialRowSelector = `#${editSocialId}`;
-                    $(editSocialRowSelector).find('.social-link-href').val(inputVal).trigger('change');
-                    $(`${editSocialRowSelector}_preview`).attr('href', previewLink).show();
-                } else {
-                    // Create new card + hidden inputs
-                    const newSocialDataId = `socials_${socials_row_no}`;
-                    var html = `
-                <div class="col-lg-4 social-row" id="${newSocialDataId}">
-                    <div class="d-flex align-items-center justify-content-between p-2 bg-light rounded">
-                        <div class="d-flex align-items-center gap-2">
-                            <img src="${asset_path}/${selectedSocialName.toLowerCase()}.svg" alt="" style="width:24px;height:24px;">
-                            <span class="social-link-text">${selectedSocialName}</span>
-                            <input type="hidden" name="socials[${socials_row_no}][${selectedSocialName}]" value="${inputVal}" class="social-link-href">
-                            <input type="hidden" name="socials[${socials_row_no}][id]" value="${socials_row_no}">
-                        </div>
-                        <div class="d-flex align-items-center gap-2">
-                            <button type="button" class="btn btn-white btn-edit-social" title="Edit">
-                                <i class="bi bi-pencil-square"></i>
-                            </button>
-                            <button type="button" class="btn btn-white btn-remove-social">
-                                {!! view('components.delete-icon') !!}
-                    </button>
-                </div>
-            </div>
-        </div>
-`;
-                    $('#inputrow_socials').append(html);
-                    let svgHtml = socialSvgs[platform];
-                    let newSocialSlide = `
-                    <a href="${previewLink}" target="_blank" class="card-social-link"
-                        id="${newSocialDataId}_preview">
-                       ${svgHtml}
-                    </a>`;
-                    $socialsSlider.append(newSocialSlide);
-                    socials_row_no++;
-                }
-                $socialsSlider.show();
-                $('#socialItemModal').modal('hide');
-            });
-
-            const $socialItemModal = $('#socialItemModal');
-            $socialItemModal.off('shown.bs.modal').on('shown.bs.modal', function () {
-                const platform = selectedSocialName.toLowerCase();
-                const $input = $('#socialItemModalInput');
-                if (platform === 'whatsapp') {
-                    $input.attr('placeholder', '');
-                    try {
-                        const itiInstance = window.intlTelInputGlobals.getInstance($input[0]);
-                        if (itiInstance) itiInstance.destroy();
-                    } catch (e) {
-
-                    }
-                    // initialize intlTelInput
-                    window.intlTelInput($input[0], iti_config);
-                }
-            });
-
-            $socialItemModal.off('hidden.bs.modal').on('hidden.bs.modal', function () {
-                const $input = $('#socialItemModalInput');
-                $input.attr('placeholder', '');
-                try {
-                    const itiInstance = window.intlTelInputGlobals.getInstance($input[0]);
-                    if (itiInstance) itiInstance.destroy();
-                } catch (e) {
-
-                }
-            });
-        })
-
-
         // When select a social in socialsModal
-        function socialRepeater(el) {
+        function socialRepeater(linkKey) {
             if ($('#inputrow_socials .social-row').length >= 10) {
-                toastrs("", "You can only add up to 10 social links.", "error");
+                toastrs("", "You can only add up to 10 links.", "error");
                 return;
             }
-            selectedSocialIcon = asset_path + '/' + el.toLowerCase() + '.svg';
-            $('#socialItemModalIcon').attr('src', selectedSocialIcon);
+            $('#socialItemModalIcon').attr('src', asset_path + '/' + linkKey.toLowerCase() + '.svg');
 
-            selectedSocialName = el;
-            const selected = el.toLowerCase();
+            selectedSocialName = linkKey;
+            const selected = linkKey.toLowerCase();
             const count = $(`#inputrow_socials .social-link-text`).filter(function () {
                 return $(this).text().trim().toLowerCase() === selected;
             }).length;
 
             if (count >= 2) {
-                toastrs("", `Only 2 ${el} links allowed.`, "error");
+                toastrs("", `Only 2 ${linkKey} same links allowed.`, "error");
                 return;
             }
             $('#socialItemModalName').text(selectedSocialName);
-
-            $('#socialItemModalInput').val('');
             $saveSocialItemBtn.text('Add');
             editSocialId = null;
 
@@ -1374,6 +1296,116 @@
                 $(this).off('hidden.bs.modal');
             });
         }
+
+        const $socialItemModal = $('#socialItemModal');
+        $socialItemModal.on('shown.bs.modal', function () {
+            const platform = selectedSocialName.toLowerCase();
+            const $input = $('#socialItemModalInput');
+            if (["whatsapp", "phone"].indexOf(platform) !== -1) {
+                // initialize intlTelInput
+                itiInstance = window.intlTelInput($input[0], {
+                    initialCountry: "auto",
+                    nationalMode: true,
+                    strictMode: true,
+                    geoIpLookup: callback => {
+                        fetch("https://ipapi.co/json")
+                            .then(res => res.json())
+                            .then(data => callback(data.country_code))
+                            .catch(() => callback("us"));
+                    },
+                    loadUtils: () => import("https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/js/utils.js"),
+                });
+            }
+
+            const linkValidator = linkValidators[platform];
+            $input.attr("validation-regex", linkValidator.pattern).attr("validation-message", linkValidator.message);
+        });
+
+        $socialItemModal.on('hidden.bs.modal', function () {
+            if (itiInstance) itiInstance.destroy();
+            const $input = $('#socialItemModalInput');
+            $input.prop('outerHTML', $socialItemModalInputClone);
+        });
+
+        const $socialsSlider = $('.socials-slider');
+        const $saveSocialItemBtn = $('#saveSocialItemBtn');
+
+        // Handle Save/Add/Update
+        $saveSocialItemBtn.on('click', function () {
+            const platform = selectedSocialName.toLowerCase();
+            const $input = $('#socialItemModalInput');
+            let inputVal = $input.val().trim();
+            if (!validateInContainer($socialItemModal)) return false;
+            if (["whatsapp", "phone"].indexOf(platform) !== -1) {
+                inputVal = itiInstance.getNumber();
+                $input.val(inputVal);
+            }
+            let previewLink = inputVal;
+            switch (platform) {
+                case "whatsapp":
+                case "phone":
+                    const cleaned = inputVal.replace(/\D/g, ''); // remove +, dashes, spaces
+                    previewLink = (platform === "whatsapp" ? "https://wa.me/" : "tel:") + cleaned;
+                    break;
+
+                case "address":
+                    previewLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(inputVal)}`;
+                    break;
+
+                case "email":
+                    previewLink = `mailto:${inputVal}`;
+                    break;
+
+                case "website":
+                    previewLink = `https://${inputVal}`;
+                    break;
+            }
+
+            if (editSocialId) {
+                const editSocialRowSelector = `#${editSocialId}`;
+                $(editSocialRowSelector).find('.social-link-href').val(inputVal).trigger('change');
+                $(`${editSocialRowSelector}_preview`).attr('href', previewLink).show();
+            } else {
+                // Create new card + hidden inputs
+                const newSocialDataId = `socials_${socialsRowNumber}`;
+                var html = `<div class="col-lg-4 social-row" id="${newSocialDataId}">
+                        <div class="d-flex align-items-center justify-content-between p-2 bg-light rounded">
+                            <div class="d-flex align-items-center gap-2">
+                                <img src="${asset_path}/${selectedSocialName.toLowerCase()}.svg" alt="" class="colored-social-icon">
+                                <span class="social-link-text">${selectedSocialName}</span>
+                                <input type="hidden" name="socials[${socialsRowNumber}][${selectedSocialName}]" value="${inputVal}" class="social-link-href">
+                                <input type="hidden" name="socials[${socialsRowNumber}][id]" value="${socialsRowNumber}">
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <button type="button"
+                                        class="btn-edit-social btn btn-icon rounded-circle p-0">
+                                    ${editIcon}
+                                </button>
+                                <button type="button"
+                                    class="btn-remove-social btn btn-icon rounded-circle p-0">
+                                    ${deleteIcon}
+                                </button>
+                            </div>
+                        </div>
+                    </div>`;
+
+                $('#inputrow_socials').append(html);
+                let svgHtml = socialSvgs[platform];
+                let newSocialSlide = `
+                    <div class="card-social-link">
+                        <a href="${previewLink}" target="_blank" class="w-100"
+                            id="${newSocialDataId}_preview">
+                           ${svgHtml}
+                        </a>
+                        <p>${selectedSocialName}</p>
+                    </div>
+                `;
+                $socialsSlider.append(newSocialSlide);
+                socialsRowNumber++;
+            }
+            $socialsSlider.show();
+            $('#socialItemModal').modal('hide');
+        })
 
 
         // Handle Edit Button
@@ -1414,11 +1446,45 @@
                 card_text_color: "--custom-color",
                 button_text_color: "--custom-button-color"
             };
+
             $('.color-group').each(function () {
                 const group = $(this);
                 const inputId = group.data('input-id');
                 const $input = $('#' + inputId);
-                const currentColor = $input.val().toLowerCase();
+                const initialColor = $input.val();
+
+                // Init Pickr
+                const pickr = Pickr.create({
+                    el: group.find('.color-picker-trigger')[0],
+                    theme: 'nano',
+                    default: initialColor,
+                    swatches: [],
+                    components: {
+                        preview: true,
+                        opacity: false,
+                        hue: true,
+                        interaction: {
+                            hex: true,
+                            input: true,
+                            save: true
+                        }
+                    }
+                });
+
+
+                // Apply color via Pickr
+                pickr.on('change', (color) => {
+                    const hex = color.toHEXA().toString().toLowerCase();
+                    $input.val(hex).trigger('input');
+                });
+
+                // Apply color via Pickr
+                pickr.on('save', (color) => {
+                    pickr.hide();
+                });
+
+                // Highlight initial selection
+                const currentColor = initialColor.toLowerCase();
                 let matched = false;
 
                 group.find('.color-swatch').each(function () {
@@ -1433,56 +1499,55 @@
                     group.find('.color-picker-swatch').addClass('selected');
                 }
 
+                // Handle swatch click
                 group.on('click', '.color-swatch', function () {
                     const selectedColor = $(this).data('color');
                     group.find('.color-swatch, .color-picker-swatch').removeClass('selected');
                     $(this).addClass('selected');
                     $input.val(selectedColor).trigger('input');
+                    // ✅ update pickr value
+                    pickr.setColor(selectedColor);
                 });
 
-                group.on('input', 'input[type="color"]', function () {
+                // On input trigger (shared logic)
+                $input.on('input', function () {
                     const val = $(this).val().toLowerCase();
-                    let found = false;
-
-                    group.find('.color-swatch').each(function () {
-                        if ($(this).data('color').toLowerCase() === val) {
-                            group.find('.color-swatch, .color-picker-swatch').removeClass('selected');
-                            $(this).addClass('selected');
-                            found = true;
-                        }
-                    });
-
-                    if (!found) {
-                        group.find('.color-swatch, .color-picker-swatch').removeClass('selected');
+                    group.find('.color-swatch, .color-picker-swatch').removeClass('selected');
+                    const matchedSwatch = group.find(`.color-swatch[data-color="${val}"]`);
+                    if (matchedSwatch.length > 0) {
+                        matchedSwatch.addClass('selected');
+                    } else {
                         group.find('.color-picker-swatch').addClass('selected');
                     }
-                    const id = $(this).attr('id');
-                    businessCard.style.setProperty(colorOptions[id], val);
-                    if (id === "card_bg_color") {
+
+                    businessCard.style.setProperty(colorOptions[inputId], val);
+                    if (inputId === "card_bg_color") {
                         businessCard.style.setProperty('--custom-section-border-color', getRelativeBorderColor());
                     }
                 });
             });
         })
-
     </script>
 
     <script id="serviceManagementScript">
         let services_count = {{ count($services_content) + 1 }};
+        const bin_icon_primary = `{!! svg('/user_interface/bin_icon_primary.svg') !!}`;
         const $service_list = $(`#serviceList`);
         const $vcard_service_list = $(`#vcardServiceList`);
+
         $(`#addNewServiceBtn`).click(function () {
             const current_service_row_count = $('.service-row').length;
+            if (!validateInContainer($('#serviceList'))) return false;
             const html = `
                 <div class="col-md-6 service-row" data-key="${services_count}">
                     <div class="form-group">
                         <div class="d-flex align-items-center mb-2">
                             <label class="form-label mb-0">Service ${current_service_row_count + 1}</label>
-                            <button type="button" class="remove-service-row item-management-btn">
-                            {!! view('components.delete-icon') !!}
-            </button>
-        </div>
-        <input type="text" class="form-control" id="service_title_${services_count}" name="services[${services_count}][title]" required />
+                            <button type="button" class="remove-service-row item-management-btn btn btn-icon rounded-circle p-0">
+                                ${bin_icon_primary}
+                            </button>
+                        </div>
+                        <input type="text" class="form-control" id="service_title_${services_count}" name="services[${services_count}][title]" validation-required="true" />
                     </div>
                 </div>
             `;
@@ -1506,7 +1571,6 @@
             $('.service-row').each(function () {
                 const $service_row = $(this);
                 const service_index = $service_row.index();
-                console.log('service_index', service_index + 1);
                 $service_row.find('.form-label').text(`Service ${service_index + 1}`);
             })
             services_count = $('.service-row:last-child').data('key') + 1;
@@ -1521,96 +1585,252 @@
     </script>
 
     <script id="galleryManagementScript">
-        $(function () {
-            $("#is_gallery_enabled").change(function () {
-                const enable = $(this).is(":checked");
-                const $section = $("#vcard-gallery-section");
-                if (enable) $section.show();
-                else $section.hide();
-            })
+        $("#is_gallery_enabled").change(function () {
+            const enable = $(this).is(":checked");
+            const $section = $("#vcard-gallery-section");
+            if (enable) $section.show();
+            else $section.hide();
+        })
 
-            $('#openGalleryModal').click(function () {
-                $('#addGalleryModal').modal('show');
-                $(`input[name="galleryoption"][value="image"]`).prop('checked', true).trigger('change');
-            })
+        const businessId = {{ $business->id }};
+        const galleryPath = "{{ $gallery_path }}";
+        const deletePrimaryIcon = `{!! svg('/user_interface/bin_icon_primary.svg') !!}`;
+        const imagePlaceholderIcon = `{!! svg('/user_interface/image_placeholder_icon.svg') !!}`;
+        const videoPlaceholderIcon = `{!! svg('/user_interface/video_placeholder_icon.svg') !!}`;
+        const perRow = window.innerWidth >= 1200 ? 4 : window.innerWidth >= 768 ? 3 : 2;
+        const maxImages = 24;
+        const maxVideos = 12;
+        let imageListSlick = null;
+        let videoListSlick = null;
+        const fileListSlickConfig = {
+            dots: false,
+            infinite: false,
+            slidesToShow: 4,
+            slidesToScroll: 4,
+            responsive: [
+                {
+                    breakpoint: 1024,
+                    settings: {
+                        slidesToShow: 3,
+                        slidesToScroll: 3,
+                    }
+                },
+                {
+                    breakpoint: 768,
+                    settings: {
+                        slidesToShow: 2,
+                        slidesToScroll: 2
+                    }
+                },
+            ]
+        }
 
-            // Switch between Image and Custom Image
-            $('#addGalleryModal input.gallery_mode').on('change', function () {
-                const selected = $(this).val();
-                $('.upload-image-div, .custom-image-div').addClass('d-none');
-                if (selected === 'image') {
-                    $('.upload-image-div').removeClass('d-none');
+        // Gallery Ajax
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        function fetchGallery() {
+            $.get(`/gallery/${businessId}`, function (items) {
+                const images = items.filter(i => ['image', 'custom_image_link'].includes(i.type));
+                const videos = items.filter(i => ['video', 'custom_video_link'].includes(i.type));
+
+                renderItems(images, '#galleryPreview', 'image');
+                renderItems(videos, '#videoGalleryPreview', 'video');
+            });
+        }
+
+        function getVideoHTML(url) {
+            let html = "";
+            if (/\.(mp4|webm|ogg)$/i.test(url)) {
+                html = `<video class="w-100 object-fit-cover gallery-card" controls>
+                     <source src="${url}" type="video/mp4">
+                       Your browser does not support the video tag.
+                </video>`;
+            } else {
+                html += `<iframe src="${url.replace('watch?v=', 'embed/')}" width="100%" height="200" frameborder="0" allowfullscreen></iframe>`
+            }
+            return html;
+        }
+
+        function renderItems(items, targetSelector, mode) {
+            const $target = $(targetSelector).empty();
+            items.forEach(i => {
+                let path = i.value;
+                if (["image", "video"].indexOf(i.type) !== -1) {
+                    path = `${galleryPath}/${path}`;
+                }
+                let html = `<div class="col-6 col-md-4 col-xl-3">`;
+                if (mode === "image") {
+                    html += `
+                        <div class="gallery-card bg-secondary position-relative rounded-3 overflow-hidden d-flex justify-content-center align-items-center">
+                            <img src="${path}" class="gallery-image w-100 h-100 object-fit-cover" alt="Gallery Image">
+                            <button type="button" class="remove-gallery item-management-btn btn btn-icon rounded-circle position-absolute top-0 end-0 m-1 border-0" data-id="${i.id}">
+                                ${deletePrimaryIcon}
+                            </button>
+                        </div>
+                    `;
                 } else {
-                    $('.custom-image-div').removeClass('d-none');
+                    html += `
+                        <div class="gallery-card position-relative rounded-3 overflow-hidden">
+                            ${getVideoHTML(path)}
+                            <button type="button" class="remove-gallery item-management-btn btn btn-icon rounded-circle position-absolute top-0 end-0 m-1 border-0" data-id="${i.id}">
+                                ${deletePrimaryIcon}
+                            </button>
+                        </div>
+                    `
                 }
-                $('#addGalleryModal .gallery-option').removeClass('btn-primary').addClass('btn-secondary');
-                $(this).closest('.gallery-option').removeClass('btn-secondary').addClass('btn-primary');
-                $('#addGalleryModal input:not([name="galleryoption"])').val('');
-                $('#upload_image_modal').val('');
-                resetPreview();
-            });
+                html += `</div>`;
+                $target.append(html);
 
-            // Preview uploaded image
-            $('#upload_image_modal').on('change', function (e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        $('#gallery_img_preview').attr('src', e.target.result).parent().removeClass('d-none');
-                    };
-                    reader.readAsDataURL(file);
+            });
+            const maxItems = mode === 'image' ? maxImages : maxVideos;
+
+            // Add placeholders
+            const remain = perRow - items.length % perRow;
+            const $addMorePlaceholdersBtn = $(`.add-more-placeholders[data-mode="${mode}"]`);
+            $addMorePlaceholdersBtn.addClass('invalid')
+            if ([0, perRow].indexOf(remain) === -1 || items.length === 0) {
+                for (let i = 0; i < remain; i++) {
+                    $target.append(`
+                        <div class="col-6 col-md-4 col-xl-3">
+                            <div class="file-placeholder gallery-card bg-secondary w-100 rounded-3 d-flex justify-content-center align-items-center cursor-pointer" data-mode="${mode}">
+                                ${mode === "image" ? imagePlaceholderIcon : videoPlaceholderIcon}
+                            </div>
+                        </div>
+                    `);
                 }
-            });
-
-            // Preview custom link
-            $('#custom_image_link_modal').on('input', function () {
-                const url = $(this).val().trim();
-                if (url) {
-                    $('#gallery_img_preview').attr('src', url).parent().removeClass('d-none');
-                } else {
-                    resetPreview();
-                }
-            });
-
-            // Cancel
-            $('#cancelGalleryModal').on('click', function () {
-                $('#addGalleryModal input:not([name="galleryoption"])').val('');
-                $('#upload_image_modal').val('');
-                resetPreview();
-                $('#addGalleryModal').modal('hide');
-            });
-
-            function resetPreview() {
-                $('#gallery_img_preview').attr('src', '#').parent().addClass('d-none');
+            } else if (items.length !== maxItems) {
+                $addMorePlaceholdersBtn.removeClass('invalid');
             }
 
-            // Save button submits the main form
-            $('#saveGalleryModal').on('click', function () {
-                $('#submitUpdateBusinessForm').trigger('click');
-            });
+        }
 
+        $(document).ready(fetchGallery);
 
-            // Gallery Ajax
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-        })
-        $('.remove-gallery').on('click', function () {
-            var this_id = $(this).data('id');
-            var business_id = '{{$business->id}}';
+        // Upload trigger
+        $(document).on('click', '.file-placeholder', function () {
+            const _this = $(this);
+            const mode = _this.data('mode');
+            if (mode === "image") {
+                $('#addGalleryModal').modal('show');
+                $(`input[name="galleryoption"][value="image"]`).prop('checked', true).trigger('change');
+            } else {
+                $('#addVideoModal').modal('show');
+                $(`input[name="galleryoption"][value="video"]`).prop('checked', true).trigger('change');
+            }
+        });
+
+        // Upload trigger
+        $(document).on('click', '.add-more-placeholders', function () {
+            const $this = $(this);
+            const mode = $this.data('mode');
+            if ($this.hasClass('invalid')) {
+                toastrs("", `Please fill all the existing ${mode}s`, "error");
+                return false;
+            }
+            const $target = $(mode === "image" ? "#galleryPreview" : "#videoGalleryPreview");
+            for (let i = 0; i < perRow; i++) {
+                $target.append(`
+                    <div class="col-6 col-md-4 col-xl-3">
+                        <div class="file-placeholder gallery-card bg-secondary w-100 rounded-3 d-flex justify-content-center align-items-center cursor-pointer" data-mode="${mode}">
+                            ${mode === "image" ? imagePlaceholderIcon : videoPlaceholderIcon}
+                        </div>
+                    </div>
+                `);
+            }
+            $this.addClass('invalid');
+        });
+
+        // Switch between Image and Custom Image
+        $('#addGalleryModal input.gallery_mode').on('change', function () {
+            const selected = $(this).val();
+            $('.upload-image-div, .custom-image-div').addClass('d-none');
+            if (selected === 'image') {
+                $('.upload-image-div').removeClass('d-none');
+            } else {
+                $('.custom-image-div').removeClass('d-none');
+            }
+            $('#addGalleryModal .gallery-option').removeClass('btn-primary').addClass('btn-white');
+            $(this).closest('.gallery-option').removeClass('btn-white').addClass('btn-primary');
+            $('#addGalleryModal input:not([name="galleryoption"])').val('');
+            $('#upload_image_modal').val('');
+            resetPreview();
+        });
+
+        // Preview uploaded image
+        $('#upload_image_modal').on('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#gallery_img_preview').attr('src', e.target.result).parent().removeClass('d-none');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Preview custom link
+        $('#custom_image_link_modal').on('input', function () {
+            const url = $(this).val().trim();
+            if (url) {
+                $('#gallery_img_preview').attr('src', url).parent().removeClass('d-none');
+            } else {
+                resetPreview();
+            }
+        });
+
+        function resetPreview() {
+            $('#gallery_img_preview').attr('src', '#').parent().addClass('d-none');
+        }
+
+        // Save Image
+        $('#saveGalleryModal').on('click', function () {
+            const mode = $('#addGalleryModal input[name="galleryoption"]:checked').val();
+            const formData = new FormData();
+            formData.append('business_id', businessId);
+            formData.append('galleryoption', mode);
+
+            if (mode === 'image') {
+                if (!validateInContainer($('.upload-image-div'))) return false;
+                const file = $('#upload_image_modal')[0].files[0];
+                formData.append('file', file);
+            } else {
+                if (!validateInContainer($('.custom-image-div'))) return false;
+                const url = $('#custom_image_link_modal').val().trim();
+                formData.append('link', url);
+            }
+
+            setLoadingState($(this));
             $.ajax({
-                url: '{{ route('destory.gallery') }}',
+                url: '/gallery/store',
                 type: 'POST',
-                data: {
-                    "id": this_id,
-                    "business_id": business_id,
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: () => {
+                    setLoadingState($(this), false);
+                    $('#addGalleryModal').modal('hide');
+                    fetchGallery();
                 },
-                success: function () {
-                    location.reload();
+                error: (xhr) => {
+                    setLoadingState($(this), false);
+                    toastrs('', xhr.responseJSON?.error || 'Failed to save item', 'error');
                 }
             });
+        });
+
+        $('#addGalleryModal').on('hidden.bs.modal', function () {
+            $('#addGalleryModal input:not([name="galleryoption"])').val('');
+            $('#upload_image_modal').val('');
+            resetPreview();
+        });
+
+        $(document).on('click', '.remove-gallery', function () {
+            $(this).prop('disabled', true);
+            $.post('/business/destroy', {id: $(this).data('id'), business_id: businessId}, fetchGallery);
         });
     </script>
 
@@ -1623,11 +1843,6 @@
                 else $section.hide();
             });
 
-            $('#openAddVideosModal').click(function () {
-                $('#addVideoModal').modal('show');
-                $(`input[name="galleryoption"][value="video"]`).prop('checked', true).trigger('change');
-            })
-
             // Switch between Image and Custom Image
             $('#addVideoModal input.gallery_mode').on('change', function () {
                 const selected = $(this).val();
@@ -1639,8 +1854,8 @@
                 }
                 $('#upload_video_modal').val('');
                 $('#custom_video_link_modal').val('');
-                $('#addVideoModal .gallery-option').removeClass('btn-primary').addClass('btn-secondary');
-                $(this).closest('.gallery-option').removeClass('btn-secondary').addClass('btn-primary');
+                $('#addVideoModal .gallery-option').removeClass('btn-primary').addClass('btn-white');
+                $(this).closest('.gallery-option').removeClass('btn-white').addClass('btn-primary');
             });
 
             // Preview uploaded video
@@ -1648,33 +1863,73 @@
                 const file = this.files[0];
                 if (file) {
                     const url = URL.createObjectURL(file);
-                    $('#videoPreview').attr('src', url);
+                    $('#iframePlayer').hide().removeAttr('src');
+                    $('#videoPreview').show().attr('src', url);
                     $('.preview-video').removeClass('d-none');
                 }
             });
 
             // Preview custom video link
             $('#custom_video_link_modal').on('input', function () {
-                const link = $(this).val();
-                if (link) {
-                    $('#videoPreview').attr('src', link);
+                const url = $(this).val();
+                if (url) {
+                    const isVideoFile = /\.(mp4|webm|ogg)$/i.test(url);
+                    if (isVideoFile) {
+                        $('#iframePlayer').hide().removeAttr('src');
+                        $('#videoPreview').show().attr('src', url);
+                    } else {
+                        const embedUrl = url.replace('watch?v=', 'embed/');
+                        $('#videoPreview').hide().removeAttr('src');
+                        $('#iframePlayer').show().attr('src', embedUrl);
+                    }
                     $('.preview-video').removeClass('d-none');
                 }
             });
 
-            // Cancel: reset fields & preview
-            $('#cancelVideoModal').on('click', function () {
-                $('#upload_video_modal').val('');
-                $('#custom_video_link_modal').val('');
-                $('#videoPreview').attr('src', '');
-                $('.upload-video-div, .custom-video-div, .preview-video').addClass('d-none');
-                $('#addVideoModal').modal('hide');
+            // Save Video
+            $('#saveVideoModal').on('click', function () {
+                const mode = $('#addVideoModal input[name="galleryoption"]:checked').val();
+                const formData = new FormData();
+                formData.append('business_id', businessId);
+                formData.append('galleryoption', mode);
+
+                if (mode === 'video') {
+                    if (!validateInContainer($('.upload-video-div'))) return false;
+                    const file = $('#upload_video_modal')[0].files[0];
+                    formData.append('file', file);
+                } else {
+                    if (!validateInContainer($('.custom-video-div'))) return false;
+                    const url = $('#custom_video_link_modal').val().trim();
+                    formData.append('link', url);
+                }
+
+                setLoadingState($(this));
+                $.ajax({
+                    url: '/gallery/store',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: () => {
+                        setLoadingState($(this), false);
+                        $('#addVideoModal').modal('hide');
+                        fetchGallery();
+                    },
+                    error: (xhr) => {
+                        setLoadingState($(this), false);
+                        toastrs('', xhr.responseJSON?.error || 'Failed to save item', 'error');
+                    }
+                });
             });
 
-            // Save: just triggers main form save
-            $('#saveVideoModal').on('click', function () {
-                $('#submitUpdateBusinessForm').trigger('click');
+            // Cancel: reset fields & preview
+            $('#addVideoModal').on('hidden.bs.modal', function () {
+                $('#upload_video_modal').val('');
+                $('#custom_video_link_modal').val('');
+                $('#videoPreview, #iframePlayer').hide().removeAttr('src');
+                $('.upload-video-div, .custom-video-div, .preview-video').addClass('d-none');
             });
+
         })
     </script>
 
@@ -1751,6 +2006,7 @@
         let qrCode;
 
         function generate_qr() {
+            const imgSrc = $(`#qrcode_image`).attr('src');
             qrCode = new QRCodeStyling(
                 {
                     width: 162,
@@ -1758,7 +2014,7 @@
                     type: "svg",
                     data: "{{ route('get.vcard',[$business->slug]) }}",
                     margin: 0,
-                    image: $(`#qrCodeImageBuffer`)[0].src,
+                    image: imgSrc !== "{{ $imagePlaceholderUrl }}" ? imgSrc : "{{ $siteLogo }}",
                     imageOptions: {
                         imageSize: 0.4,
                         margin: 0,
@@ -1784,7 +2040,6 @@
             const $code = $('.code');
             $code.empty();
             qrCode.append($code[0]);
-
         }
 
         $(function () {
@@ -1801,23 +2056,6 @@
             generate_qr();
         });
 
-        function selectNormalFile(targetId) {
-            $(`.${targetId}`).trigger('click');
-        }
-
-        $(document).on('change', '#qrCodeImage', function () {
-            const img_input = this;
-            if (img_input.files && img_input.files[0]) {
-                const img_reader = new FileReader();
-                img_reader.onload = function (event) {
-                    $("#qrCodeImageBuffer").attr("src", event.target.result);
-                    setTimeout(generate_qr, 250); // delay if needed
-                };
-                img_reader.readAsDataURL(img_input.files[0]);
-            }
-        });
-
-
         $(`#downloadMyQrCodeBtn`).on('click', function (e) {
             e.preventDefault();
             qrCode.download({
@@ -1830,9 +2068,13 @@
 
     <script id="formChangeDetectScript">
         $(function () {
+            $('#pills-tab .nav-item').click(function () {
+                const edit_tab_key = $(this).data('key');
+                $('#edit_tab_key').val(edit_tab_key);
+            })
             const $form = $('#updateBusinessForm');
             const original = $form.serialize(); // Save initial form state
-            const cancelSaveButtonSelectors = ".reset-form, #submitUpdateBusinessForm, .sticky-bottom-bar"
+            const cancelSaveButtonSelectors = ".reset-form, .submit-form, .sticky-bottom-bar"
             $(cancelSaveButtonSelectors).hide();
 
             function checkFormChanged() {
@@ -1867,108 +2109,185 @@
         });
     </script>
 
+    <script id="formValidationScript">
+        function showValidationTooltip($input, message) {
+            removeValidationTooltip($input);
+
+            $input
+                .addClass('is-invalid')
+                .attr('data-bs-toggle', 'tooltip')
+                .attr('data-bs-placement', 'top')
+                .attr('title', message);
+
+            // Initialize Bootstrap tooltip
+            const tooltip = new bootstrap.Tooltip($input[0]);
+            tooltip.show();
+
+            // Store reference for later removal
+            $input.data('bs.tooltip-instance', tooltip);
+        }
+
+        function removeValidationTooltip($input) {
+            $input.removeClass('is-invalid');
+
+            // Destroy existing tooltip if any
+            const tooltip = $input.data('bs.tooltip-instance');
+            if (tooltip) {
+                tooltip.dispose();
+                $input.removeData('bs.tooltip-instance');
+            }
+
+            $input.removeAttr('data-bs-toggle data-bs-placement title');
+        }
+
+        function validateInput($input) {
+            const val = $input.val().trim();
+            const required = $input.attr('validation-required') === 'true';
+            const pattern = $input.attr('validation-regex');
+            const message = $input.attr('validation-message') || 'Please fill out this field';
+
+            let isValid = true;
+
+            if (required && !val) {
+                isValid = false;
+            } else if (val) {
+                if (["url", "file"].indexOf($input.attr('type')) !== -1) {
+                    isValid = $input[0].checkValidity();
+                } else if (pattern) {
+                    isValid = new RegExp(pattern).test(val);
+                }
+            }
+
+            if (!isValid) {
+                showValidationTooltip($input, message);
+            } else {
+                removeValidationTooltip($input);
+            }
+
+            return isValid;
+        }
+
+        function validateInContainer($container) {
+            const $fields = $container.find('[validation-required], [validation-regex]');
+            for (let i = 0; i < $fields.length; i++) {
+                const $input = $($fields[i]);
+                if (!validateInput($input)) {
+                    $input.focus(); // optional
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        $(document).on('input blur', '[validation-required], [validation-regex]', function () {
+            validateInput($(this));
+        });
+    </script>
+
     <script id="submitFormScript">
         function delay(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
         }
 
-        function getFormattedPhoneNumber(input) {
-            const iti = window.intlTelInputGlobals.getInstance(input);
-            const fullNumber = iti.getNumber(); // e.g., +23059469464
-            const dialCode = '+' + iti.getSelectedCountryData().dialCode; // e.g., +230
 
-            if (fullNumber.startsWith(dialCode)) {
-                return dialCode + ' ' + fullNumber.slice(dialCode.length);
-            }
-
-            return fullNumber;
-        }
-
-        $('#submitUpdateBusinessForm').click(function () {
+        $('.submit-form').click(function () {
             $(`#updateBusinessForm`).submit();
         })
 
-        $(`#updateBusinessForm`).submit(async function (e) {
+        let isSubmitting = false;
+
+        $('#updateBusinessForm').off('submit').on('submit', async function (e) {
             e.preventDefault();
-            const form = $(this)[0];
+            if (isSubmitting) return;
+            isSubmitting = true;
 
-            var banner_val = '{{$business->banner}}';
-            var logo_val = '{{$business->logo}}';
+            const $form = $(this);
+            const banner_val = '{{$business->banner}}';
+            const logo_val = '{{$business->logo}}';
+            const $currentTab = $('.tab-pane.active');
 
-            if (!banner_val && !logo_val) {
-                var logo = $('input[name=logo]')[0].files[0];
-                if (!logo) {
-                    toastrs("", "Profile Picture is required", "error");
-                    return;
-                }
+            if ($currentTab.attr('id') === "details-setting") {
+                if (!banner_val && !logo_val) {
+                    var logo = $('input[name=logo]')[0].files[0];
+                    if (!logo) {
+                        toastrs("", "Profile Picture is required", "error");
+                        isSubmitting = false;
+                        return;
+                    }
 
-                var banner = $('input[name=banner]')[0].files[0];
-                if (!banner) {
-                    toastrs("", "Cover Photo is required", "error");
-                    return;
+                    var banner = $('input[name=banner]')[0].files[0];
+                    if (!banner) {
+                        toastrs("", "Cover Photo is required", "error");
+                        isSubmitting = false;
+                        return;
+                    }
                 }
             }
 
-            let socialValid = true;
-
-            $('#inputrow_socials .social-row').each(function () {
-                const $row = $(this);
-                const platform = $row.find('.social-link-text').text().trim().toLowerCase();
-                const link = $row.find('.social-link-href').val().trim();
-
-                const validator = socialValidators[platform];
-
-                let isValid;
-                if (validator instanceof RegExp) {
-                    isValid = validator.test(link);
-                } else if (typeof validator === 'function') {
-                    isValid = validator(link);
-                }
-
-                if (!isValid) {
-                    const msg = platform === 'whatsapp'
-                        ? 'Please enter a valid WhatsApp phone number (e.g., +1234567890)'
-                        : `Please enter a valid ${platform} link (e.g., https://${platform}.com/yourprofile)`;
-                    toastrs("", msg, "error");
-                    socialValid = false;
-                    return false;
-                }
-            });
-
-            if (!socialValid) return;
-
-
-            const $phoneInput = $('#{{ $business_id }}_phone');
-            const phoneVal = $phoneInput.val().trim();
-            const phonePattern = /^\+[0-9\s\-]{7,15}$/;
-
-            if (!phonePattern.test(phoneVal)) {
-                toastrs("", "Please enter a valid phone number (e.g. +1234567890)", "error");
-                return;
-            }
-            $phoneInput.val(getFormattedPhoneNumber($phoneInput[0]));
-
-            const websiteInput = $('#{{ $business_id }}_website');
-            let val = websiteInput.val().trim();
-
-            if (val && !/^https?:\/\//i.test(val)) {
-                val = 'https://' + val; // temporarily fix for validation
-            }
-            // Validate hostname properly
-            const domainPattern = /^(https?:\/\/)?([\w\-]+\.)+[a-z]{2,}(:\d+)?(\/.*)?$/i;
-            if (val && !domainPattern.test(val)) {
-                toastrs("", "Please enter a valid website URL (e.g. example.com)", "error");
+            if (!validateInContainer($currentTab)) {
+                isSubmitting = false;
                 return;
             }
 
-            if (form.checkValidity()) {
-                await delay(10);
-                $('#edit_tab_key').attr('name', 'edit_tab_key');
-                form.submit();
-            } else {
-                form.reportValidity(); // shows built-in validation UI
-            }
+            setLoadingState($('.submit-form'), true);
+            $('#edit_tab_key').attr('name', 'edit_tab_key');
+            await delay(10);
+            $form.off('submit').submit();
         });
 
+
     </script>
+
+    <script id="crossDevicePreviewManagementScript">
+        $(function () {
+            $('#openPreviewOnTabletMobile').click(function () {
+                if (window.innerWidth >= 768) {
+                    const offcanvas = bootstrap.Offcanvas.getOrCreateInstance('#previewOnTablet');
+                    offcanvas.show();
+                } else {
+                    const modal = bootstrap.Modal.getOrCreateInstance('#previewOnMobile');
+                    modal.show();
+                }
+            })
+        })
+
+        function relocateCustomBox() {
+            const $box = $('.custom-box');
+            const $previewOnDesktop = $('#previewOnDesktop');
+            const $previewOnTabletBody = $('#previewOnTabletBody');
+            const $previewOnMobileBody = $('#previewOnMobileBody');
+
+            // Ensure modal/offcanvas are hidden
+            const modal = bootstrap.Modal.getInstance('#previewOnMobile');
+            if (modal) modal.hide();
+
+            const offcanvas = bootstrap.Offcanvas.getInstance('#previewOnTablet');
+            if (offcanvas) offcanvas.hide();
+
+            if (window.innerWidth >= 1200) {
+                // Move to original
+                if (!$previewOnDesktop.has($box).length) {
+                    $previewOnDesktop.append($box);
+                }
+
+            } else if (window.innerWidth >= 768) {
+                // Move to offcanvas
+                if (!$previewOnTabletBody.has($box).length) {
+                    $previewOnTabletBody.append($box);
+                }
+
+
+            } else {
+                // Move to modal
+                if (!$previewOnMobileBody.has($box).length) {
+                    $previewOnMobileBody.append($box);
+                }
+
+            }
+        }
+
+        $(document).ready(() => relocateCustomBox());
+        $(window).on('resize', () => relocateCustomBox());
+    </script>
+
 @endpush
