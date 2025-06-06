@@ -1364,7 +1364,7 @@
             if (editSocialId) {
                 const editSocialRowSelector = `#${editSocialId}`;
                 $(editSocialRowSelector).find('.social-link-href').val(inputVal).trigger('change');
-                $(`${editSocialRowSelector}_preview`).attr('href', previewLink).show();
+                $(`${editSocialRowSelector}_preview`).attr('href', previewLink).closest('.card-social-link').show();
             } else {
                 // Create new card + hidden inputs
                 const newSocialDataId = `socials_${socialsRowNumber}`;

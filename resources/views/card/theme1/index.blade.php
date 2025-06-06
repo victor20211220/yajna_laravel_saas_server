@@ -114,9 +114,9 @@
                                     }
                                 }
                             @endphp
-                            <div class="card-social-link">
+                            <div class="card-social-link" {!! Utility::hideEmptyCardElement($social_val) !!}>
                                 <a href="{{ $link }}" target="_blank"
-                                   id="{{ 'socials_' . $id . '_preview' }}" {!! Utility::hideEmptyCardElement($social_val) !!}>
+                                   id="{{ 'socials_' . $id . '_preview' }}">
                                     {!! svg('vcard/socials/'.$platform.'.svg', ['class' => 'w-100']) !!}
                                 </a>
                                 <p>{{ $key }}</p>
