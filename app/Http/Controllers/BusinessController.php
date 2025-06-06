@@ -1756,7 +1756,7 @@ class BusinessController extends Controller
     public function storeGalleryItem(Request $request)
     {
         $request->validate([
-            'business_id' => 'required|exists:galleries,business_id',
+            'business_id' => 'required',
             'galleryoption' => 'required',
             'file' => 'nullable|file|mimes:jpg,jpeg,png,mp4,webm',
             'link' => 'nullable|url'
