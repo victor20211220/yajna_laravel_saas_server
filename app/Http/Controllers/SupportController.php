@@ -199,7 +199,7 @@ class SupportController extends Controller
         ]);
 
         Mail::mailer(config('mail.driver'))->send([], [], function ($mail) use ($request) {
-            $mail->to(env('SUPPORT_EMAIL'))
+            $mail->to(config('mail.support_email'))
                 ->subject($request->subject)
                 ->text($request->message);
 

@@ -113,4 +113,6 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    'support_email' => env('SUPPORT_EMAIL', 'support@tapeetap.com'),
+
 ];
