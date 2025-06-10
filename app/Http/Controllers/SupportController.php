@@ -187,6 +187,7 @@ class SupportController extends Controller
         }
 
         $settings = Utility::getsettingsbyid($superAdmin->id);
+        $user = \Auth::user();
         config([
             'mail.driver' => $settings['mail_driver'] ?: $setting['mail_driver'],
             'mail.host' => $settings['mail_host'] ?: $setting['mail_host'],
@@ -194,8 +195,8 @@ class SupportController extends Controller
             'mail.encryption' => $settings['mail_encryption'] ?: $setting['mail_encryption'],
             'mail.username' => $settings['mail_username'] ?: $setting['mail_username'],
             'mail.password' => $settings['mail_password'] ?: $setting['mail_password'],
-            'mail.from.address' => $settings['mail_from_address'] ?: $setting['mail_from_address'],
-            'mail.from.name' => $settings['mail_from_name'] ?: $setting['mail_from_name'],
+            'mail.from.address' => $user->email ?: "",
+            'mail.from.name' => $user->name ?: "",
         ]);
 
         Mail::mailer(config('mail.driver'))->send([], [], function ($mail) use ($request) {
