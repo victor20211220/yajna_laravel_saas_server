@@ -12267,7 +12267,7 @@ a {
 .menu-link.active .st0, .menu-link:active .st0 {
   fill: white;
 }
-.menu-link.active a, .menu-link:active a {
+.menu-link.active span, .menu-link:active span {
   color: white !important;
 }
 

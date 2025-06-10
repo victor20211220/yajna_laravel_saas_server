@@ -55,17 +55,17 @@
                     : route($item['route']);
             @endphp
 
-            <div
-                class="d-flex align-items-center gap-2 rounded-2 py-2 px-3 mb-3 menu-link {{ $isActive ? 'bg-primary text-white' : '' }}">
-                <div class="d-flex align-items-center justify-content-center" style="width: 20px;">
+            <a href="{{ $routeUrl }}"
+                class="{{ $isActive ? 'bg-primary text-white' : '' }} d-flex align-items-center gap-2 rounded-2 py-2 px-3 mb-3 menu-link text-decoration-none">
+                <span class="d-flex align-items-center justify-content-center" style="width: 20px;">
                     {!! svg($item['icon'], [
                         'class' => ($isActive ? 'fill-white' : 'fill-primary') . ' w-100 h-auto'
                     ]) !!}
-                </div>
-                <a href="{{ $routeUrl }}" class="text-decoration-none {{ $isActive ? 'text-white' : 'text-primary' }}">
+                </span>
+                <span>
                     {{ $item['label'] }}
-                </a>
-            </div>
+                </span>
+            </a>
         @endforeach
 
     </nav>
