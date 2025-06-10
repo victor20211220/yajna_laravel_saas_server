@@ -195,13 +195,14 @@ class SupportController extends Controller
             'mail.encryption' => $settings['mail_encryption'] ?: $setting['mail_encryption'],
             'mail.username' => $settings['mail_username'] ?: $setting['mail_username'],
             'mail.password' => $settings['mail_password'] ?: $setting['mail_password'],
-            'mail.from.address' => $user->email ?: "",
-            'mail.from.name' => $user->name ?: "",
+            'mail.from.address' => $settings['mail_from_address'] ?: $setting['mail_from_address'],
+            'mail.from.name' => $user->name ?: '',
         ]);
 
-        Mail::mailer(config('mail.driver'))->send([], [], function ($mail) use ($request) {
+        Mail::mailer(config('mail.driver'))->send([], [], function ($mail) use ($request, $user) {
             $mail->to(config('mail.support_email'))
                 ->subject($request->subject)
+                ->replyTo($user->email)
                 ->text($request->message);
 
             if ($request->hasFile('attachment')) {
