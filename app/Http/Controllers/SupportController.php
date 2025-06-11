@@ -159,11 +159,19 @@ class SupportController extends Controller
 
     public function send(Request $request)
     {
-        $request->validate([
-            'subject' => 'required|string|max:255',
-            'message' => 'required|string',
-            'attachment' => 'nullable|file|max:10240', // max 10MB
-        ]);
+        $validator = \Validator::make(
+            $request->all(),
+            [
+                'subject' => 'required|string|max:255',
+                'message' => 'required|string',
+                'attachment' => 'nullable|file|max:10240', // max 10MB
+            ]
+        );
+
+        if ($validator->fails()) {
+            $messages = $validator->getMessageBag();
+            return redirect()->back()->with('error', $messages->first());
+        }
 
         $superAdmin = User::where('type', 'super admin')->first();
 

@@ -45,11 +45,11 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">New Password *</label>
-                <input type="password" class="form-control bg-secondary" name="password" required>
+                <input type="password" class="form-control bg-secondary" name="password" minlength="6" required>
             </div>
             <div class="mb-3">
                 <label class="form-label">Retype Password *</label>
-                <input type="password" class="form-control bg-secondary" name="password_confirmation" required>
+                <input type="password" class="form-control bg-secondary" name="password_confirmation" minlength="6" required>
             </div>
             <div class="d-flex gap-3">
                 <a href="{{ url()->previous() }}" class="btn px-4 btn-light">Cancel</a>

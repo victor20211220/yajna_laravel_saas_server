@@ -15,10 +15,18 @@ class NewSettingController extends Controller
 
     public function updateProfile(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . Auth::id(),
-        ]);
+        $validator = \Validator::make(
+            $request->all(),
+            [
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email,' . Auth::id(),
+            ]
+        );
+
+        if ($validator->fails()) {
+            $messages = $validator->getMessageBag();
+            return redirect()->back()->with('error', $messages->first());
+        }
 
         Auth::user()->update($request->only('name', 'email'));
 
@@ -27,10 +35,18 @@ class NewSettingController extends Controller
 
     public function updatePassword(Request $request)
     {
-        $request->validate([
-            'current_password' => 'required',
-            'password' => 'required|confirmed|min:6',
-        ]);
+        $validator = \Validator::make(
+            $request->all(),
+            [
+                'current_password' => 'required',
+                'password' => 'required|confirmed|min:6',
+            ]
+        );
+
+        if ($validator->fails()) {
+            $messages = $validator->getMessageBag();
+            return redirect()->back()->with('error', $messages->first());
+        }
 
         if (!Hash::check($request->current_password, Auth::user()->password)) {
             return back()->with('error', 'Current password incorrect.');
