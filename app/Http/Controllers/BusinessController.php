@@ -864,6 +864,7 @@ class BusinessController extends Controller
 
                 $customhtml = Business::where('id', $business->id)->first();
                 $user = User::find($business->created_by);
+                dd($user);
                 $plan = Plan::find($user->plan);
                 $days = business_hours::$days;
                 $business_hours = '';
