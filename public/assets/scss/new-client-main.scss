@@ -202,18 +202,6 @@ input:-webkit-autofill {
     }
 }
 
-.section-title,
-.section-subtitle {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: var(--bs-body-color) !important;
-}
-
-.section-subtitle {
-    font-weight: 400;
-    color: #737373 !important;
-}
 
 .form-group {
     margin-bottom: 30px;
@@ -298,6 +286,19 @@ a {
 #mainContent {
     .dropdown-toggle::after {
         content: none;
+    }
+
+    .section-title,
+    .section-subtitle {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--bs-body-color);
+    }
+
+    .section-subtitle {
+        font-weight: 400;
+        color: #737373;
     }
 }
 
@@ -767,9 +768,9 @@ a {
 }
 
 .tooltip-inner {
-    font-size: 12px; /* smaller font */
-    white-space: nowrap; /* prevent wrapping */
-    max-width: none !important; /* override Bootstrap default (200px) */
+    font-size: 12px;
+    max-width: none !important;
+    margin: 0 1rem;
 }
 
 .custom-tooltip {
@@ -989,7 +990,7 @@ input.is-invalid {
         position: fixed;
         top: 0;
         left: 0;
-        height: 100%;
+        height: 100vh;
         z-index: 1045;
     }
     .toggle-sidebar-icon {
@@ -1008,7 +1009,7 @@ input.is-invalid {
 }
 
 @media(max-width: 1199.89px) {
-    #previewOnTabletBody{
+    #previewOnTabletBody {
         margin-bottom: 21px;
     }
     .custom-box {

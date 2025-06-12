@@ -5,7 +5,7 @@
     'class' => '',
 ])
 @php
-    $body = urlencode($url_link);
+    $body = urlencode(route('get.vcard',[$business->slug]));
     $whatsapp_link = "https://wa.me/?text=" . $body;
     $email_link = "mailto:?body=".$body;
     $facebook_link = "https://www.facebook.com/sharer.php?u=".$body;

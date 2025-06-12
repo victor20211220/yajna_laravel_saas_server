@@ -8,13 +8,15 @@
 @section('contentCard')
     <div class="business-card position-absolute top-0 start-50 translate-middle-x z-10 custom-rounded-34 display-none"
          id="businessCard">
-        @if($isSelfUser && !$isOnEditFormPage)
-            <a href="{{ route('home') }}" class="position-absolute top-0 start-0 m-4 z-1" id="backToPageOnCardArrow">
-                <i class="bi bi-arrow-left-circle text-white"></i>
-            </a>
-        @endif
+        <div class="position-absolute d-flex justify-content-between align-items-center p-4 z-1 w-100">
+            @if($isSelfUser && $isOnEditFormPage)
+                <div id="closeCardPreviewModalBtn">
+                    {!! svg('vcard/close_card_preview_popup.svg', ['class' => 'd-block d-md-none']) !!}
+                </div>
+            @endif
 
-        {!! svg('vcard/top_corner_share.svg', ['class' => 'position-absolute top-0 end-0 m-4 z-1', 'id' => 'openShareCardModalBtn']) !!}
+            {!! svg('vcard/top_corner_share.svg', ['class' => 'ms-auto', 'id' => 'openShareCardModalBtn']) !!}
+        </div>
         <div class="cover-photo w-100 position-relative">
             <img
                 src="{{ $business->banner ? $banner . '/' . $business->banner : asset('assets/images/icons/user_interface/cover_photo_placeholder.png') }}"
@@ -64,7 +66,7 @@
                     {!! nl2br(e($description)) !!}
                 </div>
                 <div class="toggle-arrow position-absolute bottom-0 start-0 end-0 mx-auto">
-                    {!! svg('vcard/description-toggle.svg') !!}
+                    {!! svg('vcard/description-toggle.svg', [ 'class' => 'fill-text-color' ]) !!}
                 </div>
             </div>
 
@@ -131,7 +133,7 @@
         @if($isProClient)
             <section
                 id="vcard-gallery-section" {!! Utility::hideSection(isset($gallery['is_enabled']) && $gallery['is_enabled']) !!}>
-                <div class="section-title">Gallery</div>
+                <div class="vcard-section-title">Gallery</div>
                 <div class="mb-4 pb-2"></div>
                 <div class="gallery-slider invisible">
                     @foreach ($gallery_contents as $gallery_content)
@@ -147,7 +149,7 @@
 
             <section
                 id="vcard-featured-videos-section" {!! Utility::hideSection(isset($gallery['is_video_enabled']) && $gallery['is_video_enabled']) !!}>
-                <div class="section-title">Video</div>
+                <div class="vcard-section-title">Video</div>
                 <div class="mb-4 pb-2"></div>
                 <div class="video-slider invisible">
                     @foreach ($gallery_contents as $gallery_content)
@@ -184,7 +186,7 @@
 
             <section
                 id="vcard-services-section" {!! Utility::hideSection(isset($services['is_enabled']) && $services['is_enabled']) !!}>
-                <div class="section-title">Services</div>
+                <div class="vcard-section-title">Services</div>
                 <div class="mb-4 pb-2"></div>
                 @php $service_key = 1; @endphp
                 <div class="row" id="vcardServiceList">
@@ -226,10 +228,10 @@
                 {!! svg('logo.svg', ['class' => 'fill-text-color mx-auto d-block', 'id' => 'vcard-logo']) !!}
             </a>
             <div class="mt-4 d-flex justify-content-center gap-3 align-items-center site-links">
-                <a href="{{ route('login') }}" class="text-primary">Login</a>
-                <a href="{{ route('login') }}" class="text-primary">Signup</a>
-                <a href="{{ route('about.terms') }}" class="text-primary">Terms of Use</a>
-                <a href="{{ route('about.privacy') }}" class="text-primary">Privacy Policy</a>
+                <a href="{{ route('login') }}">Login</a>
+                <a href="{{ route('login') }}">Signup</a>
+                <a href="{{ route('about.terms') }}" target="_blank">Terms of Use</a>
+                <a href="{{ route('about.privacy') }}" target="_blank">Privacy Policy</a>
             </div>
         </section>
     </div>

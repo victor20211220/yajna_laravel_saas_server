@@ -353,14 +353,14 @@
                                     'label' => 'Card Text',
                                     'tooltip_title' => 'Select the text colour for your content',
                                     'value' => old('card_text_color', $business->card_text_color ?? '#171717'),
-                                    'colors' => ['#FFFFFF', '#000000', '#FF0C02', '#F60946', '#FC8E3A', '#F4B813', '#18BCE8', '#18BCE8', '#175BFD'],
+                                    'colors' => ['#FFFFFF', '#000000', '#FF0C02', '#F60946', '#FC8E3A', '#F4B813', '#b8ebf7', '#18BCE8', '#175BFD'],
                                 ])
                                 @include('components.color-selector', [
                                     'id' => 'button_text_color',
                                     'label' => 'Button Text',
                                     'tooltip_title' => 'Change the text and icon colour of the button',
                                     'value' => old('button_text_color', $business->button_text_color ?? '#FFFFFF'),
-                                    'colors' => ['#FFFFFF', '#000000', '#FF0C02', '#F60946', '#FC8E3A', '#F4B813', '#18BCE8', '#18BCE8', '#175BFD'],
+                                    'colors' => ['#FFFFFF', '#000000', '#FF0C02', '#F60946', '#FC8E3A', '#F4B813', '#b8ebf7', '#18BCE8', '#175BFD'],
                                 ])
                             </section>
                         </div>
@@ -545,8 +545,8 @@
                                         @foreach($fields as $key => $label)
                                             @php
                                                 $defaultRequired = in_array($key, ['name', 'phone']);
-                                                $isEnabled  = old("is_{$key}_enabled",  $shareContactFields ? $shareContactFields->{"is_{$key}_enabled"}  : $defaultRequired);
                                                 $isRequired = old("is_{$key}_required", $shareContactFields ? $shareContactFields->{"is_{$key}_required"} : $defaultRequired);
+                                                $isEnabled  = old("is_{$key}_enabled",  $shareContactFields ? $shareContactFields->{"is_{$key}_enabled"}  : $defaultRequired);
                                             @endphp
                                             <div class="col-md-6">
                                                 <div
@@ -558,14 +558,14 @@
 
                                                     <div class="d-flex align-items-center gap-3">
                                                         <input class="form-check-input" type="checkbox"
-                                                               name="is_{{ $key }}_enabled"
-                                                            {{ $isEnabled ? 'checked' : '' }}>
-                                                        <span class="small text-muted">Required</span>
+                                                               name="is_{{ $key }}_required" id="is_{{ $key }}_required"
+                                                            {{ $isRequired ? 'checked' : '' }}>
+                                                        <label class="small text-muted" for="is_{{ $key }}_required">Required</label>
 
                                                         <div class="form-check form-switch m-0 p-0">
                                                             <input class="form-check-input" type="checkbox"
-                                                                   name="is_{{ $key }}_required"
-                                                                {{ $isRequired ? 'checked' : '' }}>
+                                                                   name="is_{{ $key }}_enabled"
+                                                                {{ $isEnabled ? 'checked' : '' }}>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -910,7 +910,8 @@
         <div class="offcanvas-header">
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div class="offcanvas-body overflow-x-hidden d-flex justify-content-center align-items-center" id="previewOnTabletBody"></div>
+        <div class="offcanvas-body overflow-x-hidden d-flex justify-content-center align-items-center"
+             id="previewOnTabletBody"></div>
     </div>
 
     <!-- Modal target -->
@@ -2249,7 +2250,12 @@
                     modal.show();
                 }
             })
+
+            $('#closeCardPreviewModalBtn').click(function () {
+                $('#previewOnMobile').modal('hide');
+            })
         })
+
 
         function relocateCustomBox() {
             const $box = $('.custom-box');

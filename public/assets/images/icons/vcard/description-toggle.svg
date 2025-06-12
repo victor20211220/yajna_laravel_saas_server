@@ -2,7 +2,7 @@
 <svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18.24 8.52">
   <defs>
     <style>
-      .description-cls-1 {
+      .stroke-text-color {
         fill: none;
         stroke: #171717;
         stroke-linecap: round;
@@ -12,6 +12,6 @@
     </style>
   </defs>
   <g id="Layer_1-2" data-name="Layer 1">
-    <polyline class="description-cls-1" points="17.12 1.12 9.12 7.12 1.12 1.12"/>
+    <polyline class="stroke-text-color" points="17.12 1.12 9.12 7.12 1.12 1.12"/>
   </g>
 </svg>

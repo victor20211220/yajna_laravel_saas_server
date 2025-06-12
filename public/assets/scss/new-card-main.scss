@@ -1,6 +1,7 @@
-:root{
+:root {
     --bs-body-font-family: 'Inter', sans-serif !important;
 }
+
 .business-card {
     background: var(--custom-card-bg);
     //border-radius: 20px;
@@ -44,19 +45,23 @@
         color: var(--custom-button-bg) !important;
     }
 
-    #openShareCardModalBtn {
-        width: 29px;
-        cursor: pointer;
+    .stroke-text-color {
+        stroke: var(--custom-color);
     }
 
-    #backToPageOnCardArrow {
-        width: 29px;
 
-        i {
-            font-size: 29px;
-            line-height: 29px;
+    #closeCardPreviewModalBtn,
+    #openShareCardModalBtn{
+        width: 31px;
+        cursor: pointer;
+        &[id="closeCardPreviewModalBtn"]{
+            svg{
+                width: 14px;
+            }
         }
     }
+
+
 
     #save-share-contact-buttons {
         svg {
@@ -93,7 +98,7 @@
         padding: 32px;
         border-bottom: solid 2px var(--custom-section-border-color);
 
-        .section-title {
+        .vcard-section-title {
             font-size: 21.56px;
             font-weight: 500;
             text-align: center;
@@ -304,7 +309,7 @@
         padding: 20px;
         border-bottom: solid 1px var(--bs-border-color);
 
-        .section-title {
+        .vcard-section-title {
             margin-bottom: 20px;
             font-weight: 500;
         }
@@ -397,8 +402,9 @@ video {
         transform: rotate(180deg);
     }
 }
+
 .site-links {
-    a{
+    a {
         font-size: 13px;
     }
 }

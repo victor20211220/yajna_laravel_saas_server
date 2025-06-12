@@ -103,10 +103,10 @@
                         <i class="bi bi-gear"></i>
                     </a>
                 </li>
-                <li><a class="dropdown-item d-flex justify-content-between" href="{{ route('about.privacy') }}"><span>Privacy</span><i
-                            class="bi bi-lock"></i></a></li>
-                <li><a class="dropdown-item d-flex justify-content-between" href="{{ route('about.terms') }}"><span>Terms</span><i
+                <li><a href="{{ route('about.terms') }}" target="_blank" class="dropdown-item d-flex justify-content-between"><span>Terms</span><i
                             class="bi bi-file-text"></i></a></li>
+                <li><a href="{{ route('about.privacy') }}" target="_blank" class="dropdown-item d-flex justify-content-between"><span>Privacy</span><i
+                            class="bi bi-lock"></i></a></li>
                 <li>
                     <hr class="dropdown-divider">
                 </li>
@@ -120,13 +120,13 @@
                     onclick="event.preventDefault(); document.getElementById('frm-logout').submit();">Sign Out
             </button>
             <div class="text-center">
-                <a href="{{ route('about.privacy') }}" class="text-decoration-none me-2 app-text-secondary">Terms of Use</a>
+                <a href="{{ route('about.terms') }}" target="_blank" class="text-decoration-none me-2 app-text-secondary">Terms of Use</a>
                 <span class="mx-1 app-text-secondary">|</span>
-                <a href="{{ route('about.terms') }}" class="text-decoration-none ms-2 app-text-secondary">Privacy Policy</a>
+                <a href="{{ route('about.privacy') }}" target="_blank" class="text-decoration-none ms-2 app-text-secondary">Privacy Policy</a>
             </div>
         </div>
     </div>
-    <div class="py-5 my-4 d-block d-md-none"></div>
+    <div class="my-4 d-block d-md-none"></div>
 </div>
 
 <form id="frm-logout" action="{{ route('logout') }}" method="POST" class="d-none">

@@ -75,10 +75,10 @@
         <!-- Footer (always bottom) -->
         <div class="text-center small mt-4">
             <div class="footer-links">
-                <a href="{{ route('about.privacy') }}" class="text-decoration-none me-2 text-white text-md-primary">Terms
+                <a href="{{ route('about.terms') }}" target="_blank" class="text-decoration-none me-2 text-white text-md-primary">Terms
                     of Use</a>
                 <span class="mx-1 text-white text-md-primary">|</span>
-                <a href="{{ route('about.terms') }}" class="text-decoration-none ms-2 text-white text-md-primary">Privacy
+                <a href="{{ route('about.privacy') }}" target="_blank" class="text-decoration-none ms-2 text-white text-md-primary">Privacy
                     Policy</a>
             </div>
             <div class="mt-2 copyright text-md-primary">
