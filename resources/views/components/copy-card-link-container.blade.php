@@ -5,7 +5,7 @@
     ]) }}
     <span class="position-absolute top-50 translate-middle-y"
           data-bs-toggle="tooltip"
-          data-bs-placement="left"
+          data-bs-placement="top"
           title="Copy">
           {!! svg('user_interface/copy_to_clipboard.svg') !!}
     </span>
