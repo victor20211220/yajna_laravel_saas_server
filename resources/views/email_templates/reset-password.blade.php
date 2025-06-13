@@ -8,7 +8,7 @@
 
     <!-- Logo -->
     <img src="{{ asset('assets/images/logo.png') }}" alt="tapeetap"
-         style="height: 35px; margin-bottom: 24px;">
+         style="height: 50px; margin-bottom: 24px;">
 
     <!-- Header -->
     <p style="font-size: 14px; line-height: 19px; margin: 0 0 24px;font-weight:500;">

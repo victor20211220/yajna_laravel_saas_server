@@ -7,7 +7,7 @@
 <div
     style="max-width: 500px; margin: 0 auto; padding: 29px 16px; font-family: Inter, sans-serif; color: #000000; text-align: center;">
 
-    <img src="{{ asset('assets/images/logo.png') }}" alt="tapeetap" style="height: 35px; margin-bottom: 24px;">
+    <img src="{{ asset('assets/images/logo.png') }}" alt="tapeetap" style="height: 50px; margin-bottom: 24px;">
 
     <p style="font-size: 14px; line-height: 19px; margin: 0 0 24px;font-weight:500;">
         Your login information is provided below.<br>
