@@ -12017,7 +12017,7 @@ input:-webkit-autofill {
 
 .sidebar {
   width: 300px;
-  min-height: 100dvh;
+  height: 100dvh;
   background: #fff;
   border-right: 1px solid #eee;
   transition: transform 0.3s ease-in-out;
@@ -12736,7 +12736,6 @@ input.is-invalid {
     position: fixed;
     top: 0;
     left: 0;
-    height: 100vh;
     z-index: 1045;
   }
   .toggle-sidebar-icon {
